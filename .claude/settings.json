@@ -7,7 +7,13 @@
       "Bash(python scripts/test_proteger_valide.py)",
       "Bash(python scripts/test_restreindre_bash.py)",
       "Bash(python scripts/test_verifier_prod.py)",
-      "Bash(python .claude/skills/verifier-prod/verifier_prod.py *)"
+      "Bash(python .claude/skills/verifier-prod/verifier_prod.py *)",
+      "Bash(python3 scripts/tableau.py)",
+      "Bash(python3 scripts/tableau.py *)",
+      "Bash(python3 scripts/test_proteger_valide.py)",
+      "Bash(python3 scripts/test_restreindre_bash.py)",
+      "Bash(python3 scripts/test_verifier_prod.py)",
+      "Bash(python3 .claude/skills/verifier-prod/verifier_prod.py *)"
     ],
     "ask": [
       "Bash(git push *)",
@@ -37,7 +43,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/proteger_valide.py\"",
+            "command": "command -v python >/dev/null 2>&1 && P=python || P=python3; \"$P\" \"$CLAUDE_PROJECT_DIR/.claude/hooks/proteger_valide.py\"",
             "timeout": 10
           }
         ]
@@ -47,7 +53,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/restreindre_bash.py\"",
+            "command": "command -v python >/dev/null 2>&1 && P=python || P=python3; \"$P\" \"$CLAUDE_PROJECT_DIR/.claude/hooks/restreindre_bash.py\"",
             "timeout": 10
           }
         ]

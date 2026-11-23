@@ -26,6 +26,7 @@ description: Vérifie qu'une application est en ligne ET à jour - sonde url_pro
    ```
    python .claude/skills/verifier-prod/verifier_prod.py --url <url_prod> --sha <sha_attendu> --etat projets/<slug>/rapports/verifier-prod-<sha7>.json
    ```
+   Sur macOS ou Linux sans `python`, utiliser `python3` (même script, mêmes options ; les deux formes sont autorisées).
    Valeurs par défaut : `--intervalle 30` (secondes entre deux tentatives), `--timeout 900` (15 min au total), `--max-appel 540` (9 min au plus par appel, sous la limite de 10 min de Bash).
 4. **Lire le code retour** :
    | Code | Sens | Suite |

@@ -14,6 +14,7 @@ deuxième barrière, appliquée seulement aux subagents :
 - listes blanches strictes pour `chef-de-projet`, `relecteur-code` et `deployeur`.
 
 Usage en hook de frontmatter (plan B) : `python restreindre_bash.py --agent <nom>`.
+Interpréteur accepté dans les listes blanches : `python`, `python3` (macOS, Linux) ou `py` (Windows).
 Code de sortie : 0 = laisse passer ; 2 = refus (message sur stderr).
 Bibliothèque standard uniquement.
 """
@@ -30,10 +31,10 @@ RE_ENV = re.compile(r"(^|[\\/=:])\.env", re.IGNORECASE)
 RE_ARG_SUR = re.compile(r"^[\w\-=./:@,+]+$")
 
 LISTES_BLANCHES = {
-    "chef-de-projet": "python scripts/tableau.py [options]",
+    "chef-de-projet": "python (ou python3) scripts/tableau.py [options]",
     "relecteur-code": "git diff | git log | git show | git status | git blame (sans --output ni --ext-diff)",
     "deployeur": ("gh workflow run … | gh run list|view|watch … | git rev-parse … | git log … | "
-                  "python .claude/skills/verifier-prod/verifier_prod.py …"),
+                  "python (ou python3) .claude/skills/verifier-prod/verifier_prod.py …"),
 }
 
 

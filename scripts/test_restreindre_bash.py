@@ -45,6 +45,14 @@ class TestRestreindreBash(unittest.TestCase):
         self.ok("python scripts/tableau.py", "chef-de-projet")
         self.ok("python ./scripts/tableau.py --projet reservation-salle", "chef-de-projet")
 
+    def test_chef_tableau_python3(self):
+        self.ok("python3 scripts/tableau.py", "chef-de-projet")
+        self.ok("python3 ./scripts/tableau.py --projet reservation-salle", "chef-de-projet")
+        self.ok("/usr/bin/python3 scripts/tableau.py", "chef-de-projet")
+        self.ko("python3 scripts/tableau.py && ls", "chef-de-projet", "chef-de-projet")
+        self.ko("python3 -c 'import os'", "chef-de-projet", "chef-de-projet")
+        self.ko("python2 scripts/tableau.py", "chef-de-projet", "chef-de-projet")
+
     def test_chef_autres_commandes(self):
         self.ko("ls", "chef-de-projet", "chef-de-projet")
         self.ko("python scripts/tableau.py && rm x", "chef-de-projet", "chef-de-projet")
@@ -69,6 +77,11 @@ class TestRestreindreBash(unittest.TestCase):
         self.ok("git rev-parse HEAD", "deployeur")
         self.ok("python .claude/skills/verifier-prod/verifier_prod.py --url https://x.onrender.com --sha abc1234",
                 "deployeur")
+        self.ok("python3 .claude/skills/verifier-prod/verifier_prod.py --url https://x.onrender.com --sha abc1234",
+                "deployeur")
+        self.ok("python3 ./.claude/skills/verifier-prod/verifier_prod.py --url http://localhost:8000 --sha abc1234",
+                "deployeur")
+        self.ko("python3 scripts/tableau.py", "deployeur", "deployeur")
         self.ko("curl https://exemple.org", "deployeur", "deployeur")
         self.ko("gh secret list", "deployeur", "deployeur")
 

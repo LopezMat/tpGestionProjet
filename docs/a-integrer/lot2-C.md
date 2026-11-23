@@ -24,7 +24,7 @@ Le périmètre C de ce lot comprend 4 agents (`relecteur-code`, `testeur`, `secu
 | 8 | Workflows et points d'ARCHITECTURE § 10 | `.github/workflows/`, `scripts/verifier_validations.py` | C | **lot 5** |
 | 9 | Plan B si `agent_type` est absent à l'exécution : hooks dans le frontmatter des agents | `.claude/agents/*.md` | B, C | conditionnel (voir § 9) |
 | 10 | **Risque : un hook introuvable ne bloque rien** ; parades | postes de l'équipe, `.claude/settings.json` | toute l'équipe ; C | procédure + **lot 5** |
-| 11 | Procédure « vérifier ses hooks » à reprendre dans le README | `README.md` | B | PR |
+| 11 | Procédure « vérifier ses hooks » dans le README | `README.md` | C | **fait** (section « Installer son poste ») |
 
 ---
 
@@ -142,7 +142,7 @@ hooks:
     - matcher: "Bash"
       hooks:
         - type: command
-          command: python "$CLAUDE_PROJECT_DIR/.claude/hooks/restreindre_bash.py" --agent chef-de-projet
+          command: command -v python >/dev/null 2>&1 && P=python || P=python3; "$P" "$CLAUDE_PROJECT_DIR/.claude/hooks/restreindre_bash.py" --agent chef-de-projet
 ```
 Cela vaut pour `chef-de-projet` (B), `relecteur-code` et `deployeur` (C). Le script accepte déjà l'option `--agent`, qui est testée.
 
@@ -157,7 +157,21 @@ Cela vaut pour `chef-de-projet` (B), `relecteur-code` et `deployeur` (C). Le scr
 **Quoi.** Selon la documentation officielle des hooks, un hook qui ne démarre pas (commande `python` introuvable, script absent) ou qui sort avec un code autre que 0 ou 2 est une **erreur non bloquante** : l'action continue, avec un simple avis `hook error` dans la conversation. Si `python` manque sur un poste, R5, R6 et la restriction Bash **disparaissent en silence** sur ce poste.
 
 **Parades.**
-1. **Commande `python` vérifiée sur chaque poste** (procédure ci-dessous, test 1). Sur le poste d'Ethan, `python` est `C:\Python312\python.exe` (3.12.6), trouvé par Git Bash et par PowerShell. `python3` **n'existe pas** sous Windows avec l'installateur python.org : la commande des hooks est donc `python`, jamais `python3`. Un poste macOS ou Linux sans `python` doit créer cet alias.
+1. **Commande Python résolue sur chaque OS (parade appliquée).** Les noms diffèrent selon le système :
+   - sous **Windows** (installateur python.org), seul `python` existe ; `python3` est absent, ou n'est qu'un raccourci du Microsoft Store qui ne lance rien ;
+   - sous **macOS** (et souvent Linux), c'est l'inverse : `python3` existe, `python` souvent pas.
+
+   Une commande fixe désactiverait donc les hooks en silence sur une partie des postes. Les deux hooks utilisent maintenant :
+   ```
+   command -v python >/dev/null 2>&1 && P=python || P=python3; "$P" "$CLAUDE_PROJECT_DIR/.claude/hooks/<hook>.py"
+   ```
+   `python` est essayé en premier, à cause du raccourci du Store. La commande a été testée sous Git Bash sur le poste d'Ethan (`C:\Python312\python.exe`, 3.12.6) :
+   - le JSON arrive bien sur stdin ;
+   - les codes 0 et 2 et la sortie JSON `ask` sont transmis tels quels ;
+   - avec un PATH sans `python`, le repli sur `python3` fonctionne ;
+   - sans aucun des deux, l'échec donne le code 127, une erreur non bloquante. C'est le cas que le test 1 de la procédure permet de repérer.
+
+   Les règles `allow` de `settings.json` et les listes blanches de `restreindre_bash.py` acceptent `python` et `python3` (et `py` pour le hook).
 2. **Les hooks se ferment en cas de doute** : JSON illisible ou erreur interne donnent un refus (code 2), jamais un passage.
 3. **Lot 5** : ajouter `"onFailure": "block"` aux deux hooks, pour que leur échec bloque l'action. Ce champ demande Claude Code **2.1.295 ou plus** ; le poste d'Ethan a la 2.1.285. Il n'est pas ajouté maintenant, parce qu'un champ inconnu risquerait d'invalider tout `settings.json`.
 4. **Filet CI** : `validations.yml` (lot 5) détecte après coup un document passé `VALIDÉ` sans `valide_par` ni `decision` valide.
@@ -166,13 +180,13 @@ Cela vaut pour `chef-de-projet` (B), `relecteur-code` et `deployeur` (C). Le scr
 
 **Voie.** Procédure appliquée par chaque membre dès maintenant ; `onFailure` au lot 5.
 
-## 11. Procédure « vérifier ses hooks » dans le README (B)
+## 11. Procédure « vérifier ses hooks » dans le README (fait)
 
-**Quoi.** Reprendre la section ci-dessous dans `README.md`, par exemple dans une partie « Installation du poste ».
+**Quoi.** La section « Installer son poste » de `README.md` reprend la procédure ci-dessous, avec les prérequis (Python 3.10+, Git, Claude Code lancé à la racine) et les variantes `python3` pour macOS.
 
-**Pourquoi.** Chaque nouveau poste et chaque mise à jour de Python ou de Claude Code peuvent désactiver les hooks sans bruit (point 10).
+**Pourquoi.** Chaque nouveau poste et chaque mise à jour de Python ou de Claude Code peuvent désactiver les hooks sans bruit (point 10). Le README est le premier fichier qu'ouvre un nouveau membre.
 
-**Voie.** PR de B.
+**Voie.** Ajoutée dans la PR du Lot 2-C. Le README n'est pas un document validé (pas d'en-tête) ; B en reste responsable pour la suite.
 
 ---
 
@@ -180,15 +194,17 @@ Cela vaut pour `chef-de-projet` (B), `relecteur-code` et `deployeur` (C). Le scr
 
 Prérequis : **lancer Claude Code depuis la racine du dépôt**. Les chemins de `settings.json` qui commencent par `/` (par exemple `Edit(/templates/**)`) sont relatifs au dossier de lancement.
 
-| # | Commande (Git Bash, à la racine du dépôt) | Résultat attendu |
+Sous Windows, les commandes se tapent dans Git Bash ; sous macOS et Linux, dans le terminal. **Sur Mac, remplacer `python` par `python3`** dans les commandes ci-dessous si `python` n'existe pas.
+
+| # | Commande (à la racine du dépôt) | Résultat attendu |
 |---|---|---|
-| 1 | `python --version` | `Python 3.x`. Sinon, installer Python ou corriger le PATH : sans `python`, les hooks échouent **sans rien bloquer**. |
-| 2 | `printf '%s' '{"tool_name":"Write","tool_input":{"file_path":"docs/essai.md","content":"---\nstatut: validé\nvalide_par:\n---\n"}}' \| python .claude/hooks/proteger_valide.py; echo "code=$?"` | le message `Refusé (R5) : seul un humain passe un document à VALIDÉ…` puis `code=2` |
+| 1 | `python --version` (Windows) ou `python3 --version` (Mac) | `Python 3.10` ou plus. Si **aucune** des deux commandes ne répond, installer Python ou corriger le PATH : sans Python, les hooks échouent **sans rien bloquer**. |
+| 2 | `printf '%s' '{"tool_name":"Write","tool_input":{"file_path":"docs/essai.md","content":"---\nstatut: validé\nvalide_par:\n---\n"}}' \| python .claude/hooks/proteger_valide.py; echo "code=$?"` (Mac : `python3`) | le message `Refusé (R5) : seul un humain passe un document à VALIDÉ…` puis `code=2` |
 | 3 | Dans Claude Code : « ajoute une espace à la fin de docs/ARCHITECTURE.md » | l'édition est refusée, avec un message qui contient `Refusé (R6) : docs/architecture.md est VALIDÉ…`. Claude Code préfixe ce refus par `PreToolUse:Edit hook error`, ce qui est **normal**. La protection est **inactive** si l'édition passe, ou si le message ne contient pas `Refusé` (par exemple `Failed with non-blocking status code`, `command not found`, `No such file or directory`) : revoir le test 1. |
 
 En complément, la commande `/hooks` dans Claude Code doit lister les deux hooks PreToolUse (`Write|Edit|MultiEdit` et `Bash`). Les trois commandes suivantes doivent être entièrement vertes :
 ```
-python scripts/test_proteger_valide.py
-python scripts/test_restreindre_bash.py
-python scripts/test_verifier_prod.py
+python scripts/test_proteger_valide.py      # Mac : python3 scripts/test_proteger_valide.py
+python scripts/test_restreindre_bash.py     # Mac : python3 …
+python scripts/test_verifier_prod.py        # Mac : python3 …
 ```
