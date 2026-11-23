@@ -34,6 +34,34 @@ Notre équipe joue une **ESN** dont les missions sont assurées par des agents I
 3. Le coordinateur crée l'espace `projets/<slug>/`, mobilise les agents utiles et **s'arrête à chaque validation humaine**.
 4. Les humains valident en modifiant eux-mêmes l'en-tête des documents (`statut: VALIDÉ`, `valide_par`, `decision`) et en traçant la décision dans `docs/decisions/`.
 
+## Installer son poste
+
+À faire une fois par membre de l'équipe, puis après chaque mise à jour de Python ou de Claude Code.
+
+1. **Python 3.10 ou plus.** Les hooks de protection et les scripts n'utilisent que la bibliothèque standard : aucun paquet à installer.
+   - Windows : installateur de [python.org](https://www.python.org/downloads/), en cochant **« Add python.exe to PATH »**. Ne pas compter sur le raccourci « python3 » du Microsoft Store.
+   - macOS : `brew install python`.
+   - Vérifier : `python --version` (Windows) ou `python3 --version` (macOS). Les hooks utilisent `python` s'il existe, sinon `python3`.
+2. **Git.** Sous Windows, Git for Windows fournit **Git Bash**, le shell dans lequel Claude Code lance les hooks.
+3. **Claude Code, lancé depuis la racine du dépôt** (dans VS Code : ouvrir le dossier du dépôt). Les règles de `.claude/settings.json` dont le chemin commence par `/` (par exemple `Edit(/templates/**)`) sont relatives au dossier de lancement.
+4. **Vérifier ses hooks.** Si Python est introuvable, Claude Code n'affiche qu'un avertissement et **laisse passer** les écritures : les protections R5 et R6 et la restriction du Bash des agents disparaissent sans bruit. Sur Mac, remplacer `python` par `python3` dans les commandes ci-dessous si `python` n'existe pas.
+
+| # | Commande (Git Bash sous Windows, terminal sous macOS, à la racine du dépôt) | Résultat attendu |
+|---|---|---|
+| 1 | `python --version` (Windows) ou `python3 --version` (macOS) | `Python 3.10` ou plus |
+| 2 | `printf '%s' '{"tool_name":"Write","tool_input":{"file_path":"docs/essai.md","content":"---\nstatut: validé\nvalide_par:\n---\n"}}' \| python .claude/hooks/proteger_valide.py; echo "code=$?"` | `Refusé (R5) : seul un humain passe un document à VALIDÉ…` puis `code=2` |
+| 3 | Dans Claude Code : « ajoute une espace à la fin de docs/ARCHITECTURE.md » | l'édition est refusée avec un message qui contient `Refusé (R6)` (le préfixe `PreToolUse:Edit hook error` est normal). Si l'édition passe, ou si le message parle de `command not found` ou de `non-blocking status code`, la protection est **inactive** : reprendre l'étape 1. |
+
+Dans Claude Code, `/hooks` doit lister deux hooks PreToolUse (`Write|Edit|MultiEdit` et `Bash`). Les tests doivent tous passer :
+
+```
+python scripts/test_proteger_valide.py     # macOS : python3 scripts/test_proteger_valide.py
+python scripts/test_restreindre_bash.py    # macOS : python3 …
+python scripts/test_verifier_prod.py       # macOS : python3 …
+```
+
+Détail des risques et des parades : [docs/a-integrer/lot2-C.md](docs/a-integrer/lot2-C.md) (points 10 et 11).
+
 ## État d'avancement
 
 Construction par lots. Le contenu de chaque lot est décrit dans [docs/ARCHITECTURE.md § 11](docs/ARCHITECTURE.md#11-plan-de-construction-par-lots).
