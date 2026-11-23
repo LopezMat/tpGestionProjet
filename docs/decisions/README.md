@@ -1,11 +1,11 @@
 ---
 titre: Registre des décisions humaines
-statut: VALIDÉ          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
+statut: EN_REVUE          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
 responsable: B
 version: 0.2
 maj_le: 2026-11-23
-valide_par: Ethan
-decision: DEC-001
+valide_par:
+decision:
 ---
 
 # Registre des décisions humaines
@@ -32,4 +32,4 @@ Un document `VALIDÉ` est figé pour les agents (R6). Pour le faire évoluer, un
 ## Index
 | Id | Date | Sujet | Statut |
 |---|---|---|---|
-| [DEC-001](2026-11-23-DEC-001-arbitrages-plan-initial.md) | 2026-11-23 | Arbitrages du plan initial (Lot 1) | EN_REVUE |
+| [DEC-001](2026-11-23-DEC-001-arbitrages-plan-initial.md) | 2026-11-23 | Arbitrages du plan initial (Lot 1) | VALIDÉ |
