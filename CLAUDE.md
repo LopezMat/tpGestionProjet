@@ -1,11 +1,11 @@
 ---
 titre: Règles du coordinateur
-statut: EN_REVUE
+statut: VALIDE
 responsable: B
-version: 0.2
+version: 1.0
 maj_le: 2026-11-23
-valide_par:
-decision:
+valide_par: Ethan
+decision: DEC-001
 ---
 
 # CLAUDE.md — Coordinateur de l'ESN

@@ -1,11 +1,11 @@
 ---
 titre: Historique des modifications de règles
-statut: EN_REVUE          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
+statut: VALIDE          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
 responsable: B
 version: 0.2
 maj_le: 2026-11-23
-valide_par:
-decision:
+valide_par: ETHAN
+decision: DEC-001
 ---
 
 # Historique des modifications de règles
