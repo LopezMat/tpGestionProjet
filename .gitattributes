@@ -1,0 +1,12 @@
+# Fins de ligne LF partout : les scripts, hooks et workflows tournent sous Linux (GitHub Actions)
+# et l'équipe travaille sous Windows. Pourquoi : éviter les diffs parasites et les scripts cassés par CRLF.
+* text=auto eol=lf
+
+# Fichiers binaires : jamais de conversion.
+*.pdf  binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.zip  binary
