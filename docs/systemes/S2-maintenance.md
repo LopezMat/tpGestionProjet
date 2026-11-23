@@ -1,11 +1,11 @@
 ---
 titre: Système 2 — Suivi et maintenance
-statut: EN_REVUE
-responsable: D
-version: 0.1
+statut: VALIDÉ
+responsable: B
+version: 1.0
 maj_le: 2026-11-23
-valide_par:
-decision:
+valide_par: Ethan
+decision: DEC-001
 ---
 
 # Système 2 — Suivi et maintenance
