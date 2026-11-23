@@ -1,8 +1,8 @@
 ---
 titre: Registre des décisions humaines
-statut: EN_REVUE
+statut: EN_REVUE          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
 responsable: B
-version: 0.1
+version: 0.2
 maj_le: 2026-11-23
 valide_par:
 decision:

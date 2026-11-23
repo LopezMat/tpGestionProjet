@@ -2,7 +2,7 @@
 titre: Arbitrages du plan initial (Lot 1)
 statut: EN_REVUE
 responsable: B
-version: 0.1
+version: 0.2
 maj_le: 2026-11-23
 valide_par:
 decision: DEC-001
@@ -20,7 +20,7 @@ modifie_une_regle: oui
 > **En attente de validation humaine.** Ce fichier a été rédigé par le coordinateur à partir des arbitrages de l'équipe. Conformément à R5, c'est à un membre de l'équipe de le passer lui-même à `VALIDÉ` et de renseigner `valide_par`.
 
 ## Contexte
-À partir de `docs/VISION.md`, le coordinateur a proposé une arborescence, un catalogue d'agents, un circuit des fichiers et une liste d'incohérences, d'oublis et de questions. L'équipe a arbitré chaque point le 2026-11-23. Ce fichier en garde la trace, une section par arbitrage.
+À partir de `docs/VISION.md`, le coordinateur a proposé une arborescence, un catalogue d'agents, un circuit des fichiers et une liste d'incohérences, d'oublis et de questions. L'équipe a arbitré chaque point le 2026-11-23. Ce fichier en garde la trace, une section par arbitrage. Les sections 23 à 25 ont été ajoutées le même jour, après la revue du Lot 1 par l'équipe.
 
 ---
 
@@ -124,9 +124,27 @@ Les humains valident en modifiant le fichier eux-mêmes.
 
 ---
 
+## Corrections issues de la revue du Lot 1
+
+## 23. Normalisation du statut VALIDÉ
+**Décision :** le hook et `verifier_validations.py` normalisent la valeur du statut (accents supprimés, majuscules) : `VALIDE`, `validé`, `Validé` sont traités comme `VALIDÉ`. La CI refuse tout statut de document hors `BROUILLON`, `EN_REVUE` et `VALIDÉ`. La règle figure dans `ARCHITECTURE.md` § 6 (garde-fou 5), dans `templates/_ENTETE.md` et dans R5.
+**Pourquoi :** sinon, écrire « VALIDE » sans accent contourne le hook et fait passer un document pour validé.
+
+## 24. Les journaux ne sont jamais validés
+**Décision :** `docs/CHANGELOG-REGLES.md` et `docs/decisions/README.md` sont des journaux. Ils ne passent jamais `VALIDÉ`, évoluent uniquement par PR et sont exclus de R6. Leur en-tête reste `statut: EN_REVUE`, avec le commentaire « journal, jamais VALIDÉ ». La règle figure dans R6 (CLAUDE.md), dans `templates/_ENTETE.md` et dans `ARCHITECTURE.md` § 6. Pour la même raison, la colonne « État » des lots passe d'`ARCHITECTURE.md` § 11 au `README.md` ; ARCHITECTURE ne garde que le plan des lots.
+**Pourquoi :** un journal figé empêcherait de tracer les décisions suivantes. De même, un document d'architecture qui contient un état d'avancement devrait être dévalidé à chaque lot.
+
+## 25. Protection des templates
+**Décision :** les permissions prévues (S3 § 5 et `ARCHITECTURE.md` § 6, garde-fou 6) incluent `ask` sur `Write(templates/**)` et `Edit(templates/**)`.
+**Pourquoi :** les templates restent en `BROUILLON` par nature, donc R6 ne les protège pas ; or `tableau.py` et tous les agents dépendent de leur format.
+
+---
+
 ## Points reportés (à trancher au lot workflows)
 Délais de vérification Render, persistance des données et sauvegardes, mécanisme de rollback. Voir `docs/ARCHITECTURE.md` § 10.
 
 ## Impacts
 - Fichiers créés au Lot 1 : `CLAUDE.md`, `README.md`, `.gitattributes`, `docs/ARCHITECTURE.md`, `docs/systemes/S1..S4`, `templates/`, `docs/decisions/README.md`, `docs/CHANGELOG-REGLES.md`.
 - Règles créées : R1 à R13 (CLAUDE.md) et les règles S1-R*, S2-R*, S3-R*, S4-R*. Entrée initiale dans le CHANGELOG-REGLES.
+- Sections 23 à 25 : R5, R6, `_ENTETE.md`, `ARCHITECTURE.md` § 6 et § 11, `README.md`, S3 § 5, en-têtes des deux journaux ; trois entrées dans le CHANGELOG-REGLES.
+- Note ajoutée dans S1 (étape d'assignation) : « À définir au Lot 2 (B) : critères d'affectation agent / salarié ».

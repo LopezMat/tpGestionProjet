@@ -2,7 +2,7 @@
 titre: Architecture du système multi-agents
 statut: EN_REVUE
 responsable: B
-version: 0.1
+version: 0.2
 maj_le: 2026-11-23
 valide_par:
 decision:
@@ -170,7 +170,7 @@ Le coordinateur lance chaque agent. Il est omis du schéma pour le garder lisibl
 **Statuts des documents** (en-tête standard, voir [templates/_ENTETE.md](../templates/_ENTETE.md)) : `BROUILLON` → `EN_REVUE` → `VALIDÉ`.
 Les tickets ont leur propre cycle de statuts (§ 7), qui ne comporte pas `VALIDÉ`.
 
-**Quatre garde-fous protègent `VALIDÉ`** (DEC-001) :
+**Garde-fous de la validation** (DEC-001, sections 7, 8, 23 et 25) :
 
 | # | Garde-fou | Mécanisme | Lot |
 |---|---|---|---|
@@ -178,8 +178,18 @@ Les tickets ont leur propre cycle de statuts (§ 7), qui ne comporte pas `VALID�
 | 2 | **Un document VALIDÉ est figé pour les agents** : toute écriture sur un fichier dont l'en-tête actuel est `VALIDÉ` est bloquée ; pour le modifier, un humain le repasse en `EN_REVUE` | même hook | settings/hooks |
 | 3 | Un document `VALIDÉ` a obligatoirement `valide_par` et `decision: DEC-NNN` | règle R5, templates | Lot 1 |
 | 4 | La CI vérifie que chaque `decision` pointe vers un fichier existant de `docs/decisions/` | `validations.yml` + `verifier_validations.py` | workflows |
+| 5 | **Normalisation du statut** : le hook et `verifier_validations.py` comparent la valeur après suppression des accents et passage en majuscules (`VALIDE`, `validé`, `Validé` = `VALIDÉ`). La CI **refuse tout statut de document hors `BROUILLON`, `EN_REVUE`, `VALIDÉ`** | hook + `verifier_validations.py` | settings/hooks, workflows |
+| 6 | **Templates protégés** : permission `ask` sur `Write(templates/**)` et `Edit(templates/**)` | `.claude/settings.json` | settings/hooks |
+
+Un « document » est ici tout fichier Markdown dont le frontmatter porte l'en-tête standard (champ `valide_par`). Les tickets et les fiches membres, qui ont leur propre format, ne sont pas concernés par les garde-fous 3 à 5.
 
 *Pourquoi le garde-fou 2 :* le hook ne voit que les outils Write et Edit. Un agent pourrait modifier le corps d'un document validé sans toucher au statut, ou passer par Bash. Figer le fichier, avec le contrôle CI comme filet, garantit que le contenu appliqué est bien celui qui a été validé.
+
+*Pourquoi le garde-fou 5 :* sans normalisation, écrire `VALIDE` sans accent contournerait le hook et ferait passer un document pour validé.
+
+*Pourquoi le garde-fou 6 :* les templates restent en `BROUILLON` par nature, donc R6 ne les protège pas ; or `tableau.py` et tous les agents dépendent de leur format.
+
+**Exception, les journaux.** `docs/CHANGELOG-REGLES.md` et `docs/decisions/README.md` ne passent jamais `VALIDÉ` : ils restent en `EN_REVUE`, évoluent uniquement par PR et sont exclus de R6 (garde-fou 2). *Pourquoi :* un journal figé empêcherait de tracer les décisions suivantes.
 
 **Les humains valident** en modifiant eux-mêmes le fichier dans leur éditeur, pas via Claude. Ils remplissent l'en-tête et créent le fichier de décision.
 
@@ -239,16 +249,16 @@ Ces points sont identifiés mais volontairement non tranchés au Lot 1 :
 
 À chaque lot : création, résumé à l'équipe, arrêt pour validation.
 
-| Lot | Contenu | État |
-|---|---|---|
-| 1 | Socle documentaire : CLAUDE.md, ARCHITECTURE, S1–S4, templates, décisions, changelog | en revue |
-| 2 | Fichiers d'agents `.claude/agents/` | à venir |
-| 3 | Skills | à venir |
-| 4 | `scripts/tableau.py` et ses tests | à venir |
-| 5 | `settings.json`, hooks, workflows (et les points du § 10) | à venir |
-| 6 | Projet de démonstration `projets/reservation-salle/` | à venir |
+| Lot | Contenu |
+|---|---|
+| 1 | Socle documentaire : CLAUDE.md, ARCHITECTURE, S1–S4, templates, décisions, changelog |
+| 2 | Fichiers d'agents `.claude/agents/` |
+| 3 | Skills |
+| 4 | `scripts/tableau.py` et ses tests |
+| 5 | `settings.json`, hooks, workflows (et les points du § 10) |
+| 6 | Projet de démonstration `projets/reservation-salle/` |
 
-L'ordre des lots 2 à 6 est indicatif.
+L'ordre des lots 2 à 6 est indicatif. L'état d'avancement des lots est suivi dans le [README](../README.md#état-davancement), pour que ce document puisse être validé sans être modifié à chaque lot.
 
 ## 12. Répartition des responsabilités
 

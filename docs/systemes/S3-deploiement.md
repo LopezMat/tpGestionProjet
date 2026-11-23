@@ -2,7 +2,7 @@
 titre: Système 3 — Déploiement automatisé
 statut: EN_REVUE
 responsable: C
-version: 0.1
+version: 0.2
 maj_le: 2026-11-23
 valide_par:
 decision:
@@ -74,7 +74,8 @@ Avant toute mise en ligne, le système contrôle le code, directement par ses ag
 | `gh workflow run deploy*` | ask | équivaut à une mise en production |
 | `rm -rf`, `git reset --hard`, `git push --force` | deny | actions destructrices et irréversibles |
 | lecture et écriture de `.env*` | deny | secrets |
-| Write/Edit d'un `statut: VALIDÉ` ou d'un document VALIDÉ | bloqué par hook | voir [ARCHITECTURE § 6](../ARCHITECTURE.md#6-modèle-de-validation) |
+| Write/Edit d'un `statut: VALIDÉ` (valeur normalisée : `VALIDE`, `validé`…) ou d'un document VALIDÉ | bloqué par hook | voir [ARCHITECTURE § 6](../ARCHITECTURE.md#6-modèle-de-validation) |
+| `Write(templates/**)`, `Edit(templates/**)` | ask | les templates restent en BROUILLON, donc R6 ne les protège pas ; or `tableau.py` et tous les agents dépendent de leur format |
 
 ## 6. Hébergement
 Render par défaut (offre gratuite, deploy hook déclenché par `deploy.yml`). `/health` renvoie le SHA du commit déployé. Un autre hébergeur peut être proposé par l'`architecte`, avec validation humaine. Détails : [ARCHITECTURE § 9](../ARCHITECTURE.md#9-hébergement-et-vérification-en-ligne).

@@ -2,7 +2,7 @@
 titre: Système 1 — Gestion de projet
 statut: EN_REVUE
 responsable: B
-version: 0.1
+version: 0.2
 maj_le: 2026-11-23
 valide_par:
 decision:
@@ -31,6 +31,7 @@ decision:
 1. **Découpage.** À partir du CDC VALIDÉ, une fonctionnalité donne un ou plusieurs tickets, chacun avec des critères d'acceptation vérifiables.
 2. **Estimation** en heures équivalent humain (R12), avec les dépendances (`depend_de`).
 3. **Assignation** à un agent ou à un salarié selon les compétences, le niveau, l'allocation et le calendrier.
+   > **À définir au Lot 2 (B) :** critères d'affectation agent / salarié.
 4. **Planification.** `planning.md` contient les jalons et les hypothèses de capacité ; le Gantt est généré par `tableau.py`.
 5. **Arrêt humain** : ticket `ATTENTE_HUMAIN` « Validation budget et délais ».
 6. **Suivi** à chaque étape du pipeline : `tableau.py` puis synthèse (skill `avancement`, Lot 3).

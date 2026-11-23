@@ -36,5 +36,13 @@ Notre équipe joue une **ESN** dont les missions sont assurées par des agents I
 
 ## État d'avancement
 
-Construction par lots, voir [docs/ARCHITECTURE.md § 11](docs/ARCHITECTURE.md#11-plan-de-construction-par-lots).
-**Lot 1 (socle documentaire)** : en cours de revue.
+Construction par lots. Le contenu de chaque lot est décrit dans [docs/ARCHITECTURE.md § 11](docs/ARCHITECTURE.md#11-plan-de-construction-par-lots).
+
+| Lot | Objet | État |
+|---|---|---|
+| 1 | Socle documentaire | en revue |
+| 2 | Agents | à venir |
+| 3 | Skills | à venir |
+| 4 | `tableau.py` et tests | à venir |
+| 5 | Settings, hooks, workflows | à venir |
+| 6 | Projet de démonstration | à venir |

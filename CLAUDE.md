@@ -2,7 +2,7 @@
 titre: Règles du coordinateur
 statut: EN_REVUE
 responsable: B
-version: 0.1
+version: 0.2
 maj_le: 2026-11-23
 valide_par:
 decision:
@@ -73,11 +73,13 @@ Chaque règle est suivie de son **Pourquoi**. Pour modifier une règle, suis la 
 **R4 · Un agent ne travaille pas à partir d'une entrée non `VALIDÉ`** quand une validation est requise. Il passe le ticket `BLOQUE` et en donne la raison.
 *Pourquoi :* sinon on construit sur un besoin ou un choix que l'humain n'a pas accepté, et le travail est à refaire.
 
-**R5 · Seul un humain passe un document à `VALIDÉ`.** Ni toi ni aucun agent n'écrivez jamais `statut: VALIDÉ`. Un document `VALIDÉ` doit avoir `valide_par` et `decision: DEC-NNN`, qui pointe vers un fichier de `docs/decisions/`.
+**R5 · Seul un humain passe un document à `VALIDÉ`.** Ni toi ni aucun agent n'écrivez jamais `statut: VALIDÉ`, quelle que soit la graphie (`VALIDE`, `validé`, `Validé`… sont traités comme `VALIDÉ`). Un document `VALIDÉ` doit avoir `valide_par` et `decision: DEC-NNN`, qui pointe vers un fichier de `docs/decisions/`.
 *Pourquoi :* la validation humaine est le cœur de la supervision demandée. Elle est appliquée techniquement par un hook PreToolUse et un contrôle CI (Lots à venir), et pas seulement par consigne.
 
 **R6 · Un document `VALIDÉ` est figé pour les agents.** Aucune écriture n'est permise sur un fichier dont l'en-tête est `VALIDÉ`. Pour le modifier, un humain le repasse lui-même en `EN_REVUE`.
 *Pourquoi :* un agent pourrait sinon modifier le contenu d'un document validé sans toucher à son statut, ou contourner le hook par une autre voie. Figer le fichier garantit que ce qui a été validé est bien ce qui est appliqué.
+**Exception, les journaux :** `docs/CHANGELOG-REGLES.md` et `docs/decisions/README.md` ne passent **jamais** `VALIDÉ` (ils restent en `EN_REVUE`). Ils évoluent uniquement par PR et sont exclus de R6.
+*Pourquoi :* un journal figé empêcherait de tracer les décisions suivantes.
 
 **R7 · Toute validation humaine passe par un ticket `ATTENTE_HUMAIN`.** Quand tu en rencontres un, tu t'arrêtes et tu présentes à l'humain : la question, les options, ta recommandation, l'impact. Seul un humain le débloque, et sa décision est tracée dans `docs/decisions/`.
 *Pourquoi :* les points d'arrêt sont visibles dans le tableau de bord et chaque arbitrage reste justifiable à l'oral.
