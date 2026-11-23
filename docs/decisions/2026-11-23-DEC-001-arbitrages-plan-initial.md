@@ -1,10 +1,10 @@
 ---
 titre: Arbitrages du plan initial (Lot 1)
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: B
-version: 0.2
+version: 1.0
 maj_le: 2026-11-23
-valide_par:
+valide_par: ETHAN
 decision: DEC-001
 id: DEC-001
 date: 2026-11-23

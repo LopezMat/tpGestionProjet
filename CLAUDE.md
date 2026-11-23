@@ -1,6 +1,6 @@
 ---
 titre: Règles du coordinateur
-statut: VALIDE
+statut: VALIDÉ
 responsable: B
 version: 1.0
 maj_le: 2026-11-23
