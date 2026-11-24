@@ -2,7 +2,7 @@
 titre: Registre des décisions humaines
 statut: EN_REVUE          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
 responsable: B
-version: 0.5
+version: 0.6
 maj_le: 2026-11-24
 valide_par:
 decision:
@@ -36,3 +36,5 @@ Un document `VALIDÉ` est figé pour les agents (R6). Pour le faire évoluer, un
 | [DEC-002](2026-11-24-DEC-002-integration-lot2-recette.md) | 2026-11-24 | Intégration du Lot 2, recette humaine, listes blanches Bash S2 | VALIDÉ |
 | [DEC-003](2026-11-24-DEC-003-production-locale-docker.md) | 2026-11-24 | Production locale Docker et workflows de contrôle (lot 5) | VALIDÉ |
 | [DEC-004](2026-11-24-DEC-004-recette-sans-claude-code.md) | 2026-11-24 | Recette par un recetteur sans Claude Code (notes déposées, tickets bug par `support`) | VALIDÉ |
+| [DEC-005](2026-11-24-DEC-005-interlocutrice-client-coworking.md) | 2026-11-24 | reservation-coworking : Claire interlocutrice client, allocation 10 % (T-002) | VALIDÉ |
+| [DEC-006](2026-11-24-DEC-006-validation-cdc-coworking.md) | 2026-11-24 | reservation-coworking : réponses du client, arbitrages et validation du CDC v0.4 (T-003) | VALIDÉ |
