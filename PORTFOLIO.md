@@ -8,7 +8,7 @@
 
 | Projet | Client | Type | État | Avancement | Budget consommé / prévu | % | Fin projetée | Deadline | Écart (j ouvrés) | BLOQUE | ATTENTE_HUMAIN | Alertes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 45,9 % | 270,00 € / 6 000,00 € | 4,5 % | 2026-11-24 | 2026-12-18 | -18 | 0 | 0 | 1 |
+| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 45,9 % | 292,50 € / 6 000,00 € | 4,9 % | 2026-11-24 | 2026-12-18 | -18 | 0 | 0 | 1 |
 
 ## Alertes
 

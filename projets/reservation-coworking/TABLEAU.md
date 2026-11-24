@@ -11,8 +11,8 @@
 | Type · état | metier · cadrage |
 | Avancement (h estimées terminées / h estimées hors ANNULE) | 45,9 % (8,5 h / 18,5 h) |
 | Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 3,0 h |
-| Budget consommé / prévu | 270,00 € / 6 000,00 € (4,5 %) |
-| Coût projeté à terminaison (consommé + reste × taux) | 315,00 € |
+| Budget consommé / prévu | 292,50 € / 6 000,00 € (4,9 %) |
+| Coût projeté à terminaison (consommé + reste × taux) | 337,50 € |
 | Fin projetée | 2026-11-24 |
 | Deadline | 2026-12-18 |
 | Écart avec la deadline | -18 j ouvrés |
