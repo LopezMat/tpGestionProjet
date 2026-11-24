@@ -1,10 +1,10 @@
 ---
 titre: Système 1 — Gestion de projet
-statut: VALIDÉ
+statut: EN_REVUE
 responsable: B
 version: 1.0
 maj_le: 2026-11-23
-valide_par: Ethan
+valide_par: 
 decision: DEC-001
 ---
 
