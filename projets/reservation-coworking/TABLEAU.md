@@ -9,10 +9,10 @@
 | Indicateur | Valeur |
 |---|---|
 | Type · état | metier · cadrage |
-| Avancement (h estimées terminées / h estimées hors ANNULE) | 51,6 % (8,0 h / 15,5 h) |
-| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 0,5 h |
-| Budget consommé / prévu | 262,50 € / 6 000,00 € (4,4 %) |
-| Coût projeté à terminaison (consommé + reste × taux) | 270,00 € |
+| Avancement (h estimées terminées / h estimées hors ANNULE) | 45,9 % (8,5 h / 18,5 h) |
+| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 3,0 h |
+| Budget consommé / prévu | 270,00 € / 6 000,00 € (4,5 %) |
+| Coût projeté à terminaison (consommé + reste × taux) | 315,00 € |
 | Fin projetée | 2026-11-24 |
 | Deadline | 2026-12-18 |
 | Écart avec la deadline | -18 j ouvrés |
@@ -27,14 +27,14 @@
 
 | Statut | Nombre |
 |---|---|
-| A_FAIRE | 0 |
+| A_FAIRE | 1 |
 | EN_COURS | 0 |
 | EN_REVUE | 1 |
 | BLOQUE | 0 |
-| ATTENTE_HUMAIN | 1 |
-| TERMINE | 3 |
+| ATTENTE_HUMAIN | 0 |
+| TERMINE | 4 |
 | ANNULE | 0 |
-| **Total** | 5 |
+| **Total** | 6 |
 
 ## Tickets BLOQUE
 
@@ -42,9 +42,7 @@ Aucun ticket bloqué.
 
 ## En attente d'une décision humaine (ATTENTE_HUMAIN)
 
-| Priorité | Ticket | Titre | Porteur | Question (bloque_par) | Ancienneté |
-|---|---|---|---|---|---|
-| haute | T-005 | Choix techniques | agent:architecte | validation des choix techniques | 0 j ouvré |
+Aucune décision attendue.
 
 ## Tickets salariés à faire par un humain (AF11)
 
@@ -74,9 +72,10 @@ gantt
     T-003 Validation du CDC :done, t003, 2026-11-24, 2026-11-25
     section agent architecte
     T-004 Architecture :active, t004, 2026-11-24, 2026-11-25
-    T-005 Choix techniques :crit, t005, 2026-11-24, 2026-11-25
+    T-005 Choix techniques :done, t005, 2026-11-24, 2026-11-25
     section agent chef-de-projet
     T-002 Interlocuteur client et allocation initiale :done, t002, 2026-11-24, 2026-11-25
+    T-006 Écritures Markdown par Edit/Write uniquement (hook R5/R6) :t006, 2026-11-24, 2026-11-25
     section Jalons
     Deadline :milestone, deadline, 2026-12-18, 0d
 ```

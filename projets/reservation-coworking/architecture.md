@@ -1,11 +1,11 @@
 ---
 titre: Architecture technique — Réservation de salles, Coworking Les Arcades (Perpignan)
-statut: VALIDÉ
+statut: EN_REVUE
 responsable: agent:architecte
 version: 1.0
 maj_le: 2026-11-24
-valide_par: Ethan
-decision: DEC-007
+valide_par: 
+decision: 
 ---
 <!-- modèle : templates/architecture.md v0.2 · responsable du modèle : A -->
 

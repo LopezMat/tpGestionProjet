@@ -11,7 +11,7 @@ competence_requise: architecture-logicielle (expert)   # nom du référentiel d'
 estimation_h: 0.5           # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 0            # heures équivalent humain
 depend_de: [T-004]          # ex. [T-001, T-002]
-bloque_par: validation des choix techniques   # obligatoire si BLOQUE ou ATTENTE_HUMAIN
+bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
 decision:   DEC-007                # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:architecte
