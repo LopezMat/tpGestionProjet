@@ -1,0 +1,44 @@
+# Production locale Docker : modèle commun à tous les projets (DEC-003).
+# Responsable : C · Lot 5 · voir docs/ARCHITECTURE.md § 9 et § 10, docs/systemes/S3-deploiement.md § 6.
+#
+# Ne pas lancer à la main : scripts/deployer_local.py et scripts/rollback_local.py fournissent
+# le nom de projet (-p esn-<slug>) et les variables :
+#   APP_IMAGE    image étiquetée par SHA, esn-<slug>:<sha40>, construite au SHA du GO
+#   APP_PORT     port fixe lu dans url_prod de projets/<slug>/projet.md (http://localhost:<port>)
+#   PG_PASSWORD  tiré au hasard au premier déploiement, gardé dans deploiement/local/<slug>/
+#                (ignoré par Git, S3-R8)
+#
+# GIT_COMMIT n'est volontairement PAS passé ici : il est figé dans l'image (build-arg),
+# si bien qu'une image relancée par un rollback annonce son vrai SHA sur /health.
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: esn
+      POSTGRES_DB: app
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-absent}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U esn -d app"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+    # Aucun port publié : la base n'est joignable que depuis le réseau du projet.
+
+  app:
+    image: ${APP_IMAGE:-esn-inconnu:aucune}
+    environment:
+      PORT: "8000"
+      DATABASE_URL: postgresql://esn:${PG_PASSWORD:-absent}@db:5432/app
+    ports:
+      - "127.0.0.1:${APP_PORT:-8080}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:

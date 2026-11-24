@@ -13,12 +13,12 @@ type_projet: vitrine        # vitrine | ecommerce | api | metier | modernisation
 etat_projet: cadrage        # cadrage | en_cours | en_pause | livre | maintenance | clos
 budget_eur: 0
 deadline: AAAA-MM-JJ
-hebergement: render
-url_prod:
+hebergement: local          # production locale Docker (DEC-003) ; autre hébergeur = décision humaine
+url_prod: http://localhost:8080   # port fixe, propre à chaque projet
 agents_mobilises: []        # ex. [analyste-besoin, architecte, dev-backend]
 salaries_affectes: []       # ex. [prenom1, prenom2]
 ---
-<!-- modèle : templates/projet.md v0.1 · responsable du modèle : A -->
+<!-- modèle : templates/projet.md v0.2 · responsable du modèle : A -->
 
 # Fiche projet — <client>
 

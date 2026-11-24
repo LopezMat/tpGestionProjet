@@ -1,0 +1,6 @@
+# Production locale (DEC-003) : sauvegardes, historique et mot de passe de la base.
+# Des données et un secret local ne vont jamais dans le dépôt (S3-R8).
+/deploiement/local/
+
+__pycache__/
+*.pyc

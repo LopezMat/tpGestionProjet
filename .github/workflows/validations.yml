@@ -1,0 +1,22 @@
+# Filet CI des validations humaines (ARCHITECTURE § 6, garde-fous 3, 4 et 5 ; R5, R6).
+# Responsable : C · Lot 5 · DEC-001 § 7 et § 23, DEC-003.
+# Voit aussi les écritures que les hooks Write/Edit ne voient pas (Bash, éditeur, autre poste).
+name: validations
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: VALIDÉ ⇔ valide_par + DEC existant ; statut dans la liste
+        run: python scripts/verifier_validations.py

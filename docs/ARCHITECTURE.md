@@ -2,7 +2,7 @@
 titre: Architecture du système multi-agents
 statut: EN_REVUE
 responsable: B
-version: 1.1
+version: 1.2
 maj_le: 2026-11-24
 valide_par: 
 decision: 
@@ -29,8 +29,8 @@ L'ESN est un ensemble d'agents spécialisés, orchestrés par un coordinateur un
 | Templates | Format de chaque livrable | `templates/` |
 | Runbooks | Procédures de crise | `runbooks/` |
 | Scripts Python | Tableaux de bord, contrôles | `scripts/` |
-| GitHub Actions | Tests, sécurité, déploiement, tableaux, contrôle des validations | `.github/workflows/` |
-| Render | Hébergement par défaut des apps clientes | voir § 9 |
+| GitHub Actions | Tests, sécurité, tableaux, contrôle des validations (aucun déploiement) | `.github/workflows/` |
+| Docker (production locale) | Hébergement par défaut des apps clientes, sur le poste de démonstration (DEC-003) | `deploiement/`, voir § 9 |
 
 ## 3. Arborescence
 
@@ -42,7 +42,11 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
 ├── README.md
 ├── PORTFOLIO.md                      [gén.] vue de tous les projets
 ├── .gitattributes                    fins de ligne LF
+├── .gitignore                        (C) deploiement/local/ (sauvegardes, secrets locaux)
 ├── requirements.txt                  (D) dépendances Python des scripts (PyYAML)
+├── deploiement/
+│   ├── docker-compose.yml            (C) modèle de production locale : app + Postgres (§ 9)
+│   └── local/<slug>/                 ignoré par Git : sauvegardes/*.dump, historique.json, db_password
 ├── .claude/
 │   ├── settings.json                 (C) permissions allow/ask/deny + déclaration des hooks
 │   ├── hooks/proteger_valide.py      (C) hook PreToolUse Write/Edit : R5, R6, R9, templates (§ 6)
@@ -54,10 +58,11 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
 │       ├── verifier-prod/  (SKILL.md + verifier_prod.py)                        (C)
 │       └── recette/                  procédure du salarié recetteur             (C)
 ├── .github/workflows/
-│   ├── ci.yml  securite.yml          (C) filtrés par chemin : projets/<slug>/app/**
-│   ├── deploy.yml                    (C) sauvegarde → deploy hook Render → verifier-prod → rollback si KO
-│   ├── tableau.yml                   (C) régénère TABLEAU/PORTFOLIO
+│   ├── ci.yml                        (C) tous les scripts/test_*.py (test Docker réel compris)
+│   ├── securite.yml                  (C) pip-audit, bandit, gitleaks
+│   ├── tableau.yml                   (C) régénère TABLEAU/PORTFOLIO (cron quotidien)
 │   └── validations.yml               (C) contrôle VALIDÉ ⇔ valide_par + decision
+│                                     aucun deploy.yml : la production est locale (DEC-003)
 ├── docs/
 │   ├── VISION.md  ARCHITECTURE.md  CHANGELOG-REGLES.md
 │   ├── systemes/S1..S4-*.md          un fichier par système (responsable du système)
@@ -72,11 +77,13 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
 │   ├── tableau.py  test_tableau.py   (D)
 │   ├── sonde_sante.py  test_sonde_sante.py                        (D)
 │   ├── test_proteger_valide.py  test_restreindre_bash.py  test_verifier_prod.py   (C)
-│   └── verifier_validations.py       (C, lot 5)
+│   ├── deployer_local.py  rollback_local.py  prod_locale.py  test_prod_locale.py  (C) § 9
+│   ├── verifier_validations.py  test_verifier_validations.py                      (C)
+│   └── fixtures/                     (C) faux Docker et mini-app des tests
 └── projets/<slug>/
     ├── demande.md  projet.md  existant.md (modernisation)  cdc.md  architecture.md  planning.md  retex.md
     ├── tickets/T-NNN-<titre-court>.md
-    ├── rapports/                     tests, sécurité, recette, déploiement, verifier-prod-<sha7>.json,
+    ├── rapports/                     tests, sécurité, recette, déploiement, verifier-prod-<sha7>-<horodatage>.json,
     │                                 suivi, post-mortem, logs/métriques simulés
     ├── support/entrant/              remontées utilisateurs (simulées)
     ├── app/                          code de l'application cliente
@@ -90,14 +97,14 @@ Le coordinateur n'est pas un agent. **Aucun agent ne dispose de l'outil `Agent`*
 | Agent | Système | Resp. | Rôle | Entrées | Sorties | Outils | Modèle |
 |---|---|---|---|---|---|---|---|
 | `analyste-besoin` | S4 | A | Reformule la demande, détecte les manques, rédige le CDC, analyse l'existant (modernisation) | `demande.md` | `existant.md` (modernisation), `cdc.md` (EN_REVUE), questions au client, ticket ATTENTE_HUMAIN | Read, Glob, Grep, Write, Edit | sonnet |
-| `architecte` | S4 | A | Choisit le SI et la stack (Render par défaut), conçoit l'architecture, fixe les exigences de qualité, sécurité et maintenance | `cdc.md` VALIDÉ | `architecture.md` (EN_REVUE), ticket ATTENTE_HUMAIN | Read, Glob, Grep, Write, Edit, WebSearch | opus |
+| `architecte` | S4 | A | Choisit le SI et la stack (production locale Docker par défaut, DEC-003), conçoit l'architecture, fixe les exigences de qualité, sécurité et maintenance | `cdc.md` VALIDÉ | `architecture.md` (EN_REVUE), ticket ATTENTE_HUMAIN | Read, Glob, Grep, Write, Edit, WebSearch | opus |
 | `chef-de-projet` | S1 | B | Découpe en tickets, estime, assigne ; trie les tickets S2 et `amelioration` ; suit budget et délais ; repère les besoins de formation et d'amélioration des agents ; analyse l'impact des événements d'équipe | `cdc.md` et `architecture.md` VALIDÉS, `equipe/`, `tickets/`, `retex.md` | `tickets/`, `planning.md`, `projet.md`, `retex.md` | Read, Glob, Grep, Write, Edit, Bash limité à `python scripts/tableau.py` (hook) | opus |
 | `dev-backend` | réalisation | A | Réalise les tickets backend et leurs tests unitaires | ticket prenable, `architecture.md` | code et tests dans `app/`, journal du ticket, ticket EN_REVUE | Read, Glob, Grep, Write, Edit, Bash (tests, git sans push) | sonnet |
 | `dev-frontend` | réalisation | A | Réalise les tickets frontend et leurs tests | idem | idem | idem | sonnet |
 | `relecteur-code` | S3 | C | Revue de qualité et de maintenabilité, **en lecture seule sur le code** | ticket EN_REVUE, diff | section « Revue » du ticket : `APPROUVÉ` ou `CHANGEMENTS_DEMANDÉS` | Read, Glob, Grep, Edit (ticket uniquement), Bash limité à `git diff`, `log`, `show`, `status`, `blame` (hook) | sonnet |
 | `testeur` | S3 | C | Tests fonctionnels et de régression ; vérifie les critères d'acceptation ; passe les tickets de réalisation `TERMINE` (R13) | ticket EN_REVUE, `app/`, `cdc.md` | `rapports/tests-*.md`, tickets bug, critères cochés | Read, Glob, Grep, Write, Edit (tickets et rapports), Bash (tests) | sonnet |
 | `securite` | S3 | C | Audit OWASP, dépendances, secrets, configuration. **Ne corrige pas le code** | `app/`, `architecture.md` | `rapports/securite-*.md`, tickets bug sécurité | Read, Glob, Grep, Write, Edit (son ticket et ses rapports, jamais `app/`), Bash (outils d'audit) | opus |
-| `deployeur` | S3 | C | Sauvegarde, déclenchement du déploiement après le GO humain, vérification en ligne, rollback | rapports verts, recette CONFORME, ticket de mise en production débloqué | `rapports/deploiement-*.md`, ticket TERMINE ou incident | Read, Glob, Grep, Write, Edit, Bash limité à `gh workflow run`, `gh run list\|view\|watch`, `git rev-parse`, `git log`, `verifier_prod.py` (hook) | sonnet |
+| `deployeur` | S3 | C | Sauvegarde, déclenchement du déploiement après le GO humain, vérification en ligne, rollback | rapports verts, recette CONFORME, ticket de mise en production débloqué | `rapports/deploiement-*.md`, ticket TERMINE ou incident | Read, Glob, Grep, Write, Edit, Bash limité à `deployer_local.py`, `rollback_local.py` (avec confirmation humaine), `verifier_prod.py`, `git rev-parse`, `git log` (hook) | sonnet |
 | `veilleur` | S2 | D | Veille techno et CVE sur les stacks utilisées | `architecture.md` des projets, manifestes de dépendances, web | `veille/AAAA-Sxx.md`, tickets sécurité ou amélioration | Read, Glob, Grep, Write, Edit, WebSearch, WebFetch | sonnet |
 | `analyste-prod` | S2 | D | Suivi des performances et des bugs après le déploiement | `/health` réel (via la sonde), logs et métriques simulés | `rapports/suivi-*.md`, tickets bug ou incident | Read, Glob, Grep, Write, Edit, Bash limité à `python scripts/sonde_sante.py` (hook) | sonnet |
 | `support` | S2 | D | Qualifie et dédoublonne les remontées utilisateurs, propose une réponse | `support/entrant/` | tickets support ou bug, réponses type | Read, Glob, Grep, Write, Edit | haiku |
@@ -149,7 +156,7 @@ flowchart LR
   CI --> H3
   H3 --> DP["deployeur"]
   DP --> BK[("Sauvegarde")]
-  DP --> RH[["deploy.yml vers Render"]]
+  DP --> RH[["deployer_local.py vers Docker local"]]
   RH --> PROD[("Production")]
   DP --> VP{"verifier-prod : SHA en ligne = attendu ?"}
   VP -->|oui| RD["rapport-deploiement"]
@@ -195,10 +202,10 @@ Les tickets ont leur propre cycle de statuts (§ 7), qui ne comporte pas `VALID�
 | 1 | Aucun agent ni le coordinateur ne fait **passer** un en-tête à `statut: VALIDÉ`. Un statut déjà `VALIDÉ` et laissé tel quel n'est pas une écriture de `VALIDÉ` : pour un document, le garde-fou 2 l'a déjà bloqué ; pour un journal, il est exclu de R6 | hook PreToolUse `proteger_valide.py` sur Write/Edit/MultiEdit | settings/hooks (livré) |
 | 2 | **Un document VALIDÉ est figé pour les agents** : toute écriture sur un fichier dont l'en-tête actuel est `VALIDÉ` est bloquée ; pour le modifier, un humain le repasse en `EN_REVUE` | même hook | settings/hooks (livré) |
 | 3 | Un document `VALIDÉ` a obligatoirement `valide_par` et `decision: DEC-NNN` | règle R5, templates | Lot 1 |
-| 4 | La CI vérifie que chaque `decision` pointe vers un fichier existant de `docs/decisions/` | `validations.yml` + `verifier_validations.py` | workflows |
-| 5 | **Normalisation du statut** : le hook et `verifier_validations.py` comparent la valeur après suppression des accents et passage en majuscules (`VALIDE`, `validé`, `Validé` = `VALIDÉ`). La CI **refuse tout statut de document hors `BROUILLON`, `EN_REVUE`, `VALIDÉ`** | hook + `verifier_validations.py` | settings/hooks, workflows |
+| 4 | La CI vérifie que chaque document `VALIDÉ` a `valide_par` et une `decision` qui pointe vers un fichier existant de `docs/decisions/`, et qu'aucun journal n'est `VALIDÉ` | `validations.yml` + `verifier_validations.py` | workflows (livré, DEC-003) |
+| 5 | **Normalisation du statut** : le hook et `verifier_validations.py` comparent la valeur après suppression des accents et passage en majuscules (`VALIDE`, `validé`, `Validé` = `VALIDÉ`) ; le script importe le code du hook, ils ne peuvent pas diverger. La CI **refuse tout statut de document hors `BROUILLON`, `EN_REVUE`, `VALIDÉ`** | hook + `verifier_validations.py` | settings/hooks, workflows (livrés) |
 | 6 | **Templates protégés** : toute écriture sous `templates/` à la racine demande une confirmation humaine. **Deux barrières** : la règle `ask` `Edit(/templates/**)` de `settings.json`, qui couvre aussi Write et MultiEdit, et une décision `ask` renvoyée par le hook lui-même | `.claude/settings.json` + `proteger_valide.py` | settings/hooks (livré) |
-| 7 | **Bash par agent** : pour tout subagent, pas de `git push` (même `git -C . push` ou `bash -c '…'`), pas de `git reset --hard`, pas de `rm` récursif forcé, aucun argument désignant un `.env*` ; listes blanches strictes pour `chef-de-projet`, `relecteur-code`, `deployeur`, `analyste-prod` et `gestionnaire-crise` (§ 4) | hook PreToolUse `restreindre_bash.py`, qui lit le champ `agent_type` transmis par Claude Code | settings/hooks (livré) |
+| 7 | **Bash par agent** : pour tout subagent, pas de `git push` (même `git -C . push` ou `bash -c '…'`), pas de `git reset --hard`, pas de `rm` récursif forcé, aucun argument désignant un `.env*` ; listes blanches strictes pour `chef-de-projet`, `relecteur-code`, `deployeur`, `analyste-prod` et `gestionnaire-crise` (§ 4). Pour tout appelant, session principale comprise, `deployer_local.py` et `rollback_local.py` demandent une confirmation humaine (décision `ask` du hook, doublée des règles `ask` de `settings.json` ; DEC-003) | hook PreToolUse `restreindre_bash.py`, qui lit le champ `agent_type` transmis par Claude Code | settings/hooks (livré) |
 | 8 | **Fichiers générés** : aucune écriture Write/Edit/MultiEdit sur `PORTFOLIO.md` (racine) ni sur `projets/<slug>/TABLEAU.md` ; seul `scripts/tableau.py` les écrit (R9) | `proteger_valide.py` | settings/hooks (livré) |
 
 Un « document » est ici tout fichier Markdown dont le frontmatter porte l'en-tête standard (champ `valide_par`). Les tickets et les fiches membres, qui ont leur propre format, ne sont pas concernés par les garde-fous 3 à 5.
@@ -213,7 +220,7 @@ Un « document » est ici tout fichier Markdown dont le frontmatter porte l'en-t
 
 *Pourquoi le garde-fou 8 :* un tableau retouché à la main mentirait, et la règle « la validation est appliquée techniquement » (DEC-001 § 7) s'étend naturellement aux fichiers générés. `TABLEAU.md` et `PORTFOLIO.md` **n'ont pas d'en-tête standard** : ce ne sont pas des documents à valider, puisqu'ils changent à chaque génération. Ils commencent par `<!-- FICHIER GÉNÉRÉ par scripts/tableau.py — ne pas modifier à la main (R9) -->` et un encadré qui le rappelle.
 
-**Risque : un hook qui ne démarre pas ne bloque rien.** Un hook introuvable (`python` absent, script manquant) ou qui sort avec un code autre que 0 ou 2 est une erreur non bloquante pour Claude Code : R5, R6, R9 et la restriction Bash disparaîtraient en silence. Parades : la commande des hooks essaie `python` puis `python3` ; les hooks se ferment en cas de doute (JSON illisible ou erreur interne → refus) ; chaque membre applique la procédure « Installer son poste » du [README](../README.md#installer-son-poste). Au lot 5 : `"onFailure": "block"` (Claude Code 2.1.295 ou plus) et le filet CI `validations.yml`, qui voit aussi les écritures faites par Bash (`sed -i`, redirection) que les hooks Write/Edit ne voient pas.
+**Risque : un hook qui ne démarre pas ne bloque rien.** Un hook introuvable (`python` absent, script manquant) ou qui sort avec un code autre que 0 ou 2 est une erreur non bloquante pour Claude Code : R5, R6, R9 et la restriction Bash disparaîtraient en silence. Parades : la commande des hooks essaie `python` puis `python3` ; les hooks se ferment en cas de doute (JSON illisible ou erreur interne → refus) ; chaque membre applique la procédure « Installer son poste » du [README](../README.md#installer-son-poste). Le filet CI `validations.yml` est livré (DEC-003) : il voit aussi les écritures faites par Bash (`sed -i`, redirection), que les hooks Write/Edit ne voient pas. `"onFailure": "block"` reste en attente : il exige Claude Code 2.1.295 ou plus, et un poste de l'équipe a encore la 2.1.285. On l'ajoutera, par une PR, quand tous les postes l'auront.
 
 **Exception, les journaux.** `docs/CHANGELOG-REGLES.md` et `docs/decisions/README.md` ne passent jamais `VALIDÉ` : ils restent en `EN_REVUE`, évoluent uniquement par PR et sont exclus de R6 (garde-fou 2). *Pourquoi :* un journal figé empêcherait de tracer les décisions suivantes.
 
@@ -270,20 +277,30 @@ La somme (a) + (b) donne un ordre de grandeur de 15 €/h. Le chiffre est volont
 
 ## 9. Hébergement et vérification en ligne
 
-- **Hébergeur par défaut : Render** (offre gratuite). `deploy.yml` déclenche le déploiement via le **deploy hook** du service, stocké en secret GitHub.
-- **Chaque app expose `/health`**, qui renvoie le SHA du commit déployé. Render fournit la variable `RENDER_GIT_COMMIT`.
-- **`verifier-prod`** compare ce SHA au commit attendu, **avec des retries et un délai entre eux**, parce que l'offre gratuite met l'app en veille et qu'un build prend plusieurs minutes. Le ticket de déploiement ne passe TERMINE qu'après concordance (R13).
-- **Un autre hébergeur** peut être proposé par l'`architecte` selon le projet, avec un ticket `ATTENTE_HUMAIN` et une décision.
+**Décision du professeur (2026-11-24) : pas de mise en production réelle.** La production est **locale, dans Docker, sur le poste de démonstration** ([DEC-003](decisions/2026-11-24-DEC-003-production-locale-docker.md)). S3 démontre quand même la sauvegarde, le déploiement, la vérification en ligne et le rollback.
 
-## 10. À trancher au lot workflows
+- **Fiche projet** : `projet.md` porte `hebergement: local` et `url_prod: http://localhost:<port>`, 8080 par défaut. Le port est fixe par projet.
+- **Modèle commun** [`deploiement/docker-compose.yml`](../deploiement/docker-compose.yml), avec un projet compose `esn-<slug>` :
+  - `db` : `postgres:16-alpine`, volume nommé `esn-<slug>_pgdata`, aucun port publié ;
+  - `app` : image `esn-<slug>:<sha40>`, publiée sur `127.0.0.1:<port>` seulement.
+- **Contrat de l'app** (`dev-backend`, `architecte`) : `projets/<slug>/app/Dockerfile` déclare `ARG GIT_COMMIT` et `ENV GIT_COMMIT=$GIT_COMMIT`. L'app écoute sur `$PORT` (8000 dans le conteneur) et lit `DATABASE_URL`. `/health` renvoie `{ "status": "ok", "commit": "<sha>" }` à partir de `GIT_COMMIT` (repli : `RENDER_GIT_COMMIT`, sinon `"inconnu"`).
+- **Image étiquetée par SHA** : `deployer_local.py` construit l'image à partir du **commit** du GO (`git archive <sha>:projets/<slug>/app | docker build --build-arg GIT_COMMIT=<sha> -`), jamais à partir de l'arbre de travail. `GIT_COMMIT` n'est jamais passé au lancement : il est figé dans l'image. Une image relancée par un rollback annonce donc son vrai SHA.
+- **Scripts** (codes de retour en S3 § 6), lancés par le `deployeur` avec une confirmation humaine (§ 6, garde-fou 7) :
+  - `python scripts/deployer_local.py --projet <slug> --sha <sha>` : sauvegarde, build, lancement, puis `verifier-prod` ;
+  - `python scripts/rollback_local.py --projet <slug> [--sha <sha>]` : relance de l'image précédente, puis `verifier-prod`.
+- **`verifier-prod`** compare le SHA de `/health` au commit attendu, **avec des retries espacés** (§ 10.1). Le ticket de déploiement ne passe TERMINE qu'après concordance (R13).
+- **Hébergeur distant** (Render ou autre) : l'`architecte` peut le proposer, avec un ticket `ATTENTE_HUMAIN` et une décision. Son déploiement serait alors à outiller : aucun workflow ne déploie, et `deploy.yml` a été abandonné par DEC-003. `verifier_prod.py` garde des valeurs par défaut adaptées à un hébergeur distant (30 s, 15 min).
+- **Avant la soutenance** : précharger les images de base (`postgres:16-alpine` et celle du Dockerfile de l'app), pour ne dépendre d'aucun réseau.
 
-Ces points sont identifiés mais volontairement non tranchés au Lot 1 :
+## 10. Décisions du lot 5 : vérification, sauvegardes, rollback
 
-| # | Sujet | Proposition actuelle | À décider |
+Ces points, identifiés au Lot 1, sont tranchés par [DEC-003](decisions/2026-11-24-DEC-003-production-locale-docker.md) pour la production locale.
+
+| # | Sujet | Décision | Pourquoi |
 |---|---|---|---|
-| 1 | **Délais Render** (build + réveil) | polling de `/health` toutes les 30 s, timeout 15 min | valeurs définitives, comportement au timeout |
-| 2 | **Persistance des données et sauvegardes** | disque Render gratuit éphémère, donc pas de SQLite en production ; base Render Postgres gratuite (expire après 30 j, ce qui suffit pour la semaine) ; sauvegarde par `pg_dump` dans `deploy.yml`, stockée en artefact GitHub Actions | base retenue, emplacement et durée de rétention des sauvegardes |
-| 3 | **Rollback** | redéployer le SHA précédent via le deploy hook, si le paramètre de commit est supporté (à vérifier) ; à défaut `git revert` puis redéploiement | mécanisme retenu, test du rollback |
+| 1 | **Vérification en ligne** | `verifier-prod` sonde `/health` **toutes les 5 s, pendant 120 s au plus** (`--max-appel` 540 s). Au timeout : **ÉCHEC**, puis rollback (S3-R6). **Un fichier d'état par vérification**, `rapports/verifier-prod-<sha7>-<AAAAMMJJ-HHMMSS>.json`, jamais réutilisé | le build est fait avant la vérification, dans le même script : il ne reste à attendre que le démarrage de l'app et de sa base, sans mise en veille ni build distant. Un état déjà conclu, s'il était réutilisé, donnerait un faux « EN LIGNE » après un rollback vers un SHA déjà vérifié |
+| 2 | **Données et sauvegardes** | Postgres 16 dans un volume nommé. **`pg_dump -Fc` avant chaque déploiement**, dans `deploiement/local/<slug>/sauvegardes/AAAAMMJJ-HHMMSS-<sha7 précédent>.dump`, dossier **ignoré par Git**. Sauvegarde « aucune » seulement à la première mise en service, quand il n'y a pas encore de base. **Rétention : les 10 dernières par projet**, la purge n'ayant lieu qu'après une sauvegarde réussie. **Restauration par un humain uniquement, après décision**, avec la commande du runbook [perte-donnees](../runbooks/perte-donnees.md) | des données (même fictives) ne vont jamais dans le dépôt (S3-R8) ; 10 sauvegardes couvrent largement une semaine de déploiements ; restaurer est une action sensible sur les données (point d'arrêt humain) |
+| 3 | **Rollback** | `rollback_local.py` **relance l'image étiquetée du SHA précédent**, sans rebuild ni `git revert`, puis lance `verifier-prod`. Sans `--sha`, il ne vise qu'un déploiement en échec (S3-R6) ; sur un déploiement vérifié, `--sha` est exigé après une décision humaine (S2-R7). Il ne restaure jamais de données. **Test (S3-R7)** : le test réel de `scripts/test_prod_locale.py` (v1, v2 avec un vrai dump, v3 en panne, rollback vers v2) tourne en CI et sur le poste. Il est **tracé dans un rapport** `rapports/test-rollback-AAAA-MM-JJ.md` sur le projet de démonstration (lot 6), avant la soutenance | l'image précédente existe déjà : le rollback prend quelques secondes et ne dépend ni du réseau ni d'un rebuild. Le SHA figé dans l'image rend la vérification du rollback aussi fiable que celle du déploiement |
 
 ## 11. Plan de construction par lots
 

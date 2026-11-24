@@ -80,7 +80,7 @@ Chaque règle est suivie de son **Pourquoi**. Pour modifier une règle, suis la 
 *Pourquoi :* sinon on construit sur un besoin ou un choix que l'humain n'a pas accepté, et le travail est à refaire.
 
 **R5 · Seul un humain passe un document à `VALIDÉ`.** Ni toi ni aucun agent n'écrivez jamais `statut: VALIDÉ`, quelle que soit la graphie (`VALIDE`, `validé`, `Validé`… sont traités comme `VALIDÉ`). Un document `VALIDÉ` doit avoir `valide_par` et `decision: DEC-NNN`, qui pointe vers un fichier de `docs/decisions/`.
-*Pourquoi :* la validation humaine est le cœur de la supervision demandée. Elle est appliquée techniquement par le hook [.claude/hooks/proteger_valide.py](.claude/hooks/proteger_valide.py) (livré), et pas seulement par consigne ; le contrôle CI `validations.yml` arrive au lot 5.
+*Pourquoi :* la validation humaine est le cœur de la supervision demandée. Elle est appliquée techniquement par le hook [.claude/hooks/proteger_valide.py](.claude/hooks/proteger_valide.py) (livré), et pas seulement par consigne ; le contrôle CI `validations.yml` (livré, DEC-003) sert de filet pour les écritures qui ne passent pas par Write/Edit.
 
 **R6 · Un document `VALIDÉ` est figé pour les agents.** Aucune écriture n'est permise sur un fichier dont l'en-tête est `VALIDÉ`. Pour le modifier, un humain le repasse lui-même en `EN_REVUE`.
 *Pourquoi :* un agent pourrait sinon modifier le contenu d'un document validé sans toucher à son statut, ou contourner le hook par une autre voie. Figer le fichier garantit que ce qui a été validé est bien ce qui est appliqué.
@@ -93,7 +93,7 @@ Chaque règle est suivie de son **Pourquoi**. Pour modifier une règle, suis la 
 **Points d'arrêt humains obligatoires :**
 - le cahier des charges ;
 - le budget et les délais ;
-- les choix techniques importants, dont l'hébergeur s'il diffère de Render ;
+- les choix techniques importants, dont l'hébergeur s'il diffère de la production locale Docker (DEC-003) ;
 - les actions sensibles sur les données ;
 - la recette humaine, avant le GO (R16) ;
 - la mise en production ;

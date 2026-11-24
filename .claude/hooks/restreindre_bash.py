@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Hook PreToolUse (Bash) : restrictions par agent, à partir de `agent_type`.
 
-Responsable : C · Lot 2 (C) · voir ARCHITECTURE § 4 (outils du catalogue), S3-R3, S3-R8,
-ARCHITECTURE § 6 (garde-fou 7), DEC-002 (lot2-A point 2, lot2-B point 7, lot2-D point 2).
+Responsable : C · Lot 2 (C), lot 5 · voir ARCHITECTURE § 4 (outils du catalogue), S3-R3, S3-R8,
+ARCHITECTURE § 6 (garde-fou 7), DEC-002 (lot2-A point 2, lot2-B point 7, lot2-D point 2), DEC-003.
 
 Le champ `tools` d'un subagent autorise l'outil Bash entier ; les règles Bash de
 settings.json se contournent (`git -C . push`, `bash -c '...'`). Ce hook est la
@@ -12,11 +12,14 @@ deuxième barrière, appliquée seulement aux subagents :
 - tout subagent : pas de `git push`, pas de `git reset --hard`, pas de `rm` récursif forcé,
   aucun argument qui désigne un fichier `.env*` ;
 - listes blanches strictes pour `chef-de-projet`, `relecteur-code`, `deployeur`,
-  `analyste-prod` et `gestionnaire-crise`.
+  `analyste-prod` et `gestionnaire-crise` ;
+- tout appelant, session principale comprise : `scripts/deployer_local.py` et
+  `scripts/rollback_local.py` demandent une confirmation humaine (décision JSON `ask` sur
+  stdout), en doublon des règles `ask` de settings.json (S3-R3, DEC-003).
 
 Usage en hook de frontmatter (plan B) : `python restreindre_bash.py --agent <nom>`.
 Interpréteur accepté dans les listes blanches : `python`, `python3` (macOS, Linux) ou `py` (Windows).
-Code de sortie : 0 = laisse passer ; 2 = refus (message sur stderr).
+Code de sortie : 0 = laisse passer (ou `ask` en JSON sur stdout) ; 2 = refus (message sur stderr).
 Bibliothèque standard uniquement.
 """
 import json
@@ -34,14 +37,20 @@ RE_ARG_SUR = re.compile(r"^[\w\-=./:@,+]+$")
 LISTES_BLANCHES = {
     "chef-de-projet": "python (ou python3) scripts/tableau.py [options]",
     "relecteur-code": "git diff | git log | git show | git status | git blame (sans --output ni --ext-diff)",
-    "deployeur": ("gh workflow run … | gh run list|view|watch … | git rev-parse … | git log … "
-                  "(sans --output ni --ext-diff) | "
-                  "python (ou python3) .claude/skills/verifier-prod/verifier_prod.py …"),
+    "deployeur": ("python (ou python3) scripts/deployer_local.py [options] | "
+                  "python (ou python3) scripts/rollback_local.py [options] | "
+                  "python (ou python3) .claude/skills/verifier-prod/verifier_prod.py [options] | "
+                  "git rev-parse … | git log … (sans --output ni --ext-diff)"),
     "analyste-prod": "python (ou python3) scripts/sonde_sante.py [options]",
     "gestionnaire-crise": ("python (ou python3) scripts/sonde_sante.py [options] | git log … | git rev-parse … | "
                            "gh run list … | gh run view … (sans --output ni --ext-diff ; jamais gh workflow run)"),
 }
 GIT_OPTIONS_ECRITURE = ("--output", "--ext-diff")
+INTERPRETES = ("python", "python3", "py")
+SCRIPTS_DEPLOIEMENT = ("scripts/deployer_local.py", "scripts/rollback_local.py")
+MESSAGE_DEPLOIEMENT = ("Mise en production locale (S3-R3, DEC-003) : {script} déploie ou rétablit une "
+                       "version de l'application. Confirmation humaine requise : vérifier que le GO "
+                       "(DEC-NNN) cite ce SHA, ou que le rollback suit un déploiement en ÉCHEC.")
 
 
 class Refus(Exception):
@@ -151,6 +160,42 @@ def chemin(j):
     return j[2:] if j.startswith("./") else j
 
 
+def est_script(seg, script):
+    """`python|python3|py <script> [options sûres]`, chemin relatif à la racine du dépôt."""
+    return (nom_exe(seg[0]) in INTERPRETES and len(seg) >= 2
+            and chemin(seg[1]) == script and args_surs(seg[2:]))
+
+
+def script_deploiement(commande, profondeur=0):
+    """Nom du script de déploiement lancé par la commande (même via bash -c), sinon None."""
+    if profondeur > 3:
+        return None
+    try:
+        jetons = decouper(commande)
+    except ValueError:
+        return None
+    for seg in segments(jetons):
+        seg = sans_prefixes(seg)
+        if not seg:
+            continue
+        exe = nom_exe(seg[0])
+        if exe in INTERPRETES:
+            for j in seg[1:]:
+                if not j.startswith("-"):
+                    c = chemin(j)
+                    for script in SCRIPTS_DEPLOIEMENT:
+                        if c == script or c.endswith("/" + script):
+                            return script
+                    break
+        if exe in SHELLS:
+            for k, j in enumerate(seg[1:], start=1):
+                if j == "-c" and k + 1 < len(seg):
+                    trouve = script_deploiement(seg[k + 1], profondeur + 1)
+                    if trouve:
+                        return trouve
+    return None
+
+
 def est_sonde(seg):
     """`python|python3|py scripts/sonde_sante.py [options sûres]` (lot2-D point 2)."""
     return (nom_exe(seg[0]) in ("python", "python3", "py") and len(seg) >= 2
@@ -178,17 +223,11 @@ def autorise_liste_blanche(agent, seg):
             return True
         return exe == "gh" and len(seg) >= 3 and seg[1] == "run" and seg[2] in ("list", "view")
     if agent == "deployeur":
-        if exe == "gh" and len(seg) >= 3:
-            if seg[1] == "workflow" and seg[2] == "run":
-                return True
-            if seg[1] == "run" and seg[2] in ("list", "view", "watch"):
-                return True
+        # DEC-003 : production locale Docker ; plus de gh workflow run ni de gh run.
         if git_lecture(seg, ("rev-parse", "log")):
             return True
-        if (exe in ("python", "python3", "py") and len(seg) >= 2
-                and chemin(seg[1]) == ".claude/skills/verifier-prod/verifier_prod.py"):
-            return True
-        return False
+        return any(est_script(seg, s) for s in
+                   SCRIPTS_DEPLOIEMENT + (".claude/skills/verifier-prod/verifier_prod.py",))
     return True
 
 
@@ -210,19 +249,22 @@ def controle_liste_blanche(agent, commande):
 
 
 def analyser(donnees, agent_force=None):
-    """Retourne None si autorisé, sinon le message de refus."""
+    """Retourne None si autorisé, ("deny", message) ou ("ask", message)."""
     if donnees.get("tool_name", "Bash") != "Bash":
         return None
     agent = agent_force or donnees.get("agent_type") or ""
     agent = agent.split(":")[-1].strip().lower()
-    if not agent:
-        return None  # session principale : permissions de settings.json
     commande = (donnees.get("tool_input") or {}).get("command") or ""
-    try:
-        controles_communs(commande)
-        controle_liste_blanche(agent, commande)
-    except Refus as r:
-        return str(r)
+    if agent:
+        try:
+            controles_communs(commande)
+            controle_liste_blanche(agent, commande)
+        except Refus as r:
+            return "deny", str(r)
+    # Session principale : permissions de settings.json, plus la confirmation du déploiement.
+    script = script_deploiement(commande)
+    if script:
+        return "ask", MESSAGE_DEPLOIEMENT.format(script=script)
     return None
 
 
@@ -241,12 +283,17 @@ def main():
         donnees = json.loads(sys.stdin.buffer.read().decode("utf-8-sig"))
         if not isinstance(donnees, dict):
             raise ValueError("entrée JSON inattendue")
-        message = analyser(donnees, agent_force)
+        decision = analyser(donnees, agent_force)
     except Exception as exc:  # fermeture par défaut
         refuser("Refusé : hook restreindre_bash en erreur ({}), commande bloquée par prudence. "
                 "Signale-le à l'humain.".format(exc))
-    if message:
-        refuser(message)
+    if decision and decision[0] == "deny":
+        refuser(decision[1])
+    if decision and decision[0] == "ask":
+        sortie = {"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "ask",
+                                         "permissionDecisionReason": decision[1]}}
+        sys.stdout.buffer.write(json.dumps(sortie, ensure_ascii=False).encode("utf-8"))
+        sys.stdout.flush()
     sys.exit(0)
 
 

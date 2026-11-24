@@ -1,6 +1,6 @@
 ---
 name: verifier-prod
-description: Vérifie qu'une application est en ligne ET à jour - sonde url_prod/health (lu dans projets/<slug>/projet.md) toutes les 30 s pendant 15 min au plus et compare le SHA renvoyé au SHA attendu, puis écrit les tentatives et le résultat dans le rapport de déploiement. Fonctionne aussi en production locale (url_prod en localhost). À utiliser par le deployeur à la porte 7 de S3, après chaque déploiement et après chaque rollback.
+description: Vérifie qu'une application est en ligne ET à jour - sonde url_prod/health (lu dans projets/<slug>/projet.md) à intervalles réguliers (en production locale, toutes les 5 s pendant 120 s au plus) et compare le SHA renvoyé au SHA attendu, puis écrit les tentatives et le résultat dans le rapport de déploiement. Appelé par scripts/deployer_local.py et scripts/rollback_local.py ; utilisable seul pour relancer une vérification EN COURS ou constater la version en ligne. Porte 7 de S3.
 ---
 
 <!-- Skill ESN · système S3 · responsable : C · Lot 2 (C) -->
@@ -8,9 +8,8 @@ description: Vérifie qu'une application est en ligne ET à jour - sonde url_pro
 # verifier-prod
 
 ## Quand l'utiliser
-- Porte 7 de S3 : juste après le déclenchement d'un déploiement ;
-- après un rollback, pour vérifier que la version précédente est bien revenue en ligne ;
-- à la demande de l'humain ou de l'`analyste-prod`, pour constater quelle version tourne.
+- Porte 7 de S3 : **`scripts/deployer_local.py` et `scripts/rollback_local.py` l'appellent eux-mêmes** (production locale Docker, DEC-003), avec un fichier d'état neuf ; le `deployeur` n'a qu'à recopier leur sortie ;
+- seul : pour relancer une vérification `EN COURS` (code 3, commande affichée par le script), ou pour constater quelle version tourne, à la demande de l'humain ou de l'`analyste-prod`.
 
 ## Entrées
 - `slug` du projet ;
@@ -24,10 +23,11 @@ description: Vérifie qu'une application est en ligne ET à jour - sonde url_pro
 2. **Production locale** : si l'hôte de `url_prod` est `localhost`, `127.0.0.1` ou `::1`, le mécanisme est **identique**. Il faut seulement que `projet.md` porte `hebergement: local` (choix couvert par une décision humaine). Sinon, arrêt pour incohérence entre `url_prod` et `hebergement`. Le script affiche `Mode : local`.
 3. **Lancer le script**, avec un timeout de l'outil Bash de 600 000 ms :
    ```
-   python .claude/skills/verifier-prod/verifier_prod.py --url <url_prod> --sha <sha_attendu> --etat projets/<slug>/rapports/verifier-prod-<sha7>.json
+   python .claude/skills/verifier-prod/verifier_prod.py --url <url_prod> --sha <sha_attendu> --etat projets/<slug>/rapports/verifier-prod-<sha7>-<AAAAMMJJ-HHMMSS>.json --intervalle 5 --timeout 120
    ```
    Sur macOS ou Linux sans `python`, utiliser `python3` (même script, mêmes options ; les deux formes sont autorisées).
-   Valeurs par défaut : `--intervalle 30` (secondes entre deux tentatives), `--timeout 900` (15 min au total), `--max-appel 540` (9 min au plus par appel, sous la limite de 10 min de Bash).
+   **Un fichier d'état par vérification, jamais réutilisé d'un déploiement ou d'un rollback à l'autre** : le script reprend un état déjà conclu sans sonder, et donnerait un faux « EN LIGNE » après un rollback vers un SHA déjà vérifié. On ne réutilise le même fichier que pour relancer une vérification `EN COURS`.
+   Valeurs : en production locale, `--intervalle 5` et `--timeout 120` (ARCHITECTURE § 10.1, passées par les scripts de déploiement) ; les valeurs par défaut du script, `--intervalle 30` et `--timeout 900`, restent celles d'un hébergeur distant. `--max-appel 540` (9 min au plus par appel, sous la limite de 10 min de Bash).
 4. **Lire le code retour** :
    | Code | Sens | Suite |
    |---|---|---|
@@ -47,18 +47,18 @@ description: Vérifie qu'une application est en ligne ET à jour - sonde url_pro
 ## Règles
 - **Seule la concordance du SHA compte.** Un code 200 sur `/health` ou un run de déploiement vert ne suffisent pas.
   *Pourquoi :* « un push ne suffit pas » (consigne S3, S3-R5, R13) ; l'ancienne version peut très bien répondre 200.
-- **Des retries espacés, avec un délai global.** 30 s entre deux tentatives et 15 min au total, valeurs proposées par ARCHITECTURE § 10.1 et paramétrables ; les valeurs définitives sont tranchées au lot 5.
-  *Pourquoi :* l'offre gratuite de Render met l'app en veille, et un build prend plusieurs minutes ; sans retries, on déclarerait de faux échecs.
+- **Des retries espacés, avec un délai global.** En production locale : 5 s entre deux tentatives et 120 s au total (ARCHITECTURE § 10.1, DEC-003).
+  *Pourquoi :* l'app et sa base mettent quelques secondes à démarrer ; sans retries, on déclarerait de faux échecs. Le build est fait avant la vérification, donc 2 minutes suffisent largement.
 - **Délai dépassé = ÉCHEC**, et le `deployeur` déclenche le rollback (S3-R6).
   *Pourquoi :* on rétablit d'abord le service, on analyse ensuite.
 - **Le même mécanisme en production locale.** Seule l'URL change.
   *Pourquoi :* la preuve reste identique si l'équipe est dispensée d'hébergement réel.
-- **Aucun secret dans la commande ni dans le rapport** : `url_prod` est une URL publique, jamais l'URL du deploy hook.
+- **Aucun secret dans la commande ni dans le rapport** : `url_prod` est l'URL de l'app, jamais une URL qui porte un jeton.
   *Pourquoi :* le rapport et le fichier d'état sont commités (S3-R8).
 
 ## Produit
 - les lignes « Vérification en ligne » et le « Résultat » dans `projets/<slug>/rapports/deploiement-AAAA-MM-JJ.md` ;
-- `projets/<slug>/rapports/verifier-prod-<sha7>.json` (état et tentatives).
+- `projets/<slug>/rapports/verifier-prod-<sha7>-<AAAAMMJJ-HHMMSS>.json` (état et tentatives), un par vérification.
 
 ## Point d'arrêt humain
 - Aucun en cas de succès.

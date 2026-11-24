@@ -19,11 +19,27 @@
       "Bash(python3 .claude/skills/verifier-prod/verifier_prod.py *)",
       "Bash(python3 scripts/test_tableau.py)",
       "Bash(python3 scripts/sonde_sante.py *)",
-      "Bash(python3 scripts/test_sonde_sante.py)"
+      "Bash(python3 scripts/test_sonde_sante.py)",
+      "Bash(python scripts/test_prod_locale.py)",
+      "Bash(python scripts/test_prod_locale.py *)",
+      "Bash(python scripts/verifier_validations.py)",
+      "Bash(python scripts/verifier_validations.py *)",
+      "Bash(python scripts/test_verifier_validations.py)",
+      "Bash(python3 scripts/test_prod_locale.py)",
+      "Bash(python3 scripts/test_prod_locale.py *)",
+      "Bash(python3 scripts/verifier_validations.py)",
+      "Bash(python3 scripts/verifier_validations.py *)",
+      "Bash(python3 scripts/test_verifier_validations.py)"
     ],
     "ask": [
       "Bash(git push *)",
       "Bash(gh workflow run *)",
+      "Bash(python scripts/deployer_local.py *)",
+      "Bash(python3 scripts/deployer_local.py *)",
+      "Bash(py scripts/deployer_local.py *)",
+      "Bash(python scripts/rollback_local.py *)",
+      "Bash(python3 scripts/rollback_local.py *)",
+      "Bash(py scripts/rollback_local.py *)",
       "Edit(/templates/**)"
     ],
     "deny": [
