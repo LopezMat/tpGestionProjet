@@ -1,10 +1,10 @@
 ---
 titre: Système 4 — Cahier des charges
-statut: VALIDÉ
+statut: EN_REVUE
 responsable: B
-version: 1.0
-maj_le: 2026-11-23
-valide_par: Ethan
+version: 1.1
+maj_le: 2026-11-24
+valide_par: 
 decision: DEC-001
 ---
 
@@ -29,7 +29,7 @@ decision: DEC-001
 5. **Choix du SI et architecture** par l'`architecte` : `architecture.md`, avec le statut `EN_REVUE`.
 6. **Arrêt humain : validation des choix techniques**, puis passage à S1.
 
-Pour une **modernisation**, une étape 0 s'ajoute : l'analyse de l'existant (fonctionnalités, données, dette technique, risques), validée avant toute proposition d'architecture.
+Pour une **modernisation**, une étape 0 s'ajoute : l'analyse de l'existant (fonctionnalités, données, dette technique, risques), dans `existant.md` selon [templates/existant.md](../../templates/existant.md), validée avant toute proposition d'architecture et avant la rédaction du CDC.
 
 ## 4. Choix du système d'information (grille de départ)
 
@@ -49,7 +49,7 @@ Le template CDC impose trois **sections obligatoires**, qui transforment la dema
 
 | Section du CDC | Ce qu'elle fixe | Système qui la met en œuvre |
 |---|---|---|
-| **Exigences de tests** | niveau de tests attendu, parcours critiques à couvrir, critères d'acceptation | S3 (testeur, CI) ; S1 (critères dans les tickets) |
+| **Exigences de tests** | niveau de tests attendu, parcours critiques à couvrir, critères d'acceptation | S3 (testeur, CI, recette humaine sur les critères d'acceptation : porte 3 bis) ; S1 (critères dans les tickets) |
 | **Exigences de sécurité** | données sensibles, RGPD, authentification, niveau d'audit, gestion des secrets | S3 (securite, portes de contrôle) ; S2 (crise, veille CVE) |
 | **Exigences de maintenance** | disponibilité attendue, support, veille, sauvegardes, durée de maintenance | S2 (suivi, support, runbooks) ; S1 (tickets post-déploiement) ; S3 (sauvegardes, rollback) |
 
@@ -77,5 +77,5 @@ Le template CDC impose trois **sections obligatoires**, qui transforment la dema
 
 ## 8. Interfaces
 - **→ S1** : `cdc.md` et `architecture.md` VALIDÉS, base du découpage en tickets.
-- **→ S3** : exigences de tests et de sécurité, base des portes de contrôle.
+- **→ S3** : exigences de tests et de sécurité, base des portes de contrôle ; critères d'acceptation, base de la recette humaine.
 - **→ S2** : exigences de maintenance et stack, base de la veille et du suivi.

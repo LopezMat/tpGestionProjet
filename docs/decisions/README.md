@@ -2,8 +2,8 @@
 titre: Registre des décisions humaines
 statut: EN_REVUE          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
 responsable: B
-version: 0.2
-maj_le: 2026-11-23
+version: 0.3
+maj_le: 2026-11-24
 valide_par:
 decision:
 ---
@@ -33,3 +33,4 @@ Un document `VALIDÉ` est figé pour les agents (R6). Pour le faire évoluer, un
 | Id | Date | Sujet | Statut |
 |---|---|---|---|
 | [DEC-001](2026-11-23-DEC-001-arbitrages-plan-initial.md) | 2026-11-23 | Arbitrages du plan initial (Lot 1) | VALIDÉ |
+| [DEC-002](2026-11-24-DEC-002-integration-lot2-recette.md) | 2026-11-24 | Intégration du Lot 2, recette humaine, listes blanches Bash S2 | EN_REVUE |

@@ -2,7 +2,7 @@
 """Hook PreToolUse (Bash) : restrictions par agent, à partir de `agent_type`.
 
 Responsable : C · Lot 2 (C) · voir ARCHITECTURE § 4 (outils du catalogue), S3-R3, S3-R8,
-docs/a-integrer/lot2-A.md (point 2) et lot2-B.md (point 7).
+ARCHITECTURE § 6 (garde-fou 7), DEC-002 (lot2-A point 2, lot2-B point 7, lot2-D point 2).
 
 Le champ `tools` d'un subagent autorise l'outil Bash entier ; les règles Bash de
 settings.json se contournent (`git -C . push`, `bash -c '...'`). Ce hook est la
@@ -11,7 +11,8 @@ deuxième barrière, appliquée seulement aux subagents :
 - session principale (pas d'`agent_type`) : rien, les permissions de settings.json s'appliquent ;
 - tout subagent : pas de `git push`, pas de `git reset --hard`, pas de `rm` récursif forcé,
   aucun argument qui désigne un fichier `.env*` ;
-- listes blanches strictes pour `chef-de-projet`, `relecteur-code` et `deployeur`.
+- listes blanches strictes pour `chef-de-projet`, `relecteur-code`, `deployeur`,
+  `analyste-prod` et `gestionnaire-crise`.
 
 Usage en hook de frontmatter (plan B) : `python restreindre_bash.py --agent <nom>`.
 Interpréteur accepté dans les listes blanches : `python`, `python3` (macOS, Linux) ou `py` (Windows).
@@ -33,9 +34,14 @@ RE_ARG_SUR = re.compile(r"^[\w\-=./:@,+]+$")
 LISTES_BLANCHES = {
     "chef-de-projet": "python (ou python3) scripts/tableau.py [options]",
     "relecteur-code": "git diff | git log | git show | git status | git blame (sans --output ni --ext-diff)",
-    "deployeur": ("gh workflow run … | gh run list|view|watch … | git rev-parse … | git log … | "
+    "deployeur": ("gh workflow run … | gh run list|view|watch … | git rev-parse … | git log … "
+                  "(sans --output ni --ext-diff) | "
                   "python (ou python3) .claude/skills/verifier-prod/verifier_prod.py …"),
+    "analyste-prod": "python (ou python3) scripts/sonde_sante.py [options]",
+    "gestionnaire-crise": ("python (ou python3) scripts/sonde_sante.py [options] | git log … | git rev-parse … | "
+                           "gh run list … | gh run view … (sans --output ni --ext-diff ; jamais gh workflow run)"),
 }
+GIT_OPTIONS_ECRITURE = ("--output", "--ext-diff")
 
 
 class Refus(Exception):
@@ -145,22 +151,39 @@ def chemin(j):
     return j[2:] if j.startswith("./") else j
 
 
+def est_sonde(seg):
+    """`python|python3|py scripts/sonde_sante.py [options sûres]` (lot2-D point 2)."""
+    return (nom_exe(seg[0]) in ("python", "python3", "py") and len(seg) >= 2
+            and chemin(seg[1]) == "scripts/sonde_sante.py" and args_surs(seg[2:]))
+
+
+def git_lecture(seg, sous_commandes):
+    """`git <sous-commande de lecture> …`, sans option qui écrit un fichier ou lance un programme."""
+    if nom_exe(seg[0]) != "git" or len(seg) < 2 or seg[1].lower() not in sous_commandes:
+        return False
+    return not any(a.startswith(GIT_OPTIONS_ECRITURE) for a in seg[2:])
+
+
 def autorise_liste_blanche(agent, seg):
     exe = nom_exe(seg[0])
     if agent == "chef-de-projet":
         return (exe in ("python", "python3", "py") and len(seg) >= 2
                 and chemin(seg[1]) == "scripts/tableau.py" and args_surs(seg[2:]))
     if agent == "relecteur-code":
-        if exe != "git" or len(seg) < 2 or seg[1].lower() not in ("diff", "log", "show", "status", "blame"):
-            return False
-        return not any(a.startswith(("--output", "--ext-diff")) for a in seg[2:])
+        return git_lecture(seg, ("diff", "log", "show", "status", "blame"))
+    if agent == "analyste-prod":
+        return est_sonde(seg)
+    if agent == "gestionnaire-crise":
+        if est_sonde(seg) or git_lecture(seg, ("log", "rev-parse")):
+            return True
+        return exe == "gh" and len(seg) >= 3 and seg[1] == "run" and seg[2] in ("list", "view")
     if agent == "deployeur":
         if exe == "gh" and len(seg) >= 3:
             if seg[1] == "workflow" and seg[2] == "run":
                 return True
             if seg[1] == "run" and seg[2] in ("list", "view", "watch"):
                 return True
-        if exe == "git" and len(seg) >= 2 and seg[1] in ("rev-parse", "log"):
+        if git_lecture(seg, ("rev-parse", "log")):
             return True
         if (exe in ("python", "python3", "py") and len(seg) >= 2
                 and chemin(seg[1]) == ".claude/skills/verifier-prod/verifier_prod.py"):
@@ -172,8 +195,8 @@ def autorise_liste_blanche(agent, seg):
 def controle_liste_blanche(agent, commande):
     if agent not in LISTES_BLANCHES:
         return
-    message = ("Refusé : le Bash de {a} est limité à : {l} (ARCHITECTURE § 4, catalogue ; "
-               "lot2-B point 7). Une seule commande, sans opérateur (; && || | > <), "
+    message = ("Refusé : le Bash de {a} est limité à : {l} (ARCHITECTURE § 4 et § 6, "
+               "garde-fou 7). Une seule commande, sans opérateur (; && || | > <), "
                "sans $( ) ni retour à la ligne.").format(a=agent, l=LISTES_BLANCHES[agent])
     if "\n" in commande or "$" in commande or "`" in commande:
         raise Refus(message)

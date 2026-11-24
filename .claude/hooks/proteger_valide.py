@@ -10,6 +10,8 @@ Responsable : C · Lot 2 (C) · voir CLAUDE.md R5/R6, ARCHITECTURE § 6 (garde-f
 - R6 : aucune écriture sur un document (frontmatter avec `valide_par`) dont
   l'en-tête actuel est VALIDÉ. Les deux journaux sont exclus de R6.
 - Les tickets (frontmatter `id: T-NNN`) ne sont pas concernés.
+- R9 (garde-fou 8) : aucune écriture par Write/Edit/MultiEdit sur les fichiers générés
+  `PORTFOLIO.md` (racine) et `projets/<slug>/TABLEAU.md` ; seul `scripts/tableau.py` les écrit.
 - Garde-fou 6 : toute écriture sous `templates/` (racine du dépôt) demande une confirmation
   humaine (décision JSON `ask` sur stdout), en doublon de la règle `ask` de settings.json.
 
@@ -27,6 +29,7 @@ import unicodedata
 
 JOURNAUX = {"docs/changelog-regles.md", "docs/decisions/readme.md"}
 RE_TICKET = re.compile(r"^T-\d+$", re.IGNORECASE)
+RE_GENERE = re.compile(r"^(portfolio\.md|projets/[^/]+/tableau\.md)$")
 RE_CLE = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)\s*:\s*(.*)$")
 
 
@@ -124,6 +127,11 @@ def analyser(donnees):
 
     racine = os.environ.get("CLAUDE_PROJECT_DIR") or donnees.get("cwd") or os.getcwd()
     chemin_abs, rel = chemin_relatif(chemin, racine)
+    # R9, garde-fou 8 : fichiers générés, jamais modifiés à la main (ni par un agent).
+    if RE_GENERE.match(rel):
+        return "deny", ("Refusé (R9) : {rel} est généré par scripts/tableau.py et ne se modifie jamais "
+                        "à la main. Mets à jour les tickets, puis lance « python scripts/tableau.py ». "
+                        "Voir CLAUDE.md R9, ARCHITECTURE § 6 garde-fou 8.").format(rel=rel)
     refus = analyser_md(outil, entree, chemin_abs, rel) if rel.endswith(".md") else None
     if refus:
         return "deny", refus

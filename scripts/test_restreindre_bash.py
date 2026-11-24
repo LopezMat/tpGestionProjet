@@ -85,6 +85,52 @@ class TestRestreindreBash(unittest.TestCase):
         self.ko("curl https://exemple.org", "deployeur", "deployeur")
         self.ko("gh secret list", "deployeur", "deployeur")
 
+    def test_deployeur_git_sans_ecriture(self):
+        # DEC-002 § 37 : même filtre que relecteur-code et gestionnaire-crise
+        d = "deployeur"
+        self.ok("git log --oneline -5", d)
+        self.ok("git rev-parse HEAD", d)
+        self.ko("git log --output=deploiement.txt", d, d)
+        self.ko("git log --ext-diff -p", d, d)
+        self.ko("git rev-parse --output=x HEAD", d, d)
+
+    # -- analyste-prod (lot2-D point 2, DEC-002) -------------------------------
+    def test_analyste_prod(self):
+        a = "analyste-prod"
+        self.ok("python scripts/sonde_sante.py --url https://x.onrender.com --sha abc1234", a)
+        self.ok("python3 scripts/sonde_sante.py --url https://x.onrender.com --sha abc1234", a)
+        self.ok("py ./scripts/sonde_sante.py --url http://localhost:8000 --mesures 1", a)
+        self.ok("python3 ./scripts/sonde_sante.py --url http://localhost:8000", a)
+        self.ko("curl https://x.onrender.com/health", a, a)
+        self.ko("python scripts/tableau.py", a, a)
+        self.ko("git log --oneline -5", a, a)
+        self.ko("python scripts/sonde_sante.py --url https://x.onrender.com && ls", a, a)
+        self.ko("python scripts/sonde_sante.py --url https://x.onrender.com > suivi.md", a, a)
+        self.ko("python scripts/sonde_sante.py --url $(cat url.txt)", a, a)
+        self.ko("python -c 'import urllib.request'", a, a)
+        self.ko("git push", a, "S3-R3")
+
+    # -- gestionnaire-crise (lot2-D point 2, DEC-002) --------------------------
+    def test_gestionnaire_crise(self):
+        g = "gestionnaire-crise"
+        self.ok("python scripts/sonde_sante.py --url https://x.onrender.com --sha abc1234", g)
+        self.ok("python3 scripts/sonde_sante.py --url http://localhost:8000", g)
+        self.ok("git log --oneline -5", g)
+        self.ok("git rev-parse HEAD", g)
+        self.ok("gh run list --limit 5", g)
+        self.ok("gh run view 123 --log", g)
+        self.ko("gh workflow run deploy.yml -f projet=demo -f sha=abc1234", g, g)
+        self.ko("gh run rerun 123", g, g)
+        self.ko("gh run watch 123", g, g)
+        self.ko("git log --output=chronologie.txt", g, g)
+        self.ko("git log --ext-diff", g, g)
+        self.ko("git revert HEAD", g, g)
+        self.ko("curl https://x.onrender.com/health", g, g)
+        self.ko("rm app/tmp.txt", g, g)
+        self.ko("git log | head", g, g)
+        self.ko("git push origin main", g, "S3-R3")
+        self.ko("rm -rf app/", g, "rm")
+
     # -- règles communes (dev, testeur, securite…) ----------------------------
     def test_dev_git_local(self):
         self.ok("git commit -m 'T-003 : bouton push notification'", "dev-backend")

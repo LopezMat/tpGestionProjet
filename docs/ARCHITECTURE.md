@@ -1,10 +1,10 @@
 ---
 titre: Architecture du système multi-agents
-statut: VALIDÉ
+statut: EN_REVUE
 responsable: B
-version: 1.0
-maj_le: 2026-11-23
-valide_par: Ethan
+version: 1.1
+maj_le: 2026-11-24
+valide_par: 
 decision: DEC-001
 ---
 
@@ -42,14 +42,17 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
 ├── README.md
 ├── PORTFOLIO.md                      [gén.] vue de tous les projets
 ├── .gitattributes                    fins de ligne LF
+├── requirements.txt                  (D) dépendances Python des scripts (PyYAML)
 ├── .claude/
-│   ├── settings.json                 (C) permissions ask/deny + déclaration des hooks
-│   ├── hooks/proteger_valide.py      (C) hook PreToolUse (voir § 6)
+│   ├── settings.json                 (C) permissions allow/ask/deny + déclaration des hooks
+│   ├── hooks/proteger_valide.py      (C) hook PreToolUse Write/Edit : R5, R6, R9, templates (§ 6)
+│   ├── hooks/restreindre_bash.py     (C) hook PreToolUse Bash : restrictions par agent (§ 6)
 │   ├── agents/*.md                   catalogue (§ 4)
 │   └── skills/
 │       ├── creer-ticket/  avancement/  nouveau-projet/  tracer-decision/        (B)
 │       ├── arrivee-membre/  depart-membre/  absence/  revision-budget/          (B)
-│       └── verifier-prod/                                                       (C)
+│       ├── verifier-prod/  (SKILL.md + verifier_prod.py)                        (C)
+│       └── recette/                  procédure du salarié recetteur             (C)
 ├── .github/workflows/
 │   ├── ci.yml  securite.yml          (C) filtrés par chemin : projets/<slug>/app/**
 │   ├── deploy.yml                    (C) sauvegarde → deploy hook Render → verifier-prod → rollback si KO
@@ -62,14 +65,19 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
 ├── templates/                        (A) _ENTETE.md + un template par livrable
 ├── runbooks/                         (D) perte-donnees, coupure-serveur, intrusion, rollback
 ├── equipe/                           (B) membres/<prenom>.md, agents.md, calendrier.md
+│                                     écrit uniquement par le coordinateur, après décision humaine ;
+│                                     les agents le lisent
 ├── veille/AAAA-Sxx.md                (D) veille commune à l'ESN
 ├── scripts/
 │   ├── tableau.py  test_tableau.py   (D)
-│   └── verifier_validations.py       (C)
+│   ├── sonde_sante.py  test_sonde_sante.py                        (D)
+│   ├── test_proteger_valide.py  test_restreindre_bash.py  test_verifier_prod.py   (C)
+│   └── verifier_validations.py       (C, lot 5)
 └── projets/<slug>/
-    ├── demande.md  projet.md  cdc.md  architecture.md  planning.md  retex.md
+    ├── demande.md  projet.md  existant.md (modernisation)  cdc.md  architecture.md  planning.md  retex.md
     ├── tickets/T-NNN-<titre-court>.md
-    ├── rapports/                     tests, sécurité, déploiement, post-mortem, logs/métriques simulés
+    ├── rapports/                     tests, sécurité, recette, déploiement, verifier-prod-<sha7>.json,
+    │                                 suivi, post-mortem, logs/métriques simulés
     ├── support/entrant/              remontées utilisateurs (simulées)
     ├── app/                          code de l'application cliente
     └── TABLEAU.md                    [gén.]
@@ -79,21 +87,25 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
 
 Le coordinateur n'est pas un agent. **Aucun agent ne dispose de l'outil `Agent`** (règle R1).
 
-| Agent | Système | Resp. | Rôle | Entrées | Sorties | Outils |
-|---|---|---|---|---|---|---|
-| `analyste-besoin` | S4 | A | Reformule la demande, détecte les manques, rédige le CDC, analyse l'existant (modernisation) | `demande.md` | `cdc.md` (EN_REVUE), questions au client, ticket ATTENTE_HUMAIN | Read, Glob, Grep, Write, Edit |
-| `architecte` | S4 | A | Choisit le SI et la stack (Render par défaut), conçoit l'architecture, fixe les exigences de qualité, sécurité et maintenance | `cdc.md` VALIDÉ | `architecture.md` (EN_REVUE), ticket ATTENTE_HUMAIN | Read, Glob, Grep, Write, Edit, WebSearch |
-| `chef-de-projet` | S1 | B | Découpe en tickets, estime, assigne ; trie les tickets S2 et `amelioration` ; suit budget et délais ; repère les besoins de formation et d'amélioration des agents ; analyse l'impact des événements d'équipe | `cdc.md` et `architecture.md` VALIDÉS, `equipe/`, `tickets/`, `retex.md` | `tickets/`, `planning.md`, `projet.md`, `retex.md` | Read, Glob, Grep, Write, Edit, Bash(`python scripts/tableau.py`) |
-| `dev-backend` | réalisation | A | Réalise les tickets backend et leurs tests unitaires | ticket prenable, `architecture.md` | code et tests dans `app/`, journal du ticket, ticket EN_REVUE | Read, Glob, Grep, Write, Edit, Bash (tests, git sans push) |
-| `dev-frontend` | réalisation | A | Réalise les tickets frontend et leurs tests | idem | idem | idem |
-| `relecteur-code` | S3 | C | Revue de qualité et de maintenabilité, **en lecture seule sur le code** | ticket EN_REVUE, diff | section « Revue » du ticket : `APPROUVÉ` ou `CHANGEMENTS_DEMANDÉS` | Read, Glob, Grep, Edit (ticket uniquement), Bash(`git diff`, `git log`) |
-| `testeur` | S3 | C | Tests fonctionnels et de régression ; vérifie les critères d'acceptation | ticket EN_REVUE, `app/`, `cdc.md` | `rapports/tests-*.md`, tickets bug, critères cochés | Read, Glob, Grep, Write, Edit (tickets et rapports), Bash (tests) |
-| `securite` | S3 | C | Audit OWASP, dépendances, secrets, configuration. **Ne corrige pas le code** | `app/`, `architecture.md` | `rapports/securite-*.md`, tickets bug sécurité | Read, Glob, Grep, Write, Bash (outils d'audit) |
-| `deployeur` | S3 | C | Sauvegarde, déclenchement du déploiement après le GO humain, vérification en ligne, rollback | rapports verts, ticket de mise en production débloqué | `rapports/deploiement-*.md`, ticket TERMINE ou incident | Read, Write, Edit, Bash(`gh workflow run`, `curl`) |
-| `veilleur` | S2 | D | Veille techno et CVE sur les stacks utilisées | `architecture.md` des projets, web | `veille/AAAA-Sxx.md`, tickets sécurité ou amélioration | Read, Glob, Write, WebSearch, WebFetch |
-| `analyste-prod` | S2 | D | Suivi des performances et des bugs après le déploiement | `/health` réel, logs et métriques simulés | tickets bug ou incident, rapport de suivi | Read, Grep, Write, Bash(`curl`) |
-| `support` | S2 | D | Qualifie et dédoublonne les remontées utilisateurs, propose une réponse | `support/entrant/` | tickets support ou bug, réponses type | Read, Glob, Grep, Write, Edit |
-| `gestionnaire-crise` | S2 | D | Déroule le runbook adapté, coordonne la crise, rédige le post-mortem | alerte ou incident, `runbooks/` | ticket incident critique, ATTENTE_HUMAIN, `rapports/post-mortem-*.md` | Read, Glob, Grep, Write, Edit, Bash (diagnostic) |
+| Agent | Système | Resp. | Rôle | Entrées | Sorties | Outils | Modèle |
+|---|---|---|---|---|---|---|---|
+| `analyste-besoin` | S4 | A | Reformule la demande, détecte les manques, rédige le CDC, analyse l'existant (modernisation) | `demande.md` | `existant.md` (modernisation), `cdc.md` (EN_REVUE), questions au client, ticket ATTENTE_HUMAIN | Read, Glob, Grep, Write, Edit | sonnet |
+| `architecte` | S4 | A | Choisit le SI et la stack (Render par défaut), conçoit l'architecture, fixe les exigences de qualité, sécurité et maintenance | `cdc.md` VALIDÉ | `architecture.md` (EN_REVUE), ticket ATTENTE_HUMAIN | Read, Glob, Grep, Write, Edit, WebSearch | opus |
+| `chef-de-projet` | S1 | B | Découpe en tickets, estime, assigne ; trie les tickets S2 et `amelioration` ; suit budget et délais ; repère les besoins de formation et d'amélioration des agents ; analyse l'impact des événements d'équipe | `cdc.md` et `architecture.md` VALIDÉS, `equipe/`, `tickets/`, `retex.md` | `tickets/`, `planning.md`, `projet.md`, `retex.md` | Read, Glob, Grep, Write, Edit, Bash limité à `python scripts/tableau.py` (hook) | opus |
+| `dev-backend` | réalisation | A | Réalise les tickets backend et leurs tests unitaires | ticket prenable, `architecture.md` | code et tests dans `app/`, journal du ticket, ticket EN_REVUE | Read, Glob, Grep, Write, Edit, Bash (tests, git sans push) | sonnet |
+| `dev-frontend` | réalisation | A | Réalise les tickets frontend et leurs tests | idem | idem | idem | sonnet |
+| `relecteur-code` | S3 | C | Revue de qualité et de maintenabilité, **en lecture seule sur le code** | ticket EN_REVUE, diff | section « Revue » du ticket : `APPROUVÉ` ou `CHANGEMENTS_DEMANDÉS` | Read, Glob, Grep, Edit (ticket uniquement), Bash limité à `git diff`, `log`, `show`, `status`, `blame` (hook) | sonnet |
+| `testeur` | S3 | C | Tests fonctionnels et de régression ; vérifie les critères d'acceptation ; passe les tickets de réalisation `TERMINE` (R13) | ticket EN_REVUE, `app/`, `cdc.md` | `rapports/tests-*.md`, tickets bug, critères cochés | Read, Glob, Grep, Write, Edit (tickets et rapports), Bash (tests) | sonnet |
+| `securite` | S3 | C | Audit OWASP, dépendances, secrets, configuration. **Ne corrige pas le code** | `app/`, `architecture.md` | `rapports/securite-*.md`, tickets bug sécurité | Read, Glob, Grep, Write, Edit (son ticket et ses rapports, jamais `app/`), Bash (outils d'audit) | opus |
+| `deployeur` | S3 | C | Sauvegarde, déclenchement du déploiement après le GO humain, vérification en ligne, rollback | rapports verts, recette CONFORME, ticket de mise en production débloqué | `rapports/deploiement-*.md`, ticket TERMINE ou incident | Read, Glob, Grep, Write, Edit, Bash limité à `gh workflow run`, `gh run list\|view\|watch`, `git rev-parse`, `git log`, `verifier_prod.py` (hook) | sonnet |
+| `veilleur` | S2 | D | Veille techno et CVE sur les stacks utilisées | `architecture.md` des projets, manifestes de dépendances, web | `veille/AAAA-Sxx.md`, tickets sécurité ou amélioration | Read, Glob, Grep, Write, Edit, WebSearch, WebFetch | sonnet |
+| `analyste-prod` | S2 | D | Suivi des performances et des bugs après le déploiement | `/health` réel (via la sonde), logs et métriques simulés | `rapports/suivi-*.md`, tickets bug ou incident | Read, Glob, Grep, Write, Edit, Bash limité à `python scripts/sonde_sante.py` (hook) | sonnet |
+| `support` | S2 | D | Qualifie et dédoublonne les remontées utilisateurs, propose une réponse | `support/entrant/` | tickets support ou bug, réponses type | Read, Glob, Grep, Write, Edit | haiku |
+| `gestionnaire-crise` | S2 | D | Déroule le runbook adapté, coordonne la crise, rédige le post-mortem | alerte ou incident, `runbooks/` | ticket incident critique, ATTENTE_HUMAIN, `rapports/post-mortem-*.md` | Read, Glob, Grep, Write, Edit, Bash de diagnostic limité à `sonde_sante.py`, `git log`, `git rev-parse`, `gh run list\|view` (hook) | opus |
+
+**Outils et restrictions réelles.** Le champ `tools` d'un subagent n'accepte que des outils entiers : il ne filtre pas les sous-commandes de Bash. Les limites écrites dans la colonne Outils sont donc appliquées par le hook `restreindre_bash.py` (§ 6, garde-fou 7), et pas seulement par consigne. `curl` n'est utilisé par aucun agent : le `deployeur` passe par `verifier_prod.py` et les agents S2 par `sonde_sante.py`, qui réutilise le même contrat `/health`. Le choix du modèle est justifié dans chaque fichier d'agent.
+
+**Recette humaine.** La recette n'est pas un agent : c'est un ticket « Recette » confié à un salarié (règle 6 du `chef-de-projet`), qui suit le skill [recette](../.claude/skills/recette/SKILL.md) et produit `rapports/recette-*.md` (porte 3 bis de S3).
 
 **Pôle réalisation.** `dev-backend` et `dev-frontend` sont des agents d'exécution transverses. Ils ne sont rattachés à aucun des 4 systèmes ; ils exécutent les tickets planifiés par S1 et contrôlés par S3.
 
@@ -129,8 +141,11 @@ flowchart LR
   TS --> RT["rapport-tests"]
   APP --> SE["securite"]
   SE --> RS["rapport-securite"]
-  RT --> H3{{"Humain : GO mise en prod"}}
-  RS --> H3
+  RT --> REC{{"Salarié : recette humaine"}}
+  RS --> REC
+  CDC -.-> REC
+  REC --> RR["rapport-recette"]
+  RR --> H3{{"Humain : GO mise en prod"}}
   CI --> H3
   H3 --> DP["deployeur"]
   DP --> BK[("Sauvegarde")]
@@ -156,30 +171,35 @@ flowchart LR
   TK --> TAB[["tableau.py"]]
   TAB --> DASH["TABLEAU.md + PORTFOLIO.md"]
   H1 & H2 & H3 & HR --> DEC["docs/decisions/"]
+  REC --> TK
 
   class AB,AR,CP,DEV,RC,TS,SE,DP,AP,SUP,VE,GC agent
-  class DEM,CDC,ARCH,EQ,RETEX,TK,PL,APP,RT,RS,RD,SUPIN,VEI,PM,DASH,DEC fichier
-  class H1,H2,H3,HR humain
+  class DEM,CDC,ARCH,EQ,RETEX,TK,PL,APP,RT,RS,RR,RD,SUPIN,VEI,PM,DASH,DEC fichier
+  class H1,H2,H3,HR,REC humain
   class CI,RH,RB,TAB,BK,PROD,VP auto
 ```
 
-Le coordinateur lance chaque agent. Il est omis du schéma pour le garder lisible.
+Le coordinateur lance chaque agent. Il est omis du schéma pour le garder lisible. La recette (porte 3 bis de S3) est faite par un salarié humain à partir des critères du CDC ; ses KO deviennent des tickets bug.
+
+**`equipe/`** est écrit uniquement par le coordinateur, via les skills d'événements et après décision humaine ; les agents le lisent (CLAUDE.md § 5).
 
 ## 6. Modèle de validation
 
 **Statuts des documents** (en-tête standard, voir [templates/_ENTETE.md](../templates/_ENTETE.md)) : `BROUILLON` → `EN_REVUE` → `VALIDÉ`.
 Les tickets ont leur propre cycle de statuts (§ 7), qui ne comporte pas `VALIDÉ`.
 
-**Garde-fous de la validation** (DEC-001, sections 7, 8, 23 et 25) :
+**Garde-fous de la validation** (DEC-001, sections 7, 8, 23 et 25 ; DEC-002 pour les garde-fous 7 et 8) :
 
 | # | Garde-fou | Mécanisme | Lot |
 |---|---|---|---|
-| 1 | Aucun agent ni le coordinateur n'écrit `statut: VALIDÉ` | hook PreToolUse `proteger_valide.py` sur Write/Edit | settings/hooks |
-| 2 | **Un document VALIDÉ est figé pour les agents** : toute écriture sur un fichier dont l'en-tête actuel est `VALIDÉ` est bloquée ; pour le modifier, un humain le repasse en `EN_REVUE` | même hook | settings/hooks |
+| 1 | Aucun agent ni le coordinateur ne fait **passer** un en-tête à `statut: VALIDÉ`. Un statut déjà `VALIDÉ` et laissé tel quel n'est pas une écriture de `VALIDÉ` : pour un document, le garde-fou 2 l'a déjà bloqué ; pour un journal, il est exclu de R6 | hook PreToolUse `proteger_valide.py` sur Write/Edit/MultiEdit | settings/hooks (livré) |
+| 2 | **Un document VALIDÉ est figé pour les agents** : toute écriture sur un fichier dont l'en-tête actuel est `VALIDÉ` est bloquée ; pour le modifier, un humain le repasse en `EN_REVUE` | même hook | settings/hooks (livré) |
 | 3 | Un document `VALIDÉ` a obligatoirement `valide_par` et `decision: DEC-NNN` | règle R5, templates | Lot 1 |
 | 4 | La CI vérifie que chaque `decision` pointe vers un fichier existant de `docs/decisions/` | `validations.yml` + `verifier_validations.py` | workflows |
 | 5 | **Normalisation du statut** : le hook et `verifier_validations.py` comparent la valeur après suppression des accents et passage en majuscules (`VALIDE`, `validé`, `Validé` = `VALIDÉ`). La CI **refuse tout statut de document hors `BROUILLON`, `EN_REVUE`, `VALIDÉ`** | hook + `verifier_validations.py` | settings/hooks, workflows |
-| 6 | **Templates protégés** : permission `ask` sur `Write(templates/**)` et `Edit(templates/**)` | `.claude/settings.json` | settings/hooks |
+| 6 | **Templates protégés** : toute écriture sous `templates/` à la racine demande une confirmation humaine. **Deux barrières** : la règle `ask` `Edit(/templates/**)` de `settings.json`, qui couvre aussi Write et MultiEdit, et une décision `ask` renvoyée par le hook lui-même | `.claude/settings.json` + `proteger_valide.py` | settings/hooks (livré) |
+| 7 | **Bash par agent** : pour tout subagent, pas de `git push` (même `git -C . push` ou `bash -c '…'`), pas de `git reset --hard`, pas de `rm` récursif forcé, aucun argument désignant un `.env*` ; listes blanches strictes pour `chef-de-projet`, `relecteur-code`, `deployeur`, `analyste-prod` et `gestionnaire-crise` (§ 4) | hook PreToolUse `restreindre_bash.py`, qui lit le champ `agent_type` transmis par Claude Code | settings/hooks (livré) |
+| 8 | **Fichiers générés** : aucune écriture Write/Edit/MultiEdit sur `PORTFOLIO.md` (racine) ni sur `projets/<slug>/TABLEAU.md` ; seul `scripts/tableau.py` les écrit (R9) | `proteger_valide.py` | settings/hooks (livré) |
 
 Un « document » est ici tout fichier Markdown dont le frontmatter porte l'en-tête standard (champ `valide_par`). Les tickets et les fiches membres, qui ont leur propre format, ne sont pas concernés par les garde-fous 3 à 5.
 
@@ -187,7 +207,13 @@ Un « document » est ici tout fichier Markdown dont le frontmatter porte l'en-t
 
 *Pourquoi le garde-fou 5 :* sans normalisation, écrire `VALIDE` sans accent contournerait le hook et ferait passer un document pour validé.
 
-*Pourquoi le garde-fou 6 :* les templates restent en `BROUILLON` par nature, donc R6 ne les protège pas ; or `tableau.py` et tous les agents dépendent de leur format.
+*Pourquoi le garde-fou 6 :* les templates restent en `BROUILLON` par nature, donc R6 ne les protège pas ; or `tableau.py` et tous les agents dépendent de leur format. *Pourquoi deux barrières :* le `/` initial de `Edit(/templates/**)` ancre le chemin au dossier de lancement de la session (sans lui, la règle viserait aussi `projets/x/app/templates/`). Au test réel du 2026-11-23 (Windows, mode auto), cette règle seule n'a pas déclenché de confirmation ; le hook calcule le chemin à partir de `CLAUDE_PROJECT_DIR`, ce qui ne dépend ni du dossier de lancement ni de l'OS, et sa confirmation a bien été demandée.
+
+*Pourquoi le garde-fou 7 :* le champ `tools` d'un subagent autorise Bash entier, et les règles Bash de `settings.json` se contournent (option avant la sous-commande, `bash -c`, `cat .env` qu'une règle `Read` ne couvre pas). Le hook analyse la commande : c'est la deuxième barrière. Le test réel du 2026-11-23 a montré que `agent_type` est bien transmis aux hooks de `settings.json`. La session principale (sans `agent_type`) reste soumise aux seules permissions de `settings.json`.
+
+*Pourquoi le garde-fou 8 :* un tableau retouché à la main mentirait, et la règle « la validation est appliquée techniquement » (DEC-001 § 7) s'étend naturellement aux fichiers générés. `TABLEAU.md` et `PORTFOLIO.md` **n'ont pas d'en-tête standard** : ce ne sont pas des documents à valider, puisqu'ils changent à chaque génération. Ils commencent par `<!-- FICHIER GÉNÉRÉ par scripts/tableau.py — ne pas modifier à la main (R9) -->` et un encadré qui le rappelle.
+
+**Risque : un hook qui ne démarre pas ne bloque rien.** Un hook introuvable (`python` absent, script manquant) ou qui sort avec un code autre que 0 ou 2 est une erreur non bloquante pour Claude Code : R5, R6, R9 et la restriction Bash disparaîtraient en silence. Parades : la commande des hooks essaie `python` puis `python3` ; les hooks se ferment en cas de doute (JSON illisible ou erreur interne → refus) ; chaque membre applique la procédure « Installer son poste » du [README](../README.md#installer-son-poste). Au lot 5 : `"onFailure": "block"` (Claude Code 2.1.295 ou plus) et le filet CI `validations.yml`, qui voit aussi les écritures faites par Bash (`sed -i`, redirection) que les hooks Write/Edit ne voient pas.
 
 **Exception, les journaux.** `docs/CHANGELOG-REGLES.md` et `docs/decisions/README.md` ne passent jamais `VALIDÉ` : ils restent en `EN_REVUE`, évoluent uniquement par PR et sont exclus de R6 (garde-fou 2). *Pourquoi :* un journal figé empêcherait de tracer les décisions suivantes.
 
@@ -200,6 +226,7 @@ Format complet : [templates/ticket.md](../templates/ticket.md). Règles détaill
 - **Types** : `fonctionnalite`, `tache`, `bug`, `incident`, `support`, `decision`, `formation`, `amelioration`.
 - **Statuts** : `A_FAIRE`, `EN_COURS`, `EN_REVUE`, `BLOQUE`, `ATTENTE_HUMAIN`, `TERMINE`, `ANNULE`.
 - **Un ticket `decision` porte l'attente, le fichier de `docs/decisions/` porte la trace.** Ils sont liés par l'id (`decision: DEC-NNN` dans le ticket, `ticket: T-NNN` dans la décision).
+- **Champs ajoutés par DEC-002** : `competence_requise` (obligatoire, nom du référentiel d'`equipe/agents.md` et niveau) ; `statut_depuis`, `debut_le`, `termine_le` (facultatifs, tenus par celui qui change le statut). Quand ils manquent, `tableau.py` retombe sur les estimations décrites ci-dessous.
 
 **Formules du tableau de bord** (`scripts/tableau.py`) :
 - Avancement = Σ estimation des tickets TERMINE ÷ Σ estimation des tickets hors ANNULE.
@@ -207,7 +234,20 @@ Format complet : [templates/ticket.md](../templates/ticket.md). Règles détaill
 - Capacité d'un salarié sur une période = heures/semaine × allocation au projet (%) × jours disponibles (d'après `equipe/calendrier.md`).
 - Budget consommé = Σ temps_passe_h × taux horaire de l'assigné (§ 8).
 
-**Alertes** : deadline dépassée en projection ; budget consommé supérieur à 90 % ; ticket critique ouvert ; ticket EN_COURS sans mise à jour depuis plus de **2 jours ouvrés** ; préavis de départ inférieur à **5 jours ouvrés**.
+**Hypothèses de calcul** (appliquées par `tableau.py` et rappelées dans chaque `TABLEAU.md`) :
+- **Capacité d'un agent : 7 h équivalent humain par jour ouvré, un ticket à la fois** ; des agents différents travaillent en parallèle. Constante `CAPACITE_AGENT_H_JOUR`, révisable par décision.
+- **Capacité d'un salarié** : `capacite_h_semaine ÷ 5 × allocation au projet × capacite_pct` du calendrier. Elle est nulle avant l'arrivée, après le départ, et pour un salarié `parti`. Un temps partiel est moyenné sur 5 jours.
+- **Jours ouvrés** : hors samedis, dimanches et jours fériés d'`equipe/calendrier.md`.
+- **Ordonnancement** à partir de la date du jour : dépendances, puis priorité (critique → basse), puis id ; un ticket à la fois par assigné et par projet (l'allocation sépare les projets, S1-R10). Les tickets `BLOQUE` et `ATTENTE_HUMAIN` sont supposés débloqués le jour même, ce qui rend la date optimiste. Un ticket est **non planifiable** s'il est sans capacité, s'il ne peut pas finir avant le départ de son assigné ou s'il est pris dans un cycle ; il lève une alerte.
+- **Budget consommé** : compte aussi le temps des tickets `ANNULE`, puisqu'il a été dépensé. **Coût projeté à terminaison** = consommé + Σ reste × taux.
+- **Utilisation (AF9)** : heures restantes assignées ÷ capacité allouée, d'aujourd'hui à la deadline (ou à la fin projetée si la deadline est passée). Signalée sous 50 % (information) et au-dessus de 100 % (surcharge).
+- **« Sans mise à jour »** : la date retenue est la plus récente entre `maj_le` et la dernière ligne du journal (ou `statut_depuis` s'il existe).
+- **Gantt des tickets terminés** : de `debut_le` à `termine_le`, à défaut de `cree_le` à `maj_le`.
+- **Préavis** : jours ouvrés de demain à la date de départ incluse (même calcul que le skill `depart-membre`).
+
+*Pourquoi :* un chiffre du tableau de bord doit pouvoir s'expliquer en soutenance ; une hypothèse écrite seulement dans le code n'est pas une règle de l'équipe.
+
+**Alertes** : deadline dépassée en projection ; budget consommé supérieur à 90 % ; ticket critique ouvert ; ticket EN_COURS sans mise à jour depuis plus de **2 jours ouvrés** ; préavis de départ inférieur à **5 jours ouvrés** ; affectation d'un salarié pendant une absence (S1-R9) ; ticket non planifiable ; surcharge d'un salarié ; allocation totale d'un salarié supérieure à 100 % (S1-R10).
 
 **Régénération** : `tableau.yml` commite TABLEAU/PORTFOLIO **seulement s'il y a des changements**, avec `[skip ci]` et un groupe `concurrency`. En cas de conflit, on régénère au lieu de résoudre à la main.
 

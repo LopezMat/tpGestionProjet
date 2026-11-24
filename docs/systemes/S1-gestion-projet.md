@@ -1,10 +1,10 @@
 ---
 titre: Système 1 — Gestion de projet
-statut: VALIDÉ
+statut: EN_REVUE
 responsable: B
-version: 1.0
-maj_le: 2026-11-23
-valide_par: Ethan
+version: 1.1
+maj_le: 2026-11-24
+valide_par: 
 decision: DEC-001
 ---
 
@@ -30,11 +30,21 @@ decision: DEC-001
 ## 4. Étapes
 1. **Découpage.** À partir du CDC VALIDÉ, une fonctionnalité donne un ou plusieurs tickets, chacun avec des critères d'acceptation vérifiables.
 2. **Estimation** en heures équivalent humain (R12), avec les dépendances (`depend_de`).
-3. **Assignation** à un agent ou à un salarié selon les compétences, le niveau, l'allocation et le calendrier.
-   > **À définir au Lot 2 (B) :** critères d'affectation agent / salarié.
+3. **Assignation** à un agent ou à un salarié selon les compétences, le niveau, l'allocation et le calendrier. La compétence requise est portée par le champ `competence_requise` du ticket. Les critères d'affectation, appliqués dans l'ordre (le premier qui s'applique décide), sont détaillés avec leur Pourquoi dans [chef-de-projet.md](../../.claude/agents/chef-de-projet.md) :
+   - **AF1** contact client → salarié `relation-client` (au moins `confirme`) ;
+   - **AF2** ticket `decision` → porteur salarié ; la validation formelle reste humaine (R5) ;
+   - **AF3** revue humaine (S3-R2) → ticket « Revue humaine T-NNN » assigné à un salarié compétent qui n'est pas l'auteur ;
+   - **AF4** compétence hors périmètre des agents → salarié qui la possède, sinon ticket `formation` ;
+   - **AF5** ticket `critique` → binôme agent + salarié `expert` ou `confirme` ;
+   - **AF6** par défaut → agent ;
+   - **AF7** niveau au moins égal au niveau requis, sinon binôme et ticket `formation` ; jamais de `critique` pour un `debutant` ou un salarié `en_integration` ;
+   - **AF8** disponibilité : allocation > 0, pas d'absence sur la fenêtre (S1-R9), pas après le départ ;
+   - **AF9** utilisation des salariés : un indicateur (alerte sous 50 %), jamais une obligation ;
+   - **AF10** détection des besoins de formation (compétence absente, dépendance à une seule personne, affectation sous le niveau) ;
+   - **AF11** ticket salarié = responsabilité humaine (CLAUDE.md R15).
 4. **Planification.** `planning.md` contient les jalons et les hypothèses de capacité ; le Gantt est généré par `tableau.py`.
 5. **Arrêt humain** : ticket `ATTENTE_HUMAIN` « Validation budget et délais ».
-6. **Suivi** à chaque étape du pipeline : `tableau.py` puis synthèse (skill `avancement`, Lot 3).
+6. **Suivi** à chaque étape du pipeline : `tableau.py` puis synthèse (skill [avancement](../../.claude/skills/avancement/SKILL.md)).
 7. **Triage** des tickets créés par S2 et S3 (bug, incident, support, amelioration) : priorité et assignation.
 8. **Retour d'expérience** en fin de jalon ou de projet : `retex.md`, puis tickets `amelioration` (agents) et `formation` (salariés).
 
@@ -63,14 +73,20 @@ decision: DEC-001
 
 ## 6. Événements d'équipe et de budget
 
-Chaque événement suit la même séquence : **le chef de projet analyse l'impact et fait une proposition, le coordinateur crée un ticket `ATTENTE_HUMAIN`, un humain décide, et la décision est tracée** dans `docs/decisions/`. Les skills associés arrivent au Lot 3.
+Chaque événement suit la même séquence, telle que les skills l'appliquent :
+1. **le coordinateur crée le ticket `decision`** (`A_FAIRE`, assigné à `agent:chef-de-projet`) ;
+2. **le chef de projet y écrit l'analyse d'impact et sa proposition**, puis le passe `ATTENTE_HUMAIN` ;
+3. **un humain décide**, et la décision est tracée dans `docs/decisions/` (skill `tracer-decision`) ;
+4. **le coordinateur applique les changements d'`equipe/`** après la décision ; il est le seul à écrire dans `equipe/`.
+
+*Pourquoi :* le coordinateur crée bien le ticket (texte initial de S1), l'analyse circule par fichier (R2) et le temps du chef est compté dans le ticket ; personne ne modifie l'équipe avant la décision humaine.
 
 | Événement | Skill | Traitement |
 |---|---|---|
-| Arrivée | `arrivee-membre` | crée la fiche (`statut: en_integration`), ajoute des tickets d'intégration et de formation, puis affecte progressivement des tickets adaptés au niveau |
-| Départ | `depart-membre` | plan de passation **au moins 5 jours ouvrés avant** le départ : tickets et connaissances du partant, tickets de transfert (documentation, binôme), réaffectation selon les compétences, recalcul du planning ; si la compétence manque, ticket formation ou recrutement |
-| Absence | `absence` | impact sur les tickets de la période ; réaffecter ou décaler ; recalculer la date de fin ; alerte si un ticket critique ou la deadline est touché |
-| Budget revu | `revision-budget` | recalcul de la projection ; scénarios (retirer des fonctionnalités, réaffecter, décaler) ; arbitrage humain |
+| Arrivée | [`arrivee-membre`](../../.claude/skills/arrivee-membre/SKILL.md) | crée la fiche (`statut: en_integration`), ajoute des tickets d'intégration et de formation, puis affecte progressivement des tickets adaptés au niveau |
+| Départ | [`depart-membre`](../../.claude/skills/depart-membre/SKILL.md) | plan de passation **au moins 5 jours ouvrés avant** le départ : tickets et connaissances du partant, tickets de transfert (documentation, binôme), réaffectation selon les compétences, recalcul du planning ; si la compétence manque, ticket formation ou recrutement |
+| Absence | [`absence`](../../.claude/skills/absence/SKILL.md) | impact sur les tickets de la période ; réaffecter ou décaler ; recalculer la date de fin ; alerte si un ticket critique ou la deadline est touché |
+| Budget revu | [`revision-budget`](../../.claude/skills/revision-budget/SKILL.md) | recalcul de la projection ; scénarios (retirer des fonctionnalités, réaffecter, décaler) ; arbitrage humain |
 
 **S1-R8 · La passation démarre au moins 5 jours ouvrés avant un départ.** Si le préavis est plus court : passation accélérée, alerte au tableau de bord et ticket `ATTENTE_HUMAIN`.
 *Pourquoi :* 5 jours ouvrés, soit une semaine de travail, suffisent pour documenter, faire travailler un binôme et réaffecter. En dessous, le risque de perte de connaissance doit être arbitré par un humain.
@@ -92,7 +108,7 @@ Chaque événement suit la même séquence : **le chef de projet analyse l'impac
 *Pourquoi :* sur un projet d'une semaine, 2 jours sans nouvelles représentent 40 % du temps disponible.
 
 ## 8. Contrôles
-- Chaque ticket est conforme au template (skill `creer-ticket`).
+- Chaque ticket est conforme au template (skill [creer-ticket](../../.claude/skills/creer-ticket/SKILL.md)) et porte `competence_requise`.
 - Pas de dépendance circulaire ; pas d'affectation pendant une absence.
 - Cohérence entre `projet.md` (budget, deadline) et `TABLEAU.md`.
 

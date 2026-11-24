@@ -7,6 +7,7 @@ type: fonctionnalite        # fonctionnalite | tache | bug | incident | support 
 statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: normale           # critique | haute | normale | basse
 assigne: agent:<nom>        # agent:<nom> | salarie:<prenom>
+competence_requise: <nom> (<niveau>)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 0             # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 0            # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
@@ -16,8 +17,11 @@ decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: <agent:<nom> | salarie:<prenom>>
 cree_le: AAAA-MM-JJ
 maj_le: AAAA-MM-JJ
+statut_depuis: AAAA-MM-JJ   # date du dernier changement de statut
+debut_le:                   # facultatif : date du premier passage EN_COURS
+termine_le:                 # facultatif : date du passage TERMINE
 ---
-<!-- modèle : templates/ticket.md v0.1 · responsable du modèle : A -->
+<!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
 
 # T-NNN — <titre>
 

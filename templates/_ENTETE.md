@@ -2,8 +2,8 @@
 titre: En-tête standard des documents
 statut: EN_REVUE
 responsable: A
-version: 0.2
-maj_le: 2026-11-23
+version: 0.3
+maj_le: 2026-11-24
 valide_par:
 decision:
 ---
@@ -18,7 +18,7 @@ decision:
 ---
 titre: <titre du document>
 statut: BROUILLON            # BROUILLON | EN_REVUE | VALIDÉ
-responsable: <A|B|C|D ou agent:<nom>>
+responsable: <A|B|C|D, agent:<nom> ou salarie:<prenom>>
 version: 0.1                 # +0.1 à chaque révision, 1.0 à la première validation
 maj_le: AAAA-MM-JJ
 valide_par:                  # prénom de l'humain qui valide ; vide tant que non VALIDÉ
@@ -32,7 +32,7 @@ decision:                    # DEC-NNN ; vide tant que non VALIDÉ
 |---|---|---|---|
 | `titre` | oui | auteur | — |
 | `statut` | oui | auteur, puis **humain uniquement pour `VALIDÉ`** | `BROUILLON` pendant la rédaction ; `EN_REVUE` quand c'est prêt à relire ; `VALIDÉ` par un humain |
-| `responsable` | oui | auteur | lettre de la personne responsable (A, B, C, D) ou agent producteur |
+| `responsable` | oui | auteur | lettre de la personne responsable (A, B, C, D), agent producteur (`agent:<nom>`) ou salarié producteur (`salarie:<prenom>`, par exemple pour un rapport de recette ; DEC-002) |
 | `version` | oui | auteur | incrémentée à chaque modification significative |
 | `maj_le` | oui | auteur | date de la dernière modification |
 | `valide_par` | si `VALIDÉ` | humain | prénom de l'humain qui valide |

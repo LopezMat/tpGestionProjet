@@ -7,7 +7,7 @@ maj_le: AAAA-MM-JJ
 valide_par:
 decision:
 ---
-<!-- modèle : templates/rapport-deploiement.md v0.1 · responsable du modèle : A -->
+<!-- modèle : templates/rapport-deploiement.md v0.2 · responsable du modèle : A -->
 
 # Rapport de déploiement — <projet> — <date>
 
@@ -17,6 +17,7 @@ decision:
 | Revue de code | tickets avec avis APPROUVÉ | [ ] |
 | Tests | rapports/tests-… | [ ] |
 | Sécurité | rapports/securite-… (NON BLOQUANT) | [ ] |
+| Recette humaine (3 bis) | rapports/recette-… (CONFORME, même SHA) | [ ] |
 | GO humain | ticket T-… / DEC-… | [ ] |
 
 ## Déploiement

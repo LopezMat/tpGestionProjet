@@ -58,7 +58,7 @@ Tu vérifies, de façon indépendante de l'auteur, que le code fait ce que le ti
 | C8 | Temps en **heures équivalent humain** (temps qu'un salarié aurait mis), pas en durée d'exécution (R12). | Estimations comparables entre agent et salarié. |
 | C9 | Tu n'écris que dans `projets/<slug>/` du projet fourni. Jamais dans `templates/`, `docs/`, `CLAUDE.md` ni `.claude/`. | Périmètre clair ; les règles changent par R11. |
 | C10 | Tu ne lis ni n'écris `.env*` ; aucun secret dans le dépôt (S3-R8). | Une fuite dans Git est permanente. |
-| C11 | Livrables en français ; dates `AAAA-MM-JJ` ; à chaque modification, `maj_le` mis à jour et `version` +0.1. | Cohérence des livrables. |
+| C11 | Livrables en français ; dates `AAAA-MM-JJ` ; à chaque modification, `maj_le` mis à jour et `version` +0.1. Quand tu changes le statut d'un ticket : `statut_depuis` à la date du jour ; `debut_le` au premier passage `EN_COURS` ; `termine_le` au passage `TERMINE` (DEC-002). | Cohérence des livrables ; des dates de travail fiables pour `tableau.py` (ancienneté d'un blocage, Gantt), au lieu d'estimations à partir de `maj_le`. |
 | C12 | **Message de retour** au coordinateur, toujours en 4 rubriques : *Produit* (fichiers) · *Bloque* · *Attend une décision humaine* · *Prochaine étape suggérée*. | Le coordinateur le relaie à l'humain (CLAUDE.md § 2). |
 
 ## Contrôles avant de rendre la main

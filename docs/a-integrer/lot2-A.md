@@ -2,8 +2,8 @@
 titre: Lot 2 (périmètre A) — changements à intégrer ailleurs
 statut: EN_REVUE
 responsable: A
-version: 0.1
-maj_le: 2026-11-23
+version: 0.2
+maj_le: 2026-11-24
 valide_par:
 decision:
 ---
@@ -12,15 +12,17 @@ decision:
 
 La création des 4 agents du périmètre A (`analyste-besoin`, `architecte`, `dev-backend`, `dev-frontend`) fait apparaître trois changements hors de ce périmètre. **Aucun fichier partagé n'a été modifié** : chaque point est à porter par son responsable, par PR (R11 quand une règle ou un format change).
 
-| # | Changement | Fichier | Responsable | Voie |
-|---|---|---|---|---|
-| 1 | Créer le template de l'analyse de l'existant | `templates/existant.md` | A | R11 (PR + décision + changelog) |
-| 2 | Interdire ou soumettre à confirmation `git push`, `--force`, `reset --hard` pour les agents | `.claude/settings.json` | C | Lot settings/hooks |
-| 3 | Le coordinateur crée un ticket de travail avant de lancer l'analyste ou l'architecte | `CLAUDE.md` | B | R11 (PR + décision + changelog) |
+| # | Changement | Fichier | Responsable | Voie | Intégration |
+|---|---|---|---|---|---|
+| 1 | Créer le template de l'analyse de l'existant | `templates/existant.md` | A | R11 (PR + décision + changelog) | intégré (DEC-002 § 1) |
+| 2 | Interdire ou soumettre à confirmation `git push`, `--force`, `reset --hard` pour les agents | `.claude/settings.json` | C | Lot settings/hooks | intégré (DEC-002 § 2), constaté : déjà appliqué par C |
+| 3 | Le coordinateur crée un ticket de travail avant de lancer l'analyste ou l'architecte | `CLAUDE.md` | B | R11 (PR + décision + changelog) | intégré (DEC-002 § 3) : doublon de lot2-B § 1, règle R14 |
 
 ---
 
 ## 1. `templates/existant.md` à créer (A)
+
+**Intégration** : intégré (DEC-002 § 1).
 
 **Quoi.** Un template pour `projets/<slug>/existant.md`, produit par `analyste-besoin` à l'étape 0 d'une modernisation : en-tête standard, ligne de provenance, et 4 sections : Fonctionnalités, Données, Dette technique, Risques.
 
@@ -30,6 +32,8 @@ La création des 4 agents du périmètre A (`analyste-besoin`, `architecte`, `de
 
 ## 2. Permissions sur les commandes git destructrices (C)
 
+**Intégration** : intégré (DEC-002 § 2), constaté : déjà appliqué par C.
+
 **Quoi.** Dans `.claude/settings.json` : `deny` sur `git push --force`, `git reset --hard` ; `ask` (ou `deny` pour les agents) sur `git push`. Ces règles complètent celles déjà prévues en S3 § 5.
 
 **Pourquoi.** `dev-backend` et `dev-frontend` ont l'outil `Bash` (tests et git local). Le champ `tools` d'un subagent autorise l'outil entier : il ne filtre pas les sous-commandes. L'interdiction du `push` écrite dans les fichiers d'agents n'est donc qu'une consigne ; seule une permission la rend effective. C'est le même principe que pour `VALIDÉ` : appliqué techniquement, pas seulement écrit (DEC-001 § 7).
@@ -37,6 +41,8 @@ La création des 4 agents du périmètre A (`analyste-besoin`, `architecte`, `de
 **Voie.** Lot settings/hooks (C). À vérifier au passage : si le format des subagents permet de déclarer des hooks ou des permissions propres à l'agent, on peut restreindre Bash au niveau de `dev-*` seulement.
 
 ## 3. Ticket de travail avant l'analyste et l'architecte (B)
+
+**Intégration** : intégré (DEC-002 § 3) : doublon de lot2-B § 1, règle R14.
 
 **Quoi.** Ajouter dans `CLAUDE.md` (§ 1 ou § 4) : avant de lancer `analyste-besoin` ou `architecte`, le coordinateur crée un ticket de travail (« Rédaction du CDC », « Architecture »), `type: tache`, assigné à l'agent, avec une estimation.
 
