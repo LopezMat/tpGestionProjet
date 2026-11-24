@@ -1,10 +1,10 @@
 ---
 titre: Recette par un recetteur sans Claude Code (notes déposées, tickets bug par support)
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: D
-version: 0.1
+version: 1.0
 maj_le: 2026-11-24
-valide_par:
+valide_par: Ethan
 decision: DEC-004
 id: DEC-004
 date: 2026-11-24
