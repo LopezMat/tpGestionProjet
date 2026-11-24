@@ -1,11 +1,11 @@
 ---
 titre: Système 4 — Cahier des charges
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: B
 version: 1.2
 maj_le: 2026-11-24
-valide_par: 
-decision: 
+valide_par: Ethan
+decision: DEC-003
 ---
 
 # Système 4 — Cahier des charges

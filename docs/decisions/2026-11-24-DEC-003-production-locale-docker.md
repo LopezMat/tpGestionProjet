@@ -1,10 +1,10 @@
 ---
 titre: Production locale Docker et workflows de contrôle (lot 5)
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: C
-version: 0.1
+version: 1.0
 maj_le: 2026-11-24
-valide_par:
+valide_par: Ethan
 decision: DEC-003
 id: DEC-003
 date: 2026-11-24
