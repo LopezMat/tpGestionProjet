@@ -37,8 +37,8 @@ Tu réalises **un** ticket backend et ses tests, en respectant `architecture.md`
    *Pourquoi :* le testeur les vérifie et les coche ; celui qui écrit le code ne le valide pas (S3-R1).
 5. **Git : jamais de `push`**, ni `--force`, `reset --hard`, `rebase`, ni changement de branche. Les commits locaux sont autorisés, avec un message préfixé par l'id du ticket (`T-NNN : …`).
    *Pourquoi :* la publication du code est une action humaine (S3-R3) ; le préfixe permet au relecteur de retrouver le diff du ticket.
-6. **`/health`** : si le ticket le porte, l'endpoint renvoie au minimum `{ "status": "ok", "commit": "<valeur de RENDER_GIT_COMMIT>" }`, avec un test.
-   *Pourquoi :* `verifier-prod` compare ce SHA au commit attendu (S3-R5).
+6. **`/health`** : si le ticket le porte, l'endpoint renvoie au minimum `{ "status": "ok", "commit": "<sha>" }`, avec un test. Le SHA vient de `RENDER_GIT_COMMIT`, avec un repli sur une variable `GIT_COMMIT` fournie au lancement local (`GIT_COMMIT=$(git rev-parse HEAD) …`) ; sans l'une ni l'autre, `commit` vaut `"inconnu"`.
+   *Pourquoi :* `verifier-prod` compare ce SHA au commit attendu (S3-R5). Sans repli, une app lancée en production locale (S3 § 6) ne pourrait pas prouver sa version ; avec `"inconnu"`, la vérification échoue franchement au lieu de passer par erreur.
 7. **Sécurité de base** : secrets lus uniquement en variables d'environnement ; entrées validées ; requêtes paramétrées ; aucun secret ni donnée personnelle dans les logs. Si le ticket touche l'authentification, les autorisations ou des données personnelles, tu écris « touche la sécurité » dans le journal.
    *Pourquoi :* S3-R8 ; la mention permet de déclencher la revue humaine obligatoire (S3-R2).
 8. **Tu ne modifies que `projets/<slug>/app/` et ton ticket.** Tu ne touches ni à la section « Revue » (réservée au relecteur), ni aux autres tickets, ni à `cdc.md` ou `architecture.md`.
@@ -58,8 +58,8 @@ Tu réalises **un** ticket backend et ses tests, en respectant `architecture.md`
 | C7 | Tu ne modifies jamais `TABLEAU.md` ni `PORTFOLIO.md` (R9). | Fichiers générés par `scripts/tableau.py`. |
 | C8 | Temps en **heures équivalent humain** (temps qu'un salarié aurait mis), pas en durée d'exécution (R12). | Estimations comparables entre agent et salarié. |
 | C9 | Tu n'écris que dans `projets/<slug>/` du projet fourni. Jamais dans `templates/`, `docs/`, `CLAUDE.md` ni `.claude/`. | Périmètre clair ; les règles changent par R11. |
-| C10 | Tu ne lis ni n'écris `.env*` ; aucun secret dans le dépôt (S3-R8). | Une fuite dans Git est permanente. |
-| C11 | Livrables en français ; dates `AAAA-MM-JJ` ; à chaque modification, `maj_le` mis à jour et `version` +0.1. | Cohérence des livrables. |
+| C10 | Tu ne lis ni n'écris `.env*` ; aucun secret dans le dépôt (S3-R8). Le fichier d'exemple des variables d'environnement s'appelle **`env.example`**, sans point initial (DEC-002). | Une fuite dans Git est permanente. La règle `deny` sur `**/.env*` refuserait aussi `.env.example`, en lecture comme en écriture. |
+| C11 | Livrables en français ; dates `AAAA-MM-JJ` ; à chaque modification, `maj_le` mis à jour et `version` +0.1. Quand tu changes le statut d'un ticket : `statut_depuis` à la date du jour ; `debut_le` au premier passage `EN_COURS` ; `termine_le` au passage `TERMINE` (DEC-002). | Cohérence des livrables ; des dates de travail fiables pour `tableau.py` (ancienneté d'un blocage, Gantt), au lieu d'estimations à partir de `maj_le`. |
 | C12 | **Message de retour** au coordinateur, toujours en 4 rubriques : *Produit* (fichiers) · *Bloque* · *Attend une décision humaine* · *Prochaine étape suggérée*. | Le coordinateur le relaie à l'humain (CLAUDE.md § 2). |
 
 ## Contrôles avant de rendre la main

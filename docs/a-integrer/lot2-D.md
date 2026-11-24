@@ -2,7 +2,7 @@
 titre: Lot 2 (périmètre D) — changements à intégrer ailleurs
 statut: EN_REVUE
 responsable: D
-version: 0.1
+version: 0.2
 maj_le: 2026-11-24
 valide_par:
 decision:
@@ -18,24 +18,26 @@ Le périmètre D de ce lot comprend :
 
 Leur création fait apparaître douze changements hors de ces fichiers. **Aucun fichier partagé n'a été modifié** : chaque point est à porter par son responsable, par PR (R11 quand une règle ou un format change). Le point 7 relève du lot 5.
 
-| # | Changement | Fichier | Responsable | Voie |
-|---|---|---|---|---|
-| 1 | Catalogue : outils des 4 agents S2 ; `curl` remplacé par `sonde_sante.py` ; arborescence (sonde, tests, `requirements.txt`, rapports de suivi) | `docs/ARCHITECTURE.md` § 3 et § 4 | B | R11 (ARCHITECTURE est VALIDÉ) |
-| 2 | Listes blanches Bash pour `analyste-prod` et `gestionnaire-crise` | `.claude/hooks/restreindre_bash.py`, `scripts/test_restreindre_bash.py` | C | PR (+ R11 : nouveau comportement) |
-| 3 | Règles `allow` pour les nouveaux scripts et tests | `.claude/settings.json` | C | PR |
-| 4 | R9 appliqué techniquement : Write/Edit refusés sur `TABLEAU.md` et `PORTFOLIO.md` ; statut des fichiers générés | `.claude/hooks/proteger_valide.py`, `docs/ARCHITECTURE.md` § 6 | C, B | R11 |
-| 5 | Champs facultatifs de date dans le ticket (`statut_depuis`, `debut_le`, `termine_le`) | `templates/ticket.md` | A (+ D) | R11 |
-| 6 | Templates manquants (`rapport-suivi`, `runbook`) et conventions des données simulées | `templates/`, lot 6 | A, puis lot 6 | R11 |
-| 7 | Workflow `tableau.yml` (dont `pip install -r requirements.txt` et un lancement quotidien) ; tests D dans `ci.yml` | `.github/workflows/` | C | **lot 5** |
-| 8 | Hypothèses d'ordonnancement et de calcul de `tableau.py` | `docs/ARCHITECTURE.md` § 7 | B | R11 |
-| 9 | Pas d'espace pour les tickets internes à l'ESN (veille commune, améliorations transverses) | `docs/ARCHITECTURE.md` § 3, `CLAUDE.md` | B | décision humaine, puis R11 |
-| 10 | S2 : runbooks livrés, sonde de l'analyste-prod, responsable du fichier | `docs/systemes/S2-maintenance.md` | B (fichier), D (système) | R11 (S2 est VALIDÉ) |
-| 11 | README : `pip install -r requirements.txt`, état des lots ; `equipe/agents.md` : agents de D disponibles | `README.md`, `equipe/agents.md` | B | PR |
-| 12 | Temps partiel moyenné (pas de semaine type dans la fiche) | `templates/membre.md` | A, B | information |
+| # | Changement | Fichier | Responsable | Voie | Intégration |
+|---|---|---|---|---|---|
+| 1 | Catalogue : outils des 4 agents S2 ; `curl` remplacé par `sonde_sante.py` ; arborescence (sonde, tests, `requirements.txt`, rapports de suivi) | `docs/ARCHITECTURE.md` § 3 et § 4 | B | R11 (ARCHITECTURE est VALIDÉ) | intégré (DEC-002 § 24) |
+| 2 | Listes blanches Bash pour `analyste-prod` et `gestionnaire-crise` | `.claude/hooks/restreindre_bash.py`, `scripts/test_restreindre_bash.py` | C | PR (+ R11 : nouveau comportement) | intégré (DEC-002 § 25) |
+| 3 | Règles `allow` pour les nouveaux scripts et tests | `.claude/settings.json` | C | PR | intégré (DEC-002 § 26) |
+| 4 | R9 appliqué techniquement : Write/Edit refusés sur `TABLEAU.md` et `PORTFOLIO.md` ; statut des fichiers générés | `.claude/hooks/proteger_valide.py`, `docs/ARCHITECTURE.md` § 6 | C, B | R11 | intégré (DEC-002 § 27) |
+| 5 | Champs facultatifs de date dans le ticket (`statut_depuis`, `debut_le`, `termine_le`) | `templates/ticket.md` | A (+ D) | R11 | intégré (DEC-002 § 28) |
+| 6 | Templates manquants (`rapport-suivi`, `runbook`) et conventions des données simulées | `templates/`, lot 6 | A, puis lot 6 | R11 | intégré (DEC-002 § 29) pour `rapport-suivi.md` et les conventions de nommage (S2 § 3) ; reporté au lot 6 pour `runbook.md` (facultatif) et les données simulées |
+| 7 | Workflow `tableau.yml` (dont `pip install -r requirements.txt` et un lancement quotidien) ; tests D dans `ci.yml` | `.github/workflows/` | C | **lot 5** | reporté (lot 5 : workflows ; DEC-002 § 30) |
+| 8 | Hypothèses d'ordonnancement et de calcul de `tableau.py` | `docs/ARCHITECTURE.md` § 7 | B | R11 | intégré (DEC-002 § 31) |
+| 9 | Pas d'espace pour les tickets internes à l'ESN (veille commune, améliorations transverses) | `docs/ARCHITECTURE.md` § 3, `CLAUDE.md` | B | décision humaine, puis R11 | reporté (décision humaine à prendre : budget et deadline d'un projet interne non décidés ; DEC-002 § 32) |
+| 10 | S2 : runbooks livrés, sonde de l'analyste-prod, responsable du fichier | `docs/systemes/S2-maintenance.md` | B (fichier), D (système) | R11 (S2 est VALIDÉ) | intégré (DEC-002 § 33) : nouvelle S2-R7 |
+| 11 | README : `pip install -r requirements.txt`, état des lots ; `equipe/agents.md` : agents de D disponibles | `README.md`, `equipe/agents.md` | B | PR | intégré (DEC-002 § 34) |
+| 12 | Temps partiel moyenné (pas de semaine type dans la fiche) | `templates/membre.md` | A, B | information | reporté (information sans suite tant que l'équipe ne demande pas `jours_travailles` ; DEC-002 § 35) |
 
 ---
 
 ## 1. Catalogue et arborescence (B)
+
+**Intégration** : intégré (DEC-002 § 24).
 
 **Quoi.** Dans `docs/ARCHITECTURE.md` :
 - **§ 4**, outils des agents S2, tels que livrés :
@@ -56,6 +58,8 @@ Leur création fait apparaître douze changements hors de ces fichiers. **Aucun 
 
 ## 2. Listes blanches Bash des agents S2 (C)
 
+**Intégration** : intégré (DEC-002 § 25).
+
 **Quoi.** Dans `.claude/hooks/restreindre_bash.py`, ajouter à `LISTES_BLANCHES` et à `autorise_liste_blanche` :
 - `analyste-prod` : `python|python3|py scripts/sonde_sante.py …` uniquement ;
 - `gestionnaire-crise` : `python|python3|py scripts/sonde_sante.py …`, `git log …`, `git rev-parse …`, `gh run list …`, `gh run view …`. **Pas** `gh workflow run`.
@@ -70,6 +74,8 @@ Ajouter les cas correspondants dans `scripts/test_restreindre_bash.py`. `veilleu
 
 ## 3. `settings.json` : règles `allow` (C)
 
+**Intégration** : intégré (DEC-002 § 26).
+
 **Quoi.** Ajouter, en `python` et en `python3` :
 - `Bash(python scripts/test_tableau.py)` ;
 - `Bash(python scripts/sonde_sante.py *)` ;
@@ -83,6 +89,8 @@ Ajouter les cas correspondants dans `scripts/test_restreindre_bash.py`. `veilleu
 
 ## 4. R9 appliqué techniquement (C, B)
 
+**Intégration** : intégré (DEC-002 § 27).
+
 **Quoi.**
 - Dans `proteger_valide.py` : refuser Write, Edit et MultiEdit sur `PORTFOLIO.md` à la racine et sur `projets/*/TABLEAU.md`, avec un message qui renvoie à `python scripts/tableau.py`. Le script, lui, écrit par Python et n'est pas concerné.
 - Dans ARCHITECTURE § 6 : garde-fou « fichiers générés », et la précision que `TABLEAU.md` et `PORTFOLIO.md` **n'ont pas d'en-tête standard**. Ce ne sont pas des documents à valider, puisqu'ils changent à chaque génération. Ils commencent par `<!-- FICHIER GÉNÉRÉ par scripts/tableau.py — ne pas modifier à la main (R9) -->` et un encadré qui le rappelle.
@@ -92,6 +100,8 @@ Ajouter les cas correspondants dans `scripts/test_restreindre_bash.py`. `veilleu
 **Voie.** R11 : PR de C (hook et tests), PR de B (ARCHITECTURE), décision et changelog.
 
 ## 5. Champs facultatifs de date dans le ticket (A, avec D)
+
+**Intégration** : intégré (DEC-002 § 28).
 
 **Quoi.** Ajouter au frontmatter de `templates/ticket.md` trois champs **facultatifs** :
 - `statut_depuis: AAAA-MM-JJ` : date du dernier changement de statut ;
@@ -110,6 +120,8 @@ Ces estimations sont fragiles : une simple correction de faute change `maj_le`. 
 
 ## 6. Templates manquants et données simulées (A, lot 6)
 
+**Intégration** : intégré (DEC-002 § 29) pour `rapport-suivi.md` et les conventions de nommage (S2 § 3) ; reporté au lot 6 pour `runbook.md` (facultatif) et les données simulées.
+
 **Quoi.**
 - `templates/rapport-suivi.md` pour l'`analyste-prod`. En attendant, sa structure est fixée dans l'agent : en-tête standard, puis Sources (réel ou simulé), Disponibilité et version, Performances, Erreurs et bugs, Tickets créés, Rien à signaler.
 - `templates/runbook.md`, facultatif. Les 4 runbooks suivent déjà une structure commune : Déclencheurs et sévérité, Rôles, Détection, Minutes 0–15, Escalade, Points de décision humaine, Retour à la normale, Post-mortem, Ce que les agents ne font jamais, Points ouverts.
@@ -123,6 +135,8 @@ Ces estimations sont fragiles : une simple correction de faute change `maj_le`. 
 **Voie.** PR de A pour les templates (R11) ; les conventions sont appliquées au lot 6.
 
 ## 7. Workflow `tableau.yml` et CI (C, lot 5)
+
+**Intégration** : reporté (lot 5 : workflows ; DEC-002 § 30).
 
 **Quoi.**
 - `tableau.yml` :
@@ -138,6 +152,8 @@ Ces estimations sont fragiles : une simple correction de faute change `maj_le`. 
 **Voie.** Lot 5 (C).
 
 ## 8. Hypothèses de calcul de `tableau.py` dans ARCHITECTURE § 7 (B)
+
+**Intégration** : intégré (DEC-002 § 31).
 
 **Quoi.** Compléter les formules du § 7 par les hypothèses appliquées. Elles sont aussi affichées dans chaque `TABLEAU.md`.
 - **Capacité d'un agent : 7 h équivalent humain par jour ouvré, un ticket à la fois** ; des agents différents travaillent en parallèle. Arbitré par Ethan à la revue du plan. C'est la constante `CAPACITE_AGENT_H_JOUR`, révisable par décision.
@@ -155,6 +171,8 @@ Ces estimations sont fragiles : une simple correction de faute change `maj_le`. 
 
 ## 9. Tickets internes à l'ESN (B, décision)
 
+**Intégration** : reporté (décision humaine à prendre : budget et deadline d'un projet interne non décidés ; DEC-002 § 32).
+
 **Quoi.** Certains travaux n'appartiennent à aucun projet client :
 - la veille commune (`veille/`) ;
 - une piste d'outil pour toute l'ESN ;
@@ -169,6 +187,8 @@ Il faut une décision : un projet interne, par exemple `projets/esn-interne/` av
 
 ## 10. S2 (B pour le fichier, D pour le système)
 
+**Intégration** : intégré (DEC-002 § 33) : nouvelle S2-R7.
+
 **Quoi.** Dans `docs/systemes/S2-maintenance.md` :
 - **§ 2** : sources de l'`analyste-prod` = sonde `scripts/sonde_sante.py` (réel) et `rapports/logs-*` / `metriques-*` (simulé) ; sortie `rapports/suivi-AAAA-MM-JJ.md`.
 - **§ 6** : remplacer « Les runbooks arrivent dans un lot ultérieur » par les liens vers `runbooks/*.md`. Préciser que le `gestionnaire-crise` reçoit aussi les incidents de rollback créés par le `deployeur` (lot2-C, point 7), et qu'il ne lance jamais de rollback lui-même : il le demande au `deployeur` via le coordinateur (R1).
@@ -181,6 +201,8 @@ Il faut une décision : un projet interne, par exemple `projets/esn-interne/` av
 
 ## 11. README et `equipe/agents.md` (B)
 
+**Intégration** : intégré (DEC-002 § 34).
+
 **Quoi.**
 - `README.md`, section « Installer son poste » : `python -m pip install -r requirements.txt` (Mac : `python3 -m pip …`), et `python scripts/test_tableau.py` et `python scripts/test_sonde_sante.py` dans la liste des tests à garder verts. Section « État d'avancement » : lot 4 (`tableau.py`) livré en avance, avec le lot 2-D.
 - `equipe/agents.md`, paragraphe « Disponibilité » : les fichiers des agents de D existent désormais, ils sont donc assignables (règle 7 du `chef-de-projet`).
@@ -190,6 +212,8 @@ Il faut une décision : un projet interne, par exemple `projets/esn-interne/` av
 **Voie.** PR de B.
 
 ## 12. Temps partiel (A, B, information)
+
+**Intégration** : reporté (information sans suite tant que l'équipe ne demande pas `jours_travailles` ; DEC-002 § 35).
 
 **Quoi.** La fiche salarié ne décrit pas de semaine type. La capacité de Nadia (28 h, pas de travail le mercredi) est donc **moyennée** à 5,6 h par jour ouvré. Si l'équipe veut un calcul exact, il faudrait un champ facultatif `jours_travailles: [lun, mar, jeu, ven]` dans `templates/membre.md` ; `tableau.py` serait alors adapté (D).
 

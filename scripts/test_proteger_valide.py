@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests du hook .claude/hooks/proteger_valide.py (R5, R6). Responsable : C · Lot 2 (C).
+"""Tests du hook .claude/hooks/proteger_valide.py (R5, R6, R9). Responsable : C · Lot 2 (C).
 
 Lancement : python scripts/test_proteger_valide.py
 Chaque test crée un faux projet dans un dossier temporaire et lance le hook comme
@@ -253,6 +253,19 @@ class TestProtegerValide(unittest.TestCase):
 
     def test_24_templates_r5_prime(self):
         self.refuse(self.write("templates/cdc.md", nouveau_doc("VALIDÉ")), "R5")
+
+    # -- R9, garde-fou 8 : fichiers générés (lot2-D point 4, DEC-002) -------------
+    def test_25_tableau_projet_refuse(self):
+        self.refuse(self.write("projets/demo/TABLEAU.md", "# Tableau retouché\n"), "R9")
+
+    def test_26_portfolio_refuse(self):
+        self.fichier("PORTFOLIO.md", "<!-- FICHIER GÉNÉRÉ -->\n# Portfolio\n")
+        self.refuse(self.edit("PORTFOLIO.md", "# Portfolio", "# Portfolio corrigé"), "R9")
+
+    def test_27_generes_ailleurs_libres(self):
+        os.makedirs(self.chemin("docs"), exist_ok=True)
+        self.accepte(self.write("projets/demo/app/TABLEAU.md", "# doc de l'app\n"))
+        self.accepte(self.write("docs/PORTFOLIO.md", "# autre\n"))
 
     def test_19_fiche_membre(self):
         self.fichier("equipe/membres/ethan.md", MEMBRE)

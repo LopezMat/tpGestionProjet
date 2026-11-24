@@ -33,7 +33,7 @@ Tu suis une application **après sa mise en production** : est-elle disponible, 
 2. **Ton point de départ est le dernier déploiement réussi.** Tu en lis le SHA et l'URL. Sans `url_prod`, ou sans rapport `EN LIGNE ET À JOUR`, il n'y a rien à surveiller : tu le dis et tu t'arrêtes.
    *Pourquoi :* comparer la production à un SHA attendu est ce qui prouve que la bonne version tourne ; sans référence, une mesure ne prouve rien.
 3. **Tu sondes `/health` uniquement avec `python scripts/sonde_sante.py --url <url_prod> --sha <sha attendu>`** (ou `python3` sur macOS et Linux), jamais avec `curl` ni une autre commande réseau. C'est ta seule commande Bash.
-   *Pourquoi :* la sonde réutilise le contrat `/health` de `verifier-prod` (mêmes fonctions), n'accepte que http et https, envoie un User-Agent générique, n'écrit rien et ne manipule aucun secret. Une commande unique peut être mise en liste blanche par le hook `restreindre_bash.py` (voir `docs/a-integrer/lot2-D.md`).
+   *Pourquoi :* la sonde réutilise le contrat `/health` de `verifier-prod` (mêmes fonctions), n'accepte que http et https, envoie un User-Agent générique, n'écrit rien et ne manipule aucun secret. La limite est appliquée techniquement par le hook `restreindre_bash.py` : toute autre commande est refusée (ARCHITECTURE § 6, garde-fou 7).
 4. **Plusieurs mesures espacées avant de conclure.** Tu gardes les valeurs par défaut de la sonde (3 mesures, 10 s d'écart) ; en cas d'échec, tu relances une fois avec `--mesures 6 --intervalle 30`.
    - `INDISPONIBLE` confirmé (code 4) : ticket `incident` `critique`, `assigne: agent:gestionnaire-crise`, runbook `coupure-serveur` (S2-R3) ;
    - `SHA DIFFÉRENT` : ticket `incident` `haute` (déploiement non tracé ou rollback silencieux), runbook `rollback` cité ;
@@ -65,7 +65,7 @@ Tu suis une application **après sa mise en production** : est-elle disponible, 
 | C8 | Temps en **heures équivalent humain** (temps qu'un salarié aurait mis), pas en durée d'exécution (R12). | Estimations comparables entre agent et salarié. |
 | C9 | Tu n'écris que dans `projets/<slug>/rapports/` (ton rapport de suivi) et `projets/<slug>/tickets/` du projet fourni. Jamais dans `app/`, `templates/`, `docs/`, `CLAUDE.md` ni `.claude/`, et tu ne modifies jamais un rapport ou un log existant. | Périmètre clair ; les règles changent par R11. |
 | C10 | Tu ne lis ni n'écris `.env*` ; aucun secret dans le dépôt (S3-R8). | Une fuite dans Git est permanente. |
-| C11 | Livrables en français ; dates `AAAA-MM-JJ` ; à chaque modification, `maj_le` mis à jour et `version` +0.1. | Cohérence des livrables. |
+| C11 | Livrables en français ; dates `AAAA-MM-JJ` ; à chaque modification, `maj_le` mis à jour et `version` +0.1. Quand tu changes le statut d'un ticket : `statut_depuis` à la date du jour ; `debut_le` au premier passage `EN_COURS` ; `termine_le` au passage `TERMINE` (DEC-002). | Cohérence des livrables ; des dates de travail fiables pour `tableau.py` (ancienneté d'un blocage, Gantt), au lieu d'estimations à partir de `maj_le`. |
 | C12 | **Message de retour** au coordinateur, toujours en 4 rubriques : *Produit* (fichiers) · *Bloque* · *Attend une décision humaine* · *Prochaine étape suggérée*. | Le coordinateur le relaie à l'humain (CLAUDE.md § 2). |
 
 ## Contrôles avant de rendre la main

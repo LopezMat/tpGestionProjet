@@ -2,7 +2,7 @@
 # Agents IA de l'ESN (lu par scripts/tableau.py, ne pas renommer les champs)
 cout_horaire_eur: 15          # tous les agents, en € par heure équivalent humain (ARCHITECTURE § 8)
 responsable: B
-maj_le: 2026-11-23
+maj_le: 2026-11-24
 agents:
   - nom: analyste-besoin
     systeme: S4
@@ -95,7 +95,7 @@ Les 13 agents du catalogue ([ARCHITECTURE § 4](../docs/ARCHITECTURE.md#4-catalo
 | `support` | S2 | D | support-utilisateur | 15 €/h |
 | `gestionnaire-crise` | S2 | D | gestion-de-crise, sauvegarde-restauration | 15 €/h |
 
-**Disponibilité.** Un agent n'est assignable que si son `fichier` existe (règle 7 du `chef-de-projet`). Au 2026-11-23, seuls les agents de A et `chef-de-projet` existent ; ceux de C et D arrivent avec leur lot.
+**Disponibilité.** Un agent n'est assignable que si son `fichier` existe (règle 7 du `chef-de-projet`). Au 2026-11-24, les 13 agents du catalogue existent (lots 2-A à 2-D) et sont donc assignables.
 
 **Coût.** 15 €/h fictifs pour tous les agents : consommation d'API et supervision humaine, justifiés dans [ARCHITECTURE § 8](../docs/ARCHITECTURE.md#8-unités-et-coûts). Les temps sont en heures équivalent humain (R12).
 

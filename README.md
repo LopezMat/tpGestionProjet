@@ -38,7 +38,7 @@ Notre équipe joue une **ESN** dont les missions sont assurées par des agents I
 
 À faire une fois par membre de l'équipe, puis après chaque mise à jour de Python ou de Claude Code.
 
-1. **Python 3.10 ou plus.** Les hooks de protection et les scripts n'utilisent que la bibliothèque standard : aucun paquet à installer.
+1. **Python 3.10 ou plus.** Les hooks de protection n'utilisent que la bibliothèque standard. `scripts/tableau.py` a besoin de PyYAML : `python -m pip install -r requirements.txt` (macOS : `python3 -m pip install -r requirements.txt`).
    - Windows : installateur de [python.org](https://www.python.org/downloads/), en cochant **« Add python.exe to PATH »**. Ne pas compter sur le raccourci « python3 » du Microsoft Store.
    - macOS : `brew install python`.
    - Vérifier : `python --version` (Windows) ou `python3 --version` (macOS). Les hooks utilisent `python` s'il existe, sinon `python3`.
@@ -58,6 +58,8 @@ Dans Claude Code, `/hooks` doit lister deux hooks PreToolUse (`Write|Edit|MultiE
 python scripts/test_proteger_valide.py     # macOS : python3 scripts/test_proteger_valide.py
 python scripts/test_restreindre_bash.py    # macOS : python3 …
 python scripts/test_verifier_prod.py       # macOS : python3 …
+python scripts/test_tableau.py             # macOS : python3 …  (demande PyYAML)
+python scripts/test_sonde_sante.py         # macOS : python3 …
 ```
 
 Détail des risques et des parades : [docs/a-integrer/lot2-C.md](docs/a-integrer/lot2-C.md) (points 10 et 11).
@@ -68,9 +70,9 @@ Construction par lots. Le contenu de chaque lot est décrit dans [docs/ARCHITECT
 
 | Lot | Objet | État |
 |---|---|---|
-| 1 | Socle documentaire | en revue |
-| 2 | Agents | à venir |
-| 3 | Skills | à venir |
-| 4 | `tableau.py` et tests | à venir |
-| 5 | Settings, hooks, workflows | à venir |
+| 1 | Socle documentaire | en revue (intégration du lot 2 : DEC-002) |
+| 2 | Agents (13) | livré, en revue ; points transverses intégrés par DEC-002 |
+| 3 | Skills | livré en avance avec le lot 2-B (8 skills) et le lot 2-C (`verifier-prod`) ; skill `recette` ajouté par DEC-002 |
+| 4 | `tableau.py` et tests | livré en avance avec le lot 2-D, avec la sonde `sonde_sante.py` |
+| 5 | Settings, hooks, workflows | `settings.json` et les deux hooks livrés avec le lot 2-C ; workflows et ARCHITECTURE § 10 à venir |
 | 6 | Projet de démonstration | à venir |

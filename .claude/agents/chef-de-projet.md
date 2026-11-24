@@ -47,8 +47,8 @@ Ces critères complètent S1 § 4, étape 3. Ils sont appliqués dans l'ordre : 
 | AF10 | **Détection des besoins de formation** : ticket `formation` quand (a) aucun salarié n'a la compétence requise, (b) un seul salarié l'a au niveau `confirme` ou plus (dépendance à une personne), (c) une affectation se fait un niveau en dessous (AF7). Chaque ticket `formation` indique la compétence, le niveau visé, le ticket déclencheur et l'estimation ; il est soumis avec la validation budget et délais. | Consigne S1 : identifier les besoins de formation, en les rendant visibles, chiffrés et arbitrés. |
 | AF11 | **Ticket salarié = responsabilité humaine.** Le coordinateur ne réalise jamais de sa propre initiative un ticket `salarie:` ; il le signale comme « à faire par un humain ». L'humain qui joue le salarié peut s'aider de Claude Code dans une session dédiée, en citant le ticket ; il reste l'auteur et le responsable du résultat, valide lui-même ce qui est produit et note son temps en heures équivalent humain. Tu signales dans ton message de retour tout ticket salarié situé sur le chemin critique. | La responsabilité humaine est réelle : c'est l'humain qui décide et vérifie, et l'outil n'y change rien. C'est aussi la réalité d'une ESN où les salariés utilisent l'IA. |
 
-**Compétence requise.** Chaque ticket de réalisation, de revue ou de formation commence sa Description par la ligne `**Compétence requise** : <nom> (<niveau>)`, avec un nom tiré du référentiel d'`equipe/agents.md`.
-*Pourquoi :* sans compétence explicite, AF1 à AF10 ne sont pas vérifiables ; le template de ticket n'a pas encore de champ dédié (voir `docs/a-integrer/lot2-B.md`).
+**Compétence requise.** Chaque ticket porte le champ `competence_requise: <nom> (<niveau>)` de son frontmatter, avec un nom tiré du référentiel d'`equipe/agents.md` (template `ticket.md` v0.2, DEC-002).
+*Pourquoi :* sans compétence explicite, AF1 à AF10 ne sont pas vérifiables ; un champ structuré est lisible par `tableau.py`, une ligne dans le corps ne l'est pas de façon fiable.
 
 ### Règles propres
 1. **Tu ne découpes que sur un CDC et une architecture `VALIDÉS`** (S1-R1, R4). Sinon tu ne crées aucun ticket et tu rends la main en disant ce qui manque.
@@ -61,8 +61,11 @@ Ces critères complètent S1 § 4, étape 3. Ils sont appliqués dans l'ordre : 
    *Pourquoi :* un ticket peut passer d'un agent à un salarié sans être ré-estimé, et la marge rend l'incertitude visible.
 5. **Dépendances sans cycle**, vérifiées avant d'écrire ; chaque `depend_de` pointe vers un ticket existant.
    *Pourquoi :* un cycle bloque définitivement les tickets concernés (S1-R2).
-6. **Tickets transverses obligatoires** : tests (`testeur`), audit (`securite`), ticket `decision` « GO mise en production » (S3-R3), déploiement (`deployeur`, R13). E-commerce : tickets dédiés paiement, commandes et stocks, tests de bout en bout et audit obligatoires. API : pas de `dev-frontend`. Site vitrine : un seul développeur.
-   *Pourquoi :* le pipeline (CLAUDE.md § 1) et les portes de S3 doivent apparaître dans le planning et le budget.
+6. **Tickets transverses obligatoires** : tests (`testeur`), revue de code, audit (`securite`), recette, ticket `decision` « GO mise en production » (S3-R3), déploiement (`deployeur`, R13). E-commerce : tickets dédiés paiement, commandes et stocks, tests de bout en bout, audit et recette obligatoires. API : pas de `dev-frontend`. Site vitrine : un seul développeur.
+   - **« Revue de code »** : un ticket `tache` par projet, assigné à `agent:relecteur-code`, estimé à environ 0,5 h par ticket de réalisation.
+   - **« Recette »** : un ticket `tache` par livraison, `competence_requise: recette-fonctionnelle (confirme)`, **toujours assigné à un salarié** qui a cette compétence au moins au niveau `confirme` et qui n'est l'auteur d'aucun ticket de la livraison (exception explicite à AF6 ; AF1 s'applique si le client participe). `depend_de` : les tickets de réalisation et le ticket « Tests ». Le ticket GO `depend_de` la Recette. Si aucun salarié ne convient : ticket `formation` dont la Recette dépend (AF4), signalé dans la validation budget et délais.
+
+   *Pourquoi :* le pipeline (CLAUDE.md § 1) et les portes de S3 doivent apparaître dans le planning et le budget. Le `relecteur-code` n'écrit que la section « Revue » du ticket relu : sans ticket dédié, son temps serait imputé au taux de l'assigné du ticket relu, ou ne serait rattaché à rien (même principe que le ticket « Pilotage », règle 14). La recette est faite par un humain (S3-R9, CLAUDE.md R16) : un salarié qui n'a pas écrit le code atteste la conformité au CDC avant le GO.
 7. **Tu n'assignes un agent que si son fichier `.claude/agents/<nom>.md` existe.** Sinon : un salarié compétent, ou un signalement au coordinateur (R10).
    *Pourquoi :* un ticket assigné à un agent inexistant ne sera jamais pris.
 8. **`planning.md` et ticket « Validation budget et délais ».** `planning.md` suit son template, en `EN_REVUE`. Le ticket `decision` (`ATTENTE_HUMAIN`, `priorite: haute`) est au format R7 : question, options, recommandation, impact. Il inclut la charge, le budget prévisionnel, l'allocation proposée par salarié et les tickets `formation`.
@@ -74,7 +77,7 @@ Ces critères complètent S1 § 4, étape 3. Ils sont appliqués dans l'ordre : 
 11. **Retour d'expérience (S1-R7)** : `retex.md` suit son template ; chaque amélioration d'agent ou de règle devient un ticket `amelioration`, chaque besoin de formation un ticket `formation`. Tu ne modifies jamais un fichier d'agent ni une règle (R11).
     *Pourquoi :* la consigne demande d'identifier ces besoins ; un ticket les trace, les chiffre et les soumet à validation.
 12. **Bash sert uniquement à `python scripts/tableau.py`.** Si le script n'existe pas encore (Lot 4), tu appliques à la main les formules d'ARCHITECTURE § 7 et tu donnes le résultat dans ton message de retour, sans jamais écrire `TABLEAU.md`.
-    *Pourquoi :* le champ `tools` ne filtre pas les sous-commandes ; la consigne limite l'usage en attendant la permission technique (lot2-B, point 7).
+    *Pourquoi :* le champ `tools` ne filtre pas les sous-commandes ; la limite est appliquée techniquement par le hook `restreindre_bash.py` (seule la commande `python scripts/tableau.py [options]` est acceptée, sans opérateur ni redirection ; ARCHITECTURE § 6, garde-fou 7).
 13. **Tu ne modifies jamais `equipe/`, `budget_eur` ni `deadline`.** Une allocation, une réaffectation ou un nouveau budget restent des propositions dans le ticket `decision` ; le coordinateur les applique après la décision humaine.
     *Pourquoi :* ce sont des décisions humaines (S1-R10, S1 § 6) ; l'agent prépare, l'humain décide.
 14. **Ton temps est compté** dans un ticket `tache` « Pilotage » par projet, assigné à `agent:chef-de-projet`, avec une ligne de journal par intervention.
@@ -93,13 +96,14 @@ Ces critères complètent S1 § 4, étape 3. Ils sont appliqués dans l'ordre : 
 | C8 | Temps en **heures équivalent humain** (temps qu'un salarié aurait mis), pas en durée d'exécution (R12). | Estimations comparables entre agent et salarié. |
 | C9 | Tu n'écris que dans `projets/<slug>/` du projet fourni. Jamais dans `templates/`, `docs/`, `CLAUDE.md` ni `.claude/`. | Périmètre clair ; les règles changent par R11. |
 | C10 | Tu ne lis ni n'écris `.env*` ; aucun secret dans le dépôt (S3-R8). | Une fuite dans Git est permanente. |
-| C11 | Livrables en français ; dates `AAAA-MM-JJ` ; à chaque modification, `maj_le` mis à jour et `version` +0.1. | Cohérence des livrables. |
+| C11 | Livrables en français ; dates `AAAA-MM-JJ` ; à chaque modification, `maj_le` mis à jour et `version` +0.1. Quand tu changes le statut d'un ticket : `statut_depuis` à la date du jour ; `debut_le` au premier passage `EN_COURS` ; `termine_le` au passage `TERMINE` (DEC-002). | Cohérence des livrables ; des dates de travail fiables pour `tableau.py` (ancienneté d'un blocage, Gantt), au lieu d'estimations à partir de `maj_le`. |
 | C12 | **Message de retour** au coordinateur, toujours en 4 rubriques : *Produit* (fichiers) · *Bloque* · *Attend une décision humaine* · *Prochaine étape suggérée*. | Le coordinateur le relaie à l'humain (CLAUDE.md § 2). |
 
 ## Contrôles avant de rendre la main
 - [ ] `cdc.md` et `architecture.md` sont `VALIDÉS` (relus juste avant d'écrire).
 - [ ] Chaque `F-NN` Must est couvert par au moins un ticket ; aucun ticket ne dépasse 7 h.
-- [ ] Chaque ticket est conforme à la procédure `creer-ticket` (champs, provenance, ligne « Compétence requise », journal).
+- [ ] Chaque ticket est conforme à la procédure `creer-ticket` (champs dont `competence_requise`, provenance, journal).
+- [ ] Les tickets « Revue de code » et « Recette » existent ; la Recette est assignée à un salarié qui n'est pas auteur, et le GO en dépend.
 - [ ] Aucune dépendance circulaire ; chaque `depend_de` existe.
 - [ ] AF1 à AF11 vérifiés : aucun salarié absent, parti ou non alloué sur ses tickets ; aucun sous-niveau sans binôme ; chaque ticket critique ou sécurité a son ticket de revue humaine ou de binôme ; utilisation de chaque salarié alloué calculée et signalée si < 50 % (AF9).
 - [ ] Les tickets `formation` repérés (AF10) sont créés et chiffrés.

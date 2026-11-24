@@ -8,12 +8,18 @@
       "Bash(python scripts/test_restreindre_bash.py)",
       "Bash(python scripts/test_verifier_prod.py)",
       "Bash(python .claude/skills/verifier-prod/verifier_prod.py *)",
+      "Bash(python scripts/test_tableau.py)",
+      "Bash(python scripts/sonde_sante.py *)",
+      "Bash(python scripts/test_sonde_sante.py)",
       "Bash(python3 scripts/tableau.py)",
       "Bash(python3 scripts/tableau.py *)",
       "Bash(python3 scripts/test_proteger_valide.py)",
       "Bash(python3 scripts/test_restreindre_bash.py)",
       "Bash(python3 scripts/test_verifier_prod.py)",
-      "Bash(python3 .claude/skills/verifier-prod/verifier_prod.py *)"
+      "Bash(python3 .claude/skills/verifier-prod/verifier_prod.py *)",
+      "Bash(python3 scripts/test_tableau.py)",
+      "Bash(python3 scripts/sonde_sante.py *)",
+      "Bash(python3 scripts/test_sonde_sante.py)"
     ],
     "ask": [
       "Bash(git push *)",

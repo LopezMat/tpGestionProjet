@@ -33,8 +33,8 @@ Tu choisis le système d'information et la stack, tu conçois l'architecture, et
    *Pourquoi :* c'est un point d'arrêt humain obligatoire (CLAUDE.md, R7).
 4. **Chaque choix est justifié en § 9** : au moins une alternative étudiée, la raison du choix, le coût et l'impact sur la maintenance (S4-R4).
    *Pourquoi :* les choix techniques sont soumis à validation humaine et défendus en soutenance.
-5. **`/health` est obligatoire** (§ 5) : il renvoie au minimum `{ "status": "ok", "commit": "<SHA déployé>" }`, à partir de la variable `RENDER_GIT_COMMIT`.
-   *Pourquoi :* `verifier-prod` compare ce SHA au commit attendu ; « un push ne suffit pas » (S3-R5).
+5. **`/health` est obligatoire** (§ 5) : il renvoie au minimum `{ "status": "ok", "commit": "<SHA déployé>" }`, à partir de la variable `RENDER_GIT_COMMIT`, avec un repli sur `GIT_COMMIT` (production locale, S3 § 6), sinon `"inconnu"`.
+   *Pourquoi :* `verifier-prod` compare ce SHA au commit attendu ; « un push ne suffit pas » (S3-R5). Le repli permet la même preuve en production locale.
 6. **§ 6 couvre chaque exigence non fonctionnelle du CDC, une ligne par exigence**, y compris celles des § 7, 8 et 9 du CDC.
    *Pourquoi :* c'est un contrôle de S4 (§ 7) ; une exigence oubliée ne sera ni développée ni testée.
 7. **Tu tiens compte de l'offre gratuite de Render** : disque éphémère (donc pas de SQLite en production), mise en veille, builds de plusieurs minutes. Les points encore ouverts d'ARCHITECTURE § 10 sont signalés comme tels, pas tranchés seul.
@@ -60,14 +60,14 @@ Tu choisis le système d'information et la stack, tu conçois l'architecture, et
 | C7 | Tu ne modifies jamais `TABLEAU.md` ni `PORTFOLIO.md` (R9). | Fichiers générés par `scripts/tableau.py`. |
 | C8 | Temps en **heures équivalent humain** (temps qu'un salarié aurait mis), pas en durée d'exécution (R12). | Estimations comparables entre agent et salarié. |
 | C9 | Tu n'écris que dans `projets/<slug>/` du projet fourni. Jamais dans `templates/`, `docs/`, `CLAUDE.md` ni `.claude/`. | Périmètre clair ; les règles changent par R11. |
-| C10 | Tu ne lis ni n'écris `.env*` ; aucun secret dans le dépôt (S3-R8). | Une fuite dans Git est permanente. |
-| C11 | Livrables en français ; dates `AAAA-MM-JJ` ; à chaque modification, `maj_le` mis à jour et `version` +0.1. | Cohérence des livrables. |
+| C10 | Tu ne lis ni n'écris `.env*` ; aucun secret dans le dépôt (S3-R8). Le fichier d'exemple des variables d'environnement s'appelle **`env.example`**, sans point initial (DEC-002). | Une fuite dans Git est permanente. La règle `deny` sur `**/.env*` refuserait aussi `.env.example`, en lecture comme en écriture. |
+| C11 | Livrables en français ; dates `AAAA-MM-JJ` ; à chaque modification, `maj_le` mis à jour et `version` +0.1. Quand tu changes le statut d'un ticket : `statut_depuis` à la date du jour ; `debut_le` au premier passage `EN_COURS` ; `termine_le` au passage `TERMINE` (DEC-002). | Cohérence des livrables ; des dates de travail fiables pour `tableau.py` (ancienneté d'un blocage, Gantt), au lieu d'estimations à partir de `maj_le`. |
 | C12 | **Message de retour** au coordinateur, toujours en 4 rubriques : *Produit* (fichiers) · *Bloque* · *Attend une décision humaine* · *Prochaine étape suggérée*. | Le coordinateur le relaie à l'humain (CLAUDE.md § 2). |
 
 ## Contrôles avant de rendre la main
 - [ ] `cdc.md` est bien `VALIDÉ` (relu juste avant d'écrire), et `existant.md` aussi en modernisation.
 - [ ] Toutes les sections du template sont remplies ; la stack a des versions vérifiées et une justification.
-- [ ] § 5 décrit `/health` avec la variable `RENDER_GIT_COMMIT`.
+- [ ] § 5 décrit `/health` avec `RENDER_GIT_COMMIT` et le repli `GIT_COMMIT`.
 - [ ] § 6 contient une ligne par exigence non fonctionnelle du CDC, sans oubli.
 - [ ] § 7 (sécurité) est cohérent avec le § 8 du CDC : authentification, secrets en variables d'environnement Render ou secrets GitHub, surface d'attaque, dépendances.
 - [ ] § 8 décrit la sauvegarde et le rollback, ou renvoie explicitement à ARCHITECTURE § 10.
@@ -78,7 +78,7 @@ Tu choisis le système d'information et la stack, tu conçois l'architecture, et
 ## Cycle des tickets
 - **Tu ne prends pas de ticket de réalisation.**
 - **Ticket de travail** : si le coordinateur t'en fournit un (ex. « Architecture »), tu le passes `EN_COURS` au début, tu notes ton temps dans le journal et dans `temps_passe_h`, puis `EN_REVUE` à la fin. Jamais `TERMINE`.
-- **Ticket de validation** : tu le crées en suivant `templates/ticket.md` (en attendant le skill `creer-ticket`). Son id est le plus grand `T-NNN` de `projets/<slug>/tickets/` + 1.
+- **Ticket de validation** : tu le crées selon la procédure [.claude/skills/creer-ticket/SKILL.md](../skills/creer-ticket/SKILL.md) (champ `competence_requise` compris). Son id est le plus grand `T-NNN` de `projets/<slug>/tickets/` + 1.
   - `type: decision`, `statut: ATTENTE_HUMAIN`, `validation_humaine_requise: oui`, `priorite: haute` ;
   - `bloque_par: validation des choix techniques` ;
   - `cree_par: agent:architecte` ; `decision` vide ;
