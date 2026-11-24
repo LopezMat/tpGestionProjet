@@ -11,7 +11,7 @@ competence_requise: planification (confirme)   # nom du référentiel d'equipe/a
 estimation_h: 0.5           # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 0            # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
-bloque_par: décision humaine sur l'interlocuteur client et son allocation au projet (AF1, S1-R10)
+bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
 decision:     DEC-005              # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:coordinateur
@@ -19,7 +19,7 @@ cree_le: 2026-11-24
 maj_le: 2026-11-24
 statut_depuis: 2026-11-24   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le: 2026-11-24      # facultatif : date du passage TERMINE
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
 
@@ -57,3 +57,4 @@ termine_le:                 # facultatif : date du passage TERMINE
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-24 13:49 · agent:coordinateur · création · 0 h
 - 2026-11-24 · salarie:ethan · décision prise (DEC-005) · 0 h
+- 2026-11-24 18:30 · agent:coordinateur · suivi après déblocage humain (DEC-005) : termine_le renseigné, bloque_par vidé (ticket TERMINE) · 0 h

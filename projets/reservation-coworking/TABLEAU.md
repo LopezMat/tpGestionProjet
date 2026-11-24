@@ -1,6 +1,6 @@
 <!-- FICHIER GÉNÉRÉ par scripts/tableau.py — ne pas modifier à la main (R9). Régénérer : python scripts/tableau.py -->
 
-# Tableau de bord — Espace de coworking (Perpignan) (`reservation-coworking`)
+# Tableau de bord — Coworking Les Arcades (Perpignan) (`reservation-coworking`)
 
 > **Fichier généré** le 2026-11-24 par `scripts/tableau.py` à partir des tickets, seule source de vérité (R9). Toute modification à la main sera écrasée à la prochaine génération.
 
@@ -9,17 +9,19 @@
 | Indicateur | Valeur |
 |---|---|
 | Type · état | metier · cadrage |
-| Avancement (h estimées terminées / h estimées hors ANNULE) | 0,0 % (0,0 h / 8,0 h) |
-| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 1,0 h |
-| Budget consommé / prévu | 120,00 € / 6 000,00 € (2,0 %) |
-| Coût projeté à terminaison (consommé + reste × taux) | 135,00 € |
+| Avancement (h estimées terminées / h estimées hors ANNULE) | 51,6 % (8,0 h / 15,5 h) |
+| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 0,5 h |
+| Budget consommé / prévu | 262,50 € / 6 000,00 € (4,4 %) |
+| Coût projeté à terminaison (consommé + reste × taux) | 270,00 € |
 | Fin projetée | 2026-11-24 |
 | Deadline | 2026-12-18 |
 | Écart avec la deadline | -18 j ouvrés |
 
 ## Alertes
 
-Aucune alerte.
+| Type | Détail |
+|---|---|
+| Utilisation (info) | claire utilisé à 0,0 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
 
 ## Tickets par statut
 
@@ -29,10 +31,10 @@ Aucune alerte.
 | EN_COURS | 0 |
 | EN_REVUE | 1 |
 | BLOQUE | 0 |
-| ATTENTE_HUMAIN | 2 |
-| TERMINE | 0 |
+| ATTENTE_HUMAIN | 1 |
+| TERMINE | 3 |
 | ANNULE | 0 |
-| **Total** | 3 |
+| **Total** | 5 |
 
 ## Tickets BLOQUE
 
@@ -42,8 +44,7 @@ Aucun ticket bloqué.
 
 | Priorité | Ticket | Titre | Porteur | Question (bloque_par) | Ancienneté |
 |---|---|---|---|---|---|
-| haute | T-002 | Interlocuteur client et allocation initiale | agent:chef-de-projet | décision humaine sur l'interlocuteur client et son allocation au projet (AF1, S1-R10) | 0 j ouvré |
-| haute | T-003 | Validation du CDC | agent:analyste-besoin | validation humaine du CDC v0.4 et de DEC-006 | 0 j ouvré |
+| haute | T-005 | Choix techniques | agent:architecte | validation des choix techniques | 0 j ouvré |
 
 ## Tickets salariés à faire par un humain (AF11)
 
@@ -55,7 +56,11 @@ Aucun.
 
 ## Utilisation des salariés (AF9, indicateur)
 
-Aucun salarié alloué ni assigné.
+Période : du 2026-11-24 au 2026-12-18. Heures restantes assignées ÷ capacité allouée sur la période (calendrier et jours fériés compris). Sous 50,0 %, proposer d'ajuster l'allocation ; jamais de ticket artificiel.
+
+| Salarié | Allocation | h restantes assignées | Capacité allouée | Utilisation | Observation |
+|---|---|---|---|---|---|
+| claire | 10 % | 0,0 h | 13,3 h | 0,0 % | sous 50,0 % : ajuster l'allocation ? |
 
 ## Planning prévisionnel (Gantt)
 
@@ -65,10 +70,13 @@ gantt
     dateFormat YYYY-MM-DD
     axisFormat %d/%m
     section agent analyste-besoin
-    T-001 Rédaction du CDC :active, t001, 2026-11-24, 2026-11-25
-    T-003 Validation du CDC :crit, t003, 2026-11-24, 2026-11-25
+    T-001 Rédaction du CDC :done, t001, 2026-11-24, 2026-11-25
+    T-003 Validation du CDC :done, t003, 2026-11-24, 2026-11-25
+    section agent architecte
+    T-004 Architecture :active, t004, 2026-11-24, 2026-11-25
+    T-005 Choix techniques :crit, t005, 2026-11-24, 2026-11-25
     section agent chef-de-projet
-    T-002 Interlocuteur client et allocation initiale :crit, t002, 2026-11-24, 2026-11-25
+    T-002 Interlocuteur client et allocation initiale :done, t002, 2026-11-24, 2026-11-25
     section Jalons
     Deadline :milestone, deadline, 2026-12-18, 0d
 ```

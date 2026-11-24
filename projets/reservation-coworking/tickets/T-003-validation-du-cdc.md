@@ -11,7 +11,7 @@ competence_requise: redaction-cdc (confirme)   # nom du référentiel d'equipe/a
 estimation_h: 0.5           # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 0            # heures équivalent humain
 depend_de: [T-001]          # ex. [T-001, T-002]
-bloque_par: validation humaine du CDC v0.4 et de DEC-006
+bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
 decision:   DEC-006                # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:analyste-besoin
@@ -19,7 +19,7 @@ cree_le: 2026-11-24
 maj_le: 2026-11-24
 statut_depuis: 2026-11-24   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le: 2026-11-24      # facultatif : date du passage TERMINE
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
 
@@ -76,3 +76,4 @@ Ethan a retenu l'option 2 ; les réponses du client (transmises par Claire) sont
 - 2026-11-24 17:00 · agent:analyste-besoin · CDC révisé en v0.3 (arbitrages d'Ethan, DEC-006) ; statut du ticket inchangé, validation humaine de la v0.3 en attente · 0 h
 - 2026-11-24 18:00 · agent:analyste-besoin · CDC révisé en v0.4 ; statut du ticket inchangé, validation humaine de la v0.4 en attente · 0 h
 - 2026-11-24 · salarie:ethan · décision prise (DEC-006) · 0 h
+- 2026-11-24 18:30 · agent:coordinateur · suivi après déblocage humain (DEC-006) : termine_le renseigné, bloque_par vidé (ticket TERMINE) · 0 h

@@ -8,24 +8,25 @@
 
 | Projet | Client | Type | État | Avancement | Budget consommé / prévu | % | Fin projetée | Deadline | Écart (j ouvrés) | BLOQUE | ATTENTE_HUMAIN | Alertes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Espace de coworking (Perpignan) | metier | cadrage | 0,0 % | 120,00 € / 6 000,00 € | 2,0 % | 2026-11-24 | 2026-12-18 | -18 | 0 | 2 | 0 |
+| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 51,6 % | 262,50 € / 6 000,00 € | 4,4 % | 2026-11-24 | 2026-12-18 | -18 | 0 | 1 | 1 |
 
 ## Alertes
 
-Aucune alerte.
+| Projet | Type | Détail |
+|---|---|---|
+| reservation-coworking | Utilisation (info) | claire utilisé à 0,0 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
 
 ## Décisions humaines attendues
 
 | Priorité | Projet | Ticket | Titre | Question (bloque_par) |
 |---|---|---|---|---|
-| haute | reservation-coworking | T-002 | Interlocuteur client et allocation initiale | décision humaine sur l'interlocuteur client et son allocation au projet (AF1, S1-R10) |
-| haute | reservation-coworking | T-003 | Validation du CDC | validation humaine du CDC v0.4 et de DEC-006 |
+| haute | reservation-coworking | T-005 | Choix techniques | validation des choix techniques |
 
 ## Équipe : allocation et utilisation
 
 | Salarié | Statut | Niveau | Allocation totale | Par projet | Utilisation (AF9) |
 |---|---|---|---|---|---|
-| claire | actif | expert | 0 % | aucune | — |
+| claire | actif | expert | 10 % | reservation-coworking 10 % | reservation-coworking 0,0 % |
 | hugo | actif | debutant | 0 % | aucune | — |
 | karim | actif | expert | 0 % | aucune | — |
 | lea | actif | confirme | 0 % | aucune | — |
