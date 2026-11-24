@@ -33,4 +33,4 @@ Un document `VALIDÉ` est figé pour les agents (R6). Pour le faire évoluer, un
 | Id | Date | Sujet | Statut |
 |---|---|---|---|
 | [DEC-001](2026-11-23-DEC-001-arbitrages-plan-initial.md) | 2026-11-23 | Arbitrages du plan initial (Lot 1) | VALIDÉ |
-| [DEC-002](2026-11-24-DEC-002-integration-lot2-recette.md) | 2026-11-24 | Intégration du Lot 2, recette humaine, listes blanches Bash S2 | EN_REVUE |
+| [DEC-002](2026-11-24-DEC-002-integration-lot2-recette.md) | 2026-11-24 | Intégration du Lot 2, recette humaine, listes blanches Bash S2 | VALIDÉ |

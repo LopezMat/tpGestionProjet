@@ -1,8 +1,8 @@
 ---
 titre: Intégration du Lot 2, recette humaine et listes blanches Bash S2
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: B
-version: 0.1
+version: 1.0
 maj_le: 2026-11-24
 valide_par:
 decision: DEC-002
