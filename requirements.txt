@@ -1,0 +1,4 @@
+# Dépendances Python des scripts de l'ESN (responsable : D).
+# Installation : python -m pip install -r requirements.txt   (Mac : python3 -m pip …)
+# scripts/tableau.py lit le frontmatter YAML des tickets, projets et fiches d'équipe.
+PyYAML>=6.0
