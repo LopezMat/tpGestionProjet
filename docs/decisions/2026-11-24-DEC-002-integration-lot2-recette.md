@@ -4,7 +4,7 @@ statut: VALIDÉ
 responsable: B
 version: 1.0
 maj_le: 2026-11-24
-valide_par:
+valide_par: Ethan
 decision: DEC-002
 id: DEC-002
 date: 2026-11-24
