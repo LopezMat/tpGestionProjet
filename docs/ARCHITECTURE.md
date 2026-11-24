@@ -1,11 +1,11 @@
 ---
 titre: Architecture du système multi-agents
-statut: VALIDÉ
+statut: EN_REVUE
 responsable: B
 version: 1.1
 maj_le: 2026-11-24
-valide_par: Ethan
-decision: DEC-002
+valide_par: 
+decision: 
 ---
 
 # ARCHITECTURE — le « comment » de l'ESN virtuelle
