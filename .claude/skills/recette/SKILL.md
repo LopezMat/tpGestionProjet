@@ -1,6 +1,6 @@
 ---
 name: recette
-description: Procédure du salarié recetteur (humain) pour la recette d'une livraison au regard du CDC, porte 3 bis de S3 - liste des critères d'acceptation du CDC, test de l'app au SHA candidat, tickets bug via creer-ticket pour chaque KO, re-test sur le nouveau SHA, puis rapports/recette-AAAA-MM-JJ.md avec le verdict CONFORME ou NON CONFORME. À utiliser par l'humain qui porte le ticket « Recette », dans une session dédiée, quand les rapports de tests (CONFORME) et de sécurité (NON BLOQUANT) portent sur le SHA candidat. Jamais par un agent.
+description: Procédure du salarié recetteur (humain) pour la recette d'une livraison au regard du CDC, porte 3 bis de S3 - liste des critères d'acceptation du CDC, test de l'app au SHA candidat, tickets bug via creer-ticket pour chaque KO, re-test sur le nouveau SHA, puis rapports/recette-AAAA-MM-JJ.md avec le verdict CONFORME ou NON CONFORME. À utiliser par l'humain qui porte le ticket « Recette », dans une session dédiée, quand les rapports de tests (CONFORME) et de sécurité (NON BLOQUANT) portent sur le SHA candidat ; variante pour un recetteur sans Claude Code (note par bug dans support/entrant/, tickets créés par support via le coordinateur). Jamais par un agent.
 ---
 
 <!-- Skill ESN · système S3 · responsable : C · DEC-002 -->
@@ -31,6 +31,25 @@ Quand le ticket « Recette » d'une livraison devient prenable : ses dépendance
    Rapport en `statut: EN_REVUE`. Dans le ticket « Recette » : ligne de journal (verdict, SHA, nombre de critères OK/KO, temps en heures équivalent humain) et `temps_passe_h`. Si le verdict est CONFORME et que tous ses critères sont cochés, **le recetteur** passe le ticket `TERMINE` (`termine_le`, R13) ; sinon il reste `EN_COURS`.
 8. **Rendre la main au coordinateur** : verdict, SHA, tickets bug créés. Avec un verdict CONFORME, le coordinateur peut présenter le ticket GO (R16).
 
+## Variante : recetteur sans Claude Code (DEC-004)
+Quand le recetteur n'a pas Claude Code, les étapes 1 à 7 restent les siennes, avec les différences suivantes.
+1. **Le rapport.** Le recetteur rédige lui-même `rapports/recette-AAAA-MM-JJ.md` dans son éditeur, à partir de `templates/rapport-recette.md` : critères, résultats, observations et verdict. Le coordinateur peut lui donner le SHA candidat, lu dans les rapports de tests et de sécurité ; il ne remplit rien d'autre.
+2. **Une note par KO.** Le recetteur dépose `projets/<slug>/support/entrant/recette-AAAA-MM-JJ-NN.md` (`NN` sur 2 chiffres, de 01 au nombre de bugs de la journée) et ses captures dans `projets/<slug>/support/entrant/captures/`, nommées de préférence `recette-AAAA-MM-JJ-NN-<n>.png`. Gabarit de la note :
+   ```
+   Source : recette (<Prénom>)
+   Rapport lié : rapports/recette-AAAA-MM-JJ.md
+   SHA testé : <sha>
+   Exigence : F-NN (si connue)
+   Étapes :
+   1. …
+   Attendu : <le critère du CDC>
+   Obtenu : …
+   Captures : captures/recette-AAAA-MM-JJ-NN-1.png
+   ```
+3. **Les tickets bug.** Le coordinateur crée le ticket « Support utilisateurs » du projet s'il n'existe pas (`creer-ticket`, `type: tache`, `assigne: agent:support`), puis lance `support`. Celui-ci dédoublonne et crée un ticket `bug` par note, avec `cree_par: salarie:<prenom>` (règle 10 de `support`).
+4. **Le report des ids.** Le coordinateur reporte chaque id créé dans la colonne « Ticket bug lié » du rapport, sur la ligne du critère concerné, et dans la section « Bugs créés » ; il incrémente `version` de 0.1 et met `maj_le` à jour. Il le fait seulement si le rapport est `BROUILLON` ou `EN_REVUE` (R6) ; sinon il remet les ids au recetteur. Si la note ne permet pas de retrouver la ligne du critère, il le signale au recetteur sans deviner.
+5. **Le retour au recetteur.** Le coordinateur lui transmet la liste des tickets créés et leurs priorités proposées, dont il a besoin pour le verdict (S3-R9). Le journal, le temps et le statut du ticket « Recette » restent tenus par le recetteur lui-même (R13, R15).
+
 ## Règles
 - **Claude n'écrit jamais un résultat que l'humain n'a pas constaté.** Il ne coche rien, ne déduit aucun `OK` des tests automatisés et ne choisit pas le verdict.
   *Pourquoi :* la valeur de la recette est le regard humain sur l'app, comme le client l'utilisera ; un résultat rédigé par l'IA la viderait de son sens (S3-R9, R15).
@@ -42,6 +61,8 @@ Quand le ticket « Recette » d'une livraison devient prenable : ses dépendance
   *Pourquoi :* la recette vérifie l'engagement pris envers le client, pas une version reformulée.
 - **Un rapport NON CONFORME bloque le GO** ; seul un nouveau rapport CONFORME le débloque.
   *Pourquoi :* « pas de GO sans rapport de recette CONFORME » (S3-R9, CLAUDE.md R16).
+- **Dans la variante sans Claude Code, le coordinateur n'écrit dans le rapport que des ids de tickets** (colonne « Ticket bug lié », section « Bugs créés »), jamais un résultat, une observation ni le verdict.
+  *Pourquoi :* le résultat et le verdict restent constatés par l'humain ; l'id n'est qu'un lien factuel vers le ticket créé à partir de sa note.
 
 ## Produit
 - `projets/<slug>/rapports/recette-AAAA-MM-JJ.md` (template `rapport-recette.md`, `EN_REVUE`) ;
@@ -58,3 +79,4 @@ Quand le ticket « Recette » d'une livraison devient prenable : ses dépendance
 - [ ] Chaque KO a son ticket bug lié.
 - [ ] Le verdict suit S3-R9 ; le rapport est en `EN_REVUE`.
 - [ ] Le ticket « Recette » porte le journal, le temps et les dates de statut.
+- [ ] Variante sans Claude Code : chaque note `recette-*.md` a son ticket bug ; chaque KO du rapport a son id reporté.
