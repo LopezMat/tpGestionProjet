@@ -1,0 +1,37 @@
+# Porte 2 de S3 (automatisme) : tous les tests des scripts de l'ESN.
+# Responsable : C · Lot 5 · DEC-003. Contrôle uniquement : aucun déploiement (pas de deploy.yml).
+# Le test réel de la production locale (TestReel de test_prod_locale.py) tourne aussi ici,
+# puisque les runners Ubuntu ont Docker : c'est la répétition du test de rollback (S3-R7).
+# Les tests des apps clientes (projets/<slug>/app/**) s'ajouteront au lot 6, quand la stack sera connue.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests-scripts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Dépendances
+        run: python -m pip install -r requirements.txt
+      - name: Tests (scripts/test_*.py)
+        run: |
+          set -e
+          for t in scripts/test_*.py; do
+            echo "::group::$t"
+            python "$t"
+            echo "::endgroup::"
+          done

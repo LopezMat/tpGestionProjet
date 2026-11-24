@@ -2,7 +2,7 @@
 titre: Runbook — Déploiement défectueux et rollback
 statut: EN_REVUE
 responsable: D
-version: 0.1
+version: 0.2
 maj_le: 2026-11-24
 valide_par:
 decision:
@@ -29,7 +29,7 @@ decision:
 | Revue humaine | salarié `ci-cd` ≥ confirme (aujourd'hui : Nadia) | revue des déploiements et rollbacks (AF3) |
 
 ## 1. Détection
-- **Fichier d'état de `verifier-prod`** : `projets/<slug>/rapports/verifier-prod-<sha7>.json`, champ `resultat` à `ÉCHEC`. Ses `tentatives` donnent le diagnostic :
+- **Fichier d'état de `verifier-prod`**, un par vérification : `projets/<slug>/rapports/verifier-prod-<sha7>-<AAAAMMJJ-HHMMSS>.json` (ligne `ETAT_VERIFICATION` du rapport), champ `resultat` à `ÉCHEC`. Ses `tentatives` donnent le diagnostic :
 
   | Résultat des tentatives | Lecture probable |
   |---|---|
@@ -46,12 +46,12 @@ decision:
 |---|---|---|
 | 0 | Ticket `incident` `EN_COURS`, runbook noté au journal | agent |
 | 0–5 | Lire le rapport de déploiement (SHA attendu, version précédente, sauvegarde) et le fichier d'état du SHA attendu ; classer le symptôme (tableau § 1) | agent |
-| 5–8 | **Le rollback est-il fait et vérifié ?** Le fichier d'état du SHA précédent (`verifier-prod-<sha7 précédent>.json`) doit avoir `resultat: EN LIGNE ET À JOUR`. Sinon, confirmer par la sonde : `python scripts/sonde_sante.py --url <url_prod> --sha <sha précédent>` | agent |
+| 5–8 | **Le rollback est-il fait et vérifié ?** La section « Rollback » du rapport cite le code retour de `rollback_local.py` (0 attendu), et le fichier d'état **du rollback** (`verifier-prod-<sha7 précédent>-<horodatage>.json`, le plus récent) doit avoir `resultat: EN LIGNE ET À JOUR`. Sinon, confirmer par la sonde : `python scripts/sonde_sante.py --url <url_prod> --sha <sha précédent>` | agent |
 | 5–8 | Si le rollback n'a pas été lancé (régression après un déploiement vérifié) : préparer la décision « rollback ou correctif » (§ 4) | agent |
 | 8–12 | Une **migration de données** faisait-elle partie du déploiement (`architecture.md` § 4 et § 8, diff du SHA) ? Si oui, le rollback du code peut ne pas suffire → [perte-donnees.md](perte-donnees.md) | agent |
 | 12–15 | Rollback en échec, ou service toujours indisponible → [coupure-serveur.md](coupure-serveur.md) et escalade immédiate ; sinon, préparer le ticket `bug` du correctif ; message de retour | agent |
 
-**Relance de `verifier-prod`** (par le `deployeur`) : `python .claude/skills/verifier-prod/verifier_prod.py --url <url_prod> --sha <sha> --etat projets/<slug>/rapports/verifier-prod-<sha7>.json`. Codes : 0 en ligne et à jour ; 1 échec ; 2 erreur d'usage (corriger l'appel, ne jamais conclure) ; **3 en cours : relancer exactement la même commande**, l'état est repris.
+**Rollback** (par le `deployeur`, confirmation humaine `ask`) : `python scripts/rollback_local.py --projet <slug>`, qui relance l'image `esn-<slug>:<sha précédent>` sans rebuild puis la vérifie. Codes : 0 restaurée et vérifiée ; 1 rollback non vérifié (→ [coupure-serveur.md](coupure-serveur.md), escalade immédiate) ; 2 précondition (image absente, pas de version précédente vérifiée, dernier déploiement vérifié sans `--sha`) ; **3 en cours : relancer exactement la commande `verifier_prod` affichée**, l'état est repris. Le script ne restaure jamais de données.
 
 ## 3. Escalade
 | Niveau | Qui | Quand |
@@ -82,6 +82,5 @@ Dans les **2 jours ouvrés** (S2-R5), sans blâme, selon [templates/post-mortem.
 Le `gestionnaire-crise` ne lance jamais de déploiement ni de rollback lui-même (il le demande au `deployeur` via le coordinateur) ; aucun agent ne restaure de données ni ne pousse de code (S2-R1, S2-R4, S3-R3).
 
 ## Points ouverts
-- **Mécanisme de rollback** : redéployer le SHA précédent par le deploy hook (si le paramètre de commit est supporté) ou `git revert` puis redéploiement, et **son test tracé dans un rapport** (S3-R7) : à trancher au lot 5 ([ARCHITECTURE § 10.3](../docs/ARCHITECTURE.md#10-à-trancher-au-lot-workflows)). **Tant qu'il n'existe pas, le `deployeur` s'arrête** et les humains décident de la marche à suivre.
-- Sauvegarde Postgres avant déploiement : [ARCHITECTURE § 10.2](../docs/ARCHITECTURE.md#10-à-trancher-au-lot-workflows), lot 5.
-- Délais de `verifier-prod` (30 s, 15 min) : [ARCHITECTURE § 10.1](../docs/ARCHITECTURE.md#10-à-trancher-au-lot-workflows), lot 5.
+- **Rapport du test de rollback (S3-R7)** sur le projet de démonstration : lot 6, avant la soutenance. Le mécanisme est tranché par [DEC-003](../docs/decisions/2026-11-24-DEC-003-production-locale-docker.md) ([ARCHITECTURE § 10](../docs/ARCHITECTURE.md#10-décisions-du-lot-5--vérification-sauvegardes-rollback)) : relance de l'image étiquetée du SHA précédent ; sauvegarde `pg_dump` avant chaque déploiement ; vérification toutes les 5 s pendant 120 s au plus. Il est rejoué automatiquement par le test réel de `scripts/test_prod_locale.py` (CI).
+- Une **migration de données** rend le retour à l'image précédente risqué : à signaler dans `architecture.md` § 8 (règle 7 de l'`architecte`).

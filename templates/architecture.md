@@ -7,7 +7,7 @@ maj_le: AAAA-MM-JJ
 valide_par:
 decision:
 ---
-<!-- modèle : templates/architecture.md v0.1 · responsable du modèle : A -->
+<!-- modèle : templates/architecture.md v0.2 · responsable du modèle : A -->
 
 # Architecture technique — <projet>
 
@@ -22,7 +22,7 @@ Source : [cdc.md](cdc.md) (doit être VALIDÉ)
 | Frontend | | | |
 | Backend | | | |
 | Base de données | | | |
-| Hébergement | Render (par défaut) | | |
+| Hébergement | Production locale Docker (par défaut, DEC-003) | | |
 
 ## 3. Schéma
 ```mermaid
@@ -34,7 +34,7 @@ flowchart LR
 <modèle de données, données sensibles, persistance en production>
 
 ## 5. Endpoint `/health` (obligatoire)
-Renvoie au minimum `{ "status": "ok", "commit": "<SHA déployé>" }` (variable `RENDER_GIT_COMMIT` sur Render).
+Renvoie au minimum `{ "status": "ok", "commit": "<SHA déployé>" }`, à partir de `GIT_COMMIT`, figé dans l'image par `ARG GIT_COMMIT` (repli : `RENDER_GIT_COMMIT`, sinon `"inconnu"`).
 
 ## 6. Couverture des exigences non fonctionnelles du CDC
 | Exigence CDC | Réponse architecturale |
@@ -44,7 +44,7 @@ Renvoie au minimum `{ "status": "ok", "commit": "<SHA déployé>" }` (variable `
 <authentification, secrets, surface d'attaque, dépendances>
 
 ## 8. Déploiement, sauvegarde et rollback
-<service Render, base, stratégie de sauvegarde, rollback>
+<contrat de l'image : `app/Dockerfile` (`ARG GIT_COMMIT`, écoute sur `$PORT`, base dans `DATABASE_URL`) ; base (Postgres 16 du modèle `deploiement/docker-compose.yml`) ; migrations de données et leur compatibilité avec un rollback ; sauvegarde et rollback, ou renvoi à ARCHITECTURE § 10>
 
 ## 9. Décisions techniques
 | # | Décision | Alternatives étudiées | Pourquoi | Coût / impact maintenance |

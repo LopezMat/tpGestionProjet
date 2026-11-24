@@ -2,10 +2,10 @@
 titre: Système 2 — Suivi et maintenance
 statut: VALIDÉ
 responsable: B
-version: 1.1
+version: 1.2
 maj_le: 2026-11-24
 valide_par: Ethan
-decision: DEC-002
+decision: DEC-003
 ---
 
 # Système 2 — Suivi et maintenance
@@ -84,14 +84,17 @@ Une **régression constatée après un déploiement vérifié** (SHA en ligne = 
 | Situation | Runbook | S'appuie sur |
 |---|---|---|
 | Perte de données | [runbooks/perte-donnees.md](../../runbooks/perte-donnees.md) | sauvegarde prise avant chaque déploiement (S3) |
-| Coupure du serveur | [runbooks/coupure-serveur.md](../../runbooks/coupure-serveur.md) | `/health`, tableau de bord Render, rollback |
+| Coupure du serveur | [runbooks/coupure-serveur.md](../../runbooks/coupure-serveur.md) | `/health` (sonde), état des conteneurs constaté par l'humain d'exploitation (`docker compose ps`, `logs`), rollback |
 | Intrusion | [runbooks/intrusion.md](../../runbooks/intrusion.md) | rotation des secrets, analyse des logs, `securite` |
-| Déploiement défectueux | [runbooks/rollback.md](../../runbooks/rollback.md) | procédure de rollback testée (S3), skill `verifier-prod` et ses fichiers d'état `rapports/verifier-prod-<sha7>.json` |
+| Déploiement défectueux | [runbooks/rollback.md](../../runbooks/rollback.md) | procédure de rollback testée (S3, `scripts/rollback_local.py`), skill `verifier-prod` et ses fichiers d'état `rapports/verifier-prod-<sha7>-<AAAAMMJJ-HHMMSS>.json`, un par vérification |
 
 Les 4 runbooks sont livrés (Lot 2, D). Le `gestionnaire-crise` reçoit aussi les **incidents de rollback** créés par le `deployeur` après un échec de vérification (S3-R6). **Il ne lance jamais de rollback lui-même** : il le demande au `deployeur` via le coordinateur (R1).
 *Pourquoi :* un seul agent déclenche les déploiements, après les contrôles de S3 ; le gestionnaire de crise diagnostique et prépare les décisions.
 
-Les mécanismes de sauvegarde et de rollback sont à trancher au lot workflows ([ARCHITECTURE § 10](../ARCHITECTURE.md#10-à-trancher-au-lot-workflows)).
+Les mécanismes de sauvegarde et de rollback sont tranchés par [DEC-003](../decisions/2026-11-24-DEC-003-production-locale-docker.md) ([ARCHITECTURE § 10](../ARCHITECTURE.md#10-décisions-du-lot-5--vérification-sauvegardes-rollback)) :
+- une sauvegarde `pg_dump` est prise avant chaque déploiement, dans `deploiement/local/<slug>/sauvegardes/` (ignoré par Git), et les 10 dernières sont gardées ;
+- le rollback relance l'image étiquetée du SHA précédent, puis la vérifie ;
+- une restauration de données reste toujours une décision humaine (S2-R4, runbook `perte-donnees`).
 
 ## 7. Contrôles
 - Chaque ticket S2 contient : la source, les étapes de reproduction ou les preuves, la priorité proposée et sa justification.

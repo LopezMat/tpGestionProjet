@@ -7,7 +7,7 @@ maj_le: AAAA-MM-JJ
 valide_par:
 decision:
 ---
-<!-- modèle : templates/rapport-deploiement.md v0.2 · responsable du modèle : A -->
+<!-- modèle : templates/rapport-deploiement.md v0.3 · responsable du modèle : A -->
 
 # Rapport de déploiement — <projet> — <date>
 
@@ -23,10 +23,13 @@ decision:
 ## Déploiement
 - **SHA attendu** :
 - **Version précédente (SHA)** :
-- **Sauvegarde** : <référence de l'artefact / emplacement>
-- **Exécution** : <lien vers le run deploy.yml>
-- **Hébergeur / service** :
+- **Sauvegarde** : <ligne SAUVEGARDE : chemin du dump dans deploiement/local/<slug>/sauvegardes/, ou « aucune (première mise en service) »>
+- **Exécution** : <commande `python scripts/deployer_local.py --projet … --sha …`, confirmée par <prénom>, et son code retour>
+- **Image** : <ligne IMAGE : esn-<slug>:<sha>>
+- **Hébergeur / service** : <production locale Docker (mode local), projet compose esn-<slug>>
 - **URL** :
+- **Fichier d'état** : <ligne ETAT_VERIFICATION>
+
 
 ## Vérification en ligne (verifier-prod)
 | Tentative | Heure | Code HTTP | SHA renvoyé | Résultat |
@@ -37,6 +40,8 @@ decision:
 
 ## Rollback (si échec)
 - Déclenché : <oui / non>
+- Commande : <`python scripts/rollback_local.py --projet …`, confirmée par <prénom>, et son code retour>
 - Version restaurée :
-- Vérification après rollback :
+- Vérification après rollback : <fichier d'état et résultat>
+- Données : <non restaurées ; dernière sauvegarde : … (restauration = décision humaine)>
 - Ticket incident : T-…

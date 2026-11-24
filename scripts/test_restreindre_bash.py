@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests du hook .claude/hooks/restreindre_bash.py (Bash par agent). Responsable : C · Lot 2 (C).
+"""Tests du hook .claude/hooks/restreindre_bash.py (Bash par agent). Responsable : C · Lot 2 (C), lot 5.
 
 Lancement : python scripts/test_restreindre_bash.py
 Le hook est lancé comme par Claude Code : JSON sur stdin, avec ou sans `agent_type`.
@@ -22,6 +22,16 @@ def lancer(commande, agent=None, args=(), brut=None):
     donnees = brut if brut is not None else json.dumps(entree).encode("utf-8")
     r = subprocess.run([sys.executable, HOOK, *args], input=donnees, capture_output=True)
     return r.returncode, r.stderr.decode("utf-8", errors="replace")
+
+
+def decision(commande, agent=None):
+    """Décision JSON écrite sur stdout (ou None) et code de sortie."""
+    entree = {"tool_name": "Bash", "tool_input": {"command": commande}}
+    if agent:
+        entree["agent_type"] = agent
+    r = subprocess.run([sys.executable, HOOK], input=json.dumps(entree).encode("utf-8"), capture_output=True)
+    sortie = r.stdout.decode("utf-8", errors="replace").strip()
+    return r.returncode, (json.loads(sortie)["hookSpecificOutput"] if sortie else None)
 
 
 class TestRestreindreBash(unittest.TestCase):
@@ -72,8 +82,23 @@ class TestRestreindreBash(unittest.TestCase):
 
     # -- deployeur ------------------------------------------------------------
     def test_deployeur(self):
-        self.ok("gh workflow run deploy.yml -f projet=demo -f sha=abc1234", "deployeur")
-        self.ok("gh run view 123 --log", "deployeur")
+        # DEC-003 : production locale Docker ; deploy.yml et gh run n'existent plus pour lui.
+        d = "deployeur"
+        self.ok("python scripts/deployer_local.py --projet demo --sha abc1234", d)
+        self.ok("python3 ./scripts/deployer_local.py --projet reservation-salle --sha 0123456789abcdef", d)
+        self.ok("py scripts/rollback_local.py --projet demo", d)
+        self.ok("python scripts/rollback_local.py --projet demo --sha abc1234", d)
+        self.ko("gh workflow run deploy.yml -f projet=demo -f sha=abc1234", d, d)
+        self.ko("gh run view 123 --log", d, d)
+        self.ko("gh run list", d, d)
+        self.ko("docker compose -p esn-demo down -v", d, d)
+        self.ko("docker run --rm postgres:16-alpine", d, d)
+        self.ko("python scripts/deployer_local.py --projet demo --sha abc1234; docker rm -f x", d, d)
+        self.ko("python scripts/deployer_local.py --projet demo --sha $(git rev-parse HEAD)", d, d)
+        self.ko("ESN_DOCKER_SIMULATION=x.py python scripts/deployer_local.py --projet demo --sha abc1234", d, d)
+        self.ko("python scripts/prod_locale.py", d, d)
+        self.ko("python -c 'import scripts.deployer_local'", d, d)
+        self.ko("python scripts/deployer_local.py --projet 'demo x' --sha abc1234", d, d)
         self.ok("git rev-parse HEAD", "deployeur")
         self.ok("python .claude/skills/verifier-prod/verifier_prod.py --url https://x.onrender.com --sha abc1234",
                 "deployeur")
@@ -130,6 +155,34 @@ class TestRestreindreBash(unittest.TestCase):
         self.ko("git log | head", g, g)
         self.ko("git push origin main", g, "S3-R3")
         self.ko("rm -rf app/", g, "rm")
+        # le gestionnaire-crise ne déploie ni ne rétablit jamais lui-même (runbook rollback)
+        self.ko("python scripts/rollback_local.py --projet demo", g, g)
+        self.ko("python scripts/deployer_local.py --projet demo --sha abc1234", g, g)
+
+    # -- confirmation humaine du déploiement local (DEC-003, S3-R3) -------------
+    def test_deploiement_ask(self):
+        for agent in ("deployeur", None):
+            for commande in ("python scripts/deployer_local.py --projet demo --sha abc1234",
+                             "python3 scripts/rollback_local.py --projet demo"):
+                code, dec = decision(commande, agent)
+                self.assertEqual(code, 0, commande)
+                self.assertIsNotNone(dec, "{!r} ({}) aurait dû demander une confirmation".format(commande, agent))
+                self.assertEqual(dec["permissionDecision"], "ask")
+                self.assertIn("S3-R3", dec["permissionDecisionReason"])
+        # session principale : variantes de chemin et enveloppes
+        for commande in ("python ./scripts/deployer_local.py --projet demo --sha abc1234",
+                         "cd . && python C:/depot/scripts/rollback_local.py --projet demo",
+                         "bash -c 'python scripts/deployer_local.py --projet demo --sha abc1234'",
+                         "timeout 600 py -u scripts/deployer_local.py --projet demo --sha abc1234"):
+            code, dec = decision(commande)
+            self.assertEqual(code, 0, commande)
+            self.assertIsNotNone(dec, commande)
+            self.assertEqual(dec["permissionDecision"], "ask")
+        # rien à confirmer pour les autres commandes
+        self.assertEqual(decision("python scripts/test_prod_locale.py"), (0, None))
+        self.assertEqual(decision("git rev-parse HEAD", "deployeur"), (0, None))
+        self.assertEqual(decision("python .claude/skills/verifier-prod/verifier_prod.py --url "
+                                  "http://localhost:8080 --sha abc1234", "deployeur"), (0, None))
 
     # -- règles communes (dev, testeur, securite…) ----------------------------
     def test_dev_git_local(self):

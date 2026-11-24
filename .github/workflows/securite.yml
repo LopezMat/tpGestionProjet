@@ -1,0 +1,56 @@
+# Porte 3 de S3 (automatisme) : dépendances, code des scripts et secrets.
+# Responsable : C · Lot 5 · DEC-003. Contrôle uniquement : ne corrige rien (S3-R1).
+name: securite
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 5 * * 1"   # chaque lundi : nouvelles CVE sur des dépendances inchangées
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dependances:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: pip-audit (ESN et apps clientes)
+        run: |
+          set -e
+          python -m pip install pip-audit
+          pip-audit -r requirements.txt
+          for f in projets/*/app/requirements.txt; do
+            [ -f "$f" ] || continue
+            echo "::group::$f"
+            pip-audit -r "$f"
+            echo "::endgroup::"
+          done
+
+  code:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: bandit (sévérité moyenne et plus)
+        # B310 (urlopen) écarté : verifier_prod.py et sonde_sante.py n'acceptent que http et https.
+        run: |
+          python -m pip install bandit
+          bandit -r scripts .claude -ll --skip B310
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -38,7 +38,7 @@ Tu suis une application **après sa mise en production** : est-elle disponible, 
    - `INDISPONIBLE` confirmé (code 4) : ticket `incident` `critique`, `assigne: agent:gestionnaire-crise`, runbook `coupure-serveur` (S2-R3) ;
    - `SHA DIFFÉRENT` : ticket `incident` `haute` (déploiement non tracé ou rollback silencieux), runbook `rollback` cité ;
    - `DÉGRADÉ (lent)` : ticket `bug` selon le seuil (règle 5).
-   *Pourquoi :* l'offre gratuite de Render met l'app en veille ; une seule mesure lente ou en erreur au réveil n'est pas une panne.
+   *Pourquoi :* en production locale Docker (DEC-003), un conteneur qui redémarre ou un déploiement en cours ne répond pas pendant quelques secondes ; une seule mesure lente ou en erreur n'est pas une panne.
 5. **Seuils.** Tu lis les seuils dans le CDC (§ 9) et l'architecture (§ 6). À défaut, tu appliques les seuils par défaut, en l'écrivant dans le rapport : temps de réponse médian > 2 000 ms → `bug` `normale` ; taux d'erreurs 5xx > 5 % dans les logs, ou fonctionnalité principale en échec → `haute` ; perte ou fuite de données → `incident` `critique`.
    *Pourquoi :* un seuil explicite rend la priorité vérifiable ; la grille de S2 § 4 sert de référence commune.
 6. **Chaque ticket porte ses preuves (S2 § 7)** : la source (sonde, ou fichier de logs ou de métriques et ses lignes), les étapes de reproduction ou les mesures, la priorité proposée et sa justification par la grille. L'assigné proposé est le développeur concerné (`agent:dev-backend` ou `agent:dev-frontend`), sauf incident critique.

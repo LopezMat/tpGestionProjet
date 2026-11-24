@@ -2,10 +2,10 @@
 titre: Système 4 — Cahier des charges
 statut: VALIDÉ
 responsable: B
-version: 1.1
+version: 1.2
 maj_le: 2026-11-24
 valide_par: Ethan
-decision: DEC-002
+decision: DEC-003
 ---
 
 # Système 4 — Cahier des charges
@@ -41,7 +41,7 @@ Pour une **modernisation**, une étape 0 s'ajoute : l'analyse de l'existant (fon
 | Application métier | app web (front + API + base) | équipe complète |
 | Modernisation | selon l'analyse de l'existant (refonte, migration progressive, encapsulation) | analyste (existant), architecte |
 
-Hébergement par défaut : **Render**. Un autre hébergeur exige un ticket `ATTENTE_HUMAIN` et une décision. Ce n'est qu'un point de départ ; l'architecte justifie chaque écart.
+Hébergement par défaut : **production locale Docker** sur le poste de démonstration ([DEC-003](../decisions/2026-11-24-DEC-003-production-locale-docker.md), [ARCHITECTURE § 9](../ARCHITECTURE.md#9-hébergement-et-vérification-en-ligne)) : l'app dans une image étiquetée par SHA, avec Postgres 16. Un autre hébergeur exige un ticket `ATTENTE_HUMAIN`, une décision et son propre outillage de déploiement. Ce n'est qu'un point de départ ; l'architecte justifie chaque écart.
 
 ## 5. Garantir qualité, sécurité et maintenance par les autres systèmes
 

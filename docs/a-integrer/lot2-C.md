@@ -2,7 +2,7 @@
 titre: Lot 2 (périmètre C) — changements à intégrer ailleurs
 statut: EN_REVUE
 responsable: C
-version: 0.2
+version: 0.3
 maj_le: 2026-11-24
 valide_par:
 decision:
@@ -21,9 +21,9 @@ Le périmètre C de ce lot comprend 4 agents (`relecteur-code`, `testeur`, `secu
 | 5 | Ticket transverse « Revue de code » ; règle 12 (Bash) désormais appliquée techniquement | `.claude/agents/chef-de-projet.md` | B | PR | intégré (DEC-002 § 17) |
 | 6 | `/health` en production locale (sans `RENDER_GIT_COMMIT`) ; fichier d'exemple `env.example` plutôt que `.env.example` | `.claude/agents/dev-backend.md`, `architecte.md` | A | PR (+ R11 si le comportement change) | intégré (DEC-002 § 18) |
 | 7 | Incidents de rollback pour `gestionnaire-crise` ; runbook `rollback` et `analyste-prod` s'appuient sur `verifier-prod` | `runbooks/`, agents S2 | D | information, au fil de leur lot | intégré (DEC-002 § 19), constaté : déjà appliqué par D |
-| 8 | Workflows et points d'ARCHITECTURE § 10 | `.github/workflows/`, `scripts/verifier_validations.py` | C | **lot 5** | reporté (lot 5 : workflows et ARCHITECTURE § 10, contenu même du lot ; DEC-002 § 20) |
+| 8 | Workflows et points d'ARCHITECTURE § 10 | `.github/workflows/`, `scripts/verifier_validations.py` | C | **lot 5** | intégré (DEC-003) : workflows de contrôle sans `deploy.yml` (production locale Docker), `verifier_validations.py`, ARCHITECTURE § 10 tranché |
 | 9 | Plan B si `agent_type` est absent à l'exécution : hooks dans le frontmatter des agents | `.claude/agents/*.md` | B, C | conditionnel (voir § 9) | reporté (conditionnel, sans objet tant que `agent_type` est transmis, test du 2026-11-23 ; DEC-002 § 21) |
-| 10 | **Risque : un hook introuvable ne bloque rien** ; parades | postes de l'équipe, `.claude/settings.json` | toute l'équipe ; C | procédure + **lot 5** | intégré (DEC-002 § 22) pour la note de risque et les parades ; reporté au lot 5 pour `onFailure: "block"` (Claude Code ≥ 2.1.295) et `validations.yml` |
+| 10 | **Risque : un hook introuvable ne bloque rien** ; parades | postes de l'équipe, `.claude/settings.json` | toute l'équipe ; C | procédure + **lot 5** | intégré (DEC-002 § 22) pour la note de risque et les parades ; `validations.yml` intégré (DEC-003) ; `onFailure: "block"` toujours reporté (Claude Code 2.1.285 < 2.1.295, DEC-003 § 6) |
 | 11 | Procédure « vérifier ses hooks » dans le README | `README.md` | C | **fait** (section « Installer son poste ») | intégré (DEC-002 § 23), constaté : déjà fait par C |
 
 ---
@@ -130,7 +130,7 @@ Dans R5, remplacer « appliquée techniquement par un hook PreToolUse et un cont
 
 ## 8. Lot 5 (C)
 
-**Intégration** : reporté (lot 5 : workflows et ARCHITECTURE § 10, contenu même du lot ; DEC-002 § 20).
+**Intégration** : intégré (DEC-003). Différence avec ce qui suit : pas de `deploy.yml`, la production est locale (décision du professeur) ; sauvegarde, déploiement et rollback passent par `scripts/deployer_local.py` et `scripts/rollback_local.py`.
 
 **Quoi.** Hors de ce lot, à livrer au lot 5 :
 - **workflows** :
@@ -172,7 +172,7 @@ Cela vaut pour `chef-de-projet` (B), `relecteur-code` et `deployeur` (C). Le scr
 
 ## 10. Risque : un hook introuvable ne bloque rien (toute l'équipe ; C)
 
-**Intégration** : intégré (DEC-002 § 22) pour la note de risque et les parades ; reporté au lot 5 pour `onFailure: "block"` (Claude Code ≥ 2.1.295) et `validations.yml`.
+**Intégration** : intégré (DEC-002 § 22) pour la note de risque et les parades ; `validations.yml` intégré (DEC-003) ; `onFailure: "block"` toujours reporté : Claude Code 2.1.285 constaté le 2026-11-24 (DEC-003 § 6).
 
 **Quoi.** Selon la documentation officielle des hooks, un hook qui ne démarre pas (commande `python` introuvable, script absent) ou qui sort avec un code autre que 0 ou 2 est une **erreur non bloquante** : l'action continue, avec un simple avis `hook error` dans la conversation. Si `python` manque sur un poste, R5, R6 et la restriction Bash **disparaissent en silence** sur ce poste.
 

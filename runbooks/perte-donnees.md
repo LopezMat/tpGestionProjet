@@ -2,7 +2,7 @@
 titre: Runbook — Perte de données
 statut: EN_REVUE
 responsable: D
-version: 0.1
+version: 0.2
 maj_le: 2026-11-24
 valide_par:
 decision:
@@ -42,7 +42,7 @@ decision:
 |---|---|---|
 | 0 | Le coordinateur lance `gestionnaire-crise` sur le ticket `incident` ; ticket `EN_COURS`, runbook noté au journal | coordinateur, agent |
 | 0–5 | **Figer le périmètre** : quelles données (tables, entités), depuis quand (premier symptôme), combien d'utilisateurs ; s'il y a fuite → [intrusion.md](intrusion.md) en parallèle | agent |
-| 5–10 | **Identifier la dernière sauvegarde** : section « Déploiement » du dernier `rapports/deploiement-*.md` (porte 5, S3-R4) ; noter sa référence et son heure ; calculer la fenêtre de perte (heure de la sauvegarde → maintenant) | agent |
+| 5–10 | **Identifier la dernière sauvegarde** : ligne « Sauvegarde » du dernier `rapports/deploiement-*.md` (porte 5, S3-R4), ou le fichier le plus récent de `deploiement/local/<slug>/sauvegardes/` (nom `AAAAMMJJ-HHMMSS-<sha7>.dump`, les 10 dernières sont gardées) ; noter sa référence et son heure ; calculer la fenêtre de perte (heure de la sauvegarde → maintenant) | agent |
 | 5–10 | Relier à un changement : dernier déploiement (`git log`, `gh run list`), migration, opération manuelle | agent |
 | 10–15 | **Préparer les décisions** (§ 4) : tickets `decision` en `ATTENTE_HUMAIN` avec options, recommandation et impact ; ticket `incident` → `BLOQUE` (`bloque_par: attente décision T-NNN`) | agent |
 | 15 | Message de retour au coordinateur, qui s'arrête et présente les décisions (R7) | agent, coordinateur |
@@ -78,5 +78,11 @@ Dans les **2 jours ouvrés** (S2-R5), sans blâme, selon [templates/post-mortem.
 Restaurer, purger, modifier des données de production, mettre l'application en maintenance, contacter le client (S2-R1, S2-R4, AF1).
 
 ## Points ouverts
-- **Sauvegarde Postgres** : base retenue, emplacement et durée de rétention des sauvegardes (`pg_dump` en artefact GitHub Actions proposé) à trancher au lot 5 ([ARCHITECTURE § 10.2](../docs/ARCHITECTURE.md#10-à-trancher-au-lot-workflows)). **Tant que ce mécanisme n'existe pas, aucune restauration n'est possible** : la seule décision humaine est d'accepter la perte ou de reconstruire à la main.
-- Procédure de restauration elle-même (commande, durée, test) : à écrire ici au lot 5, et à tester avant la soutenance (S3-R7, DEC-001 § 14).
+- Durée réelle d'une restauration sur les données du projet de démonstration : à mesurer au lot 6, avant la soutenance (S3-R7, DEC-001 § 14).
+
+## Procédure de restauration (humain, après décision)
+Tranchée par [DEC-003](../docs/decisions/2026-11-24-DEC-003-production-locale-docker.md) et [ARCHITECTURE § 10.2](../docs/ARCHITECTURE.md#10-décisions-du-lot-5--vérification-sauvegardes-rollback) : Postgres 16 dans le volume `esn-<slug>_pgdata` ; `pg_dump -Fc` avant chaque déploiement, dans `deploiement/local/<slug>/sauvegardes/` (ignoré par Git). **Aucun agent ne lance ces commandes.** C'est le salarié `sauvegarde-restauration` qui les exécute, après le `DEC-NNN`, depuis la racine du dépôt :
+1. Arrêter l'app pour figer les écritures : `docker compose -p esn-<slug> -f deploiement/docker-compose.yml stop app`.
+2. Restaurer la sauvegarde choisie par la décision : `docker compose -p esn-<slug> -f deploiement/docker-compose.yml exec -T db pg_restore --clean --if-exists -U esn -d app < deploiement/local/<slug>/sauvegardes/<fichier>.dump`. La commande est rejouée par le test réel de `scripts/test_prod_locale.py`.
+3. Relancer l'app : `docker compose -p esn-<slug> -f deploiement/docker-compose.yml start app`. Vérifier ensuite par la sonde que le SHA attendu répond (`python scripts/sonde_sante.py --url <url_prod> --sha <sha>`).
+4. Noter dans le ticket : la sauvegarde utilisée, l'heure, la fenêtre de perte et le contrôle de cohérence (§ 5).

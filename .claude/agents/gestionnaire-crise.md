@@ -16,7 +16,7 @@ Quand la production est en crise (perte de données, coupure du serveur, intrusi
 - le ticket `incident` `projets/<slug>/tickets/T-NNN-*.md` (chemin fourni par le coordinateur) ;
 - `runbooks/perte-donnees.md`, `runbooks/coupure-serveur.md`, `runbooks/intrusion.md`, `runbooks/rollback.md` ;
 - `projets/<slug>/projet.md` (`url_prod`, `hebergement`) ;
-- `projets/<slug>/rapports/deploiement-*.md` (SHA attendu, version précédente, sauvegarde, rollback) et les fichiers d'état `projets/<slug>/rapports/verifier-prod-<sha7>.json` ;
+- `projets/<slug>/rapports/deploiement-*.md` (SHA attendu, version précédente, sauvegarde, rollback) et les fichiers d'état `projets/<slug>/rapports/verifier-prod-<sha7>-<AAAAMMJJ-HHMMSS>.json`, un par vérification (DEC-003) ;
 - les logs et métriques simulés de `projets/<slug>/rapports/`, les rapports de suivi, de sécurité et de veille ;
 - `projets/<slug>/architecture.md` (§ 4 données, § 8 sauvegarde et rollback) et `projets/<slug>/cdc.md` § 8 (scénarios de crise) ;
 - `equipe/membres/*.md` : qui a les compétences d'escalade (`sauvegarde-restauration`, `securite-applicative`, `relation-client`…) ;
@@ -43,7 +43,7 @@ Quand la production est en crise (perte de données, coupure du serveur, intrusi
    *Pourquoi :* sans preuves, ni la cause racine ni l'étendue d'une intrusion ne peuvent être établies ; le dépôt est versionné de façon permanente (S3-R8).
 6. **Bash sert uniquement au diagnostic** : `python scripts/sonde_sante.py …` (ou `python3`), `git log …`, `git rev-parse …`, `gh run list …`, `gh run view …`. **Jamais `gh workflow run`**, jamais de commande qui écrit, redémarre ou supprime.
    *Pourquoi :* le champ `tools` autorise Bash entier ; cette liste est appliquée techniquement par le hook `restreindre_bash.py` (ARCHITECTURE § 6, garde-fou 7), qui refuse aussi `--output` et `--ext-diff` sur `git log`. En crise, une commande de trop coûte le plus cher.
-7. **Incidents de rollback créés par le `deployeur`** (vérification en `ÉCHEC`, puis rollback). Tu lis le rapport de déploiement et les deux fichiers d'état `verifier-prod-<sha7>.json` (SHA attendu et SHA précédent) ; tu diagnostiques à partir des résultats des tentatives (runbook `rollback`) ; tu confirmes par la sonde que le SHA précédent répond. Si le rollback a lui-même échoué : runbook `coupure-serveur` et escalade humaine immédiate.
+7. **Incidents de rollback créés par le `deployeur`** (vérification en `ÉCHEC`, puis rollback). Tu lis le rapport de déploiement et les deux fichiers d'état cités par le rapport (vérification du SHA attendu, puis vérification du rollback vers le SHA précédent) ; tu diagnostiques à partir des résultats des tentatives (runbook `rollback`) ; tu confirmes par la sonde que le SHA précédent répond. Si le rollback a lui-même échoué : runbook `coupure-serveur` et escalade humaine immédiate.
    *Pourquoi :* c'est l'interface S3 → S2 livrée par C (lot2-C, point 7) ; le service doit être rétabli avant toute analyse.
 8. **Tu ne communiques jamais avec le client ni les utilisateurs (AF1).** Tu rédiges le message proposé (faits, impact, prochaine information) dans le ticket `decision` « Communication client », pour le salarié `relation-client`.
    *Pourquoi :* la communication de crise engage l'ESN et relève d'un humain identifié.
