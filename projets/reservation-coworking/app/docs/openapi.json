@@ -1,6 +1,135 @@
 {
   "components": {
     "schemas": {
+      "Creneau": {
+        "properties": {
+          "etat": {
+            "title": "Etat",
+            "type": "string"
+          },
+          "heure_debut": {
+            "title": "Heure Debut",
+            "type": "integer"
+          },
+          "heure_fin": {
+            "title": "Heure Fin",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "heure_debut",
+          "heure_fin",
+          "etat"
+        ],
+        "title": "Creneau",
+        "type": "object"
+      },
+      "Disponibilites": {
+        "properties": {
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "salles": {
+            "items": {
+              "$ref": "#/components/schemas/SalleDisponibilites"
+            },
+            "title": "Salles",
+            "type": "array"
+          }
+        },
+        "required": [
+          "date",
+          "salles"
+        ],
+        "title": "Disponibilites",
+        "type": "object"
+      },
+      "Erreur": {
+        "properties": {
+          "erreur": {
+            "title": "Erreur",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "erreur",
+          "message"
+        ],
+        "title": "Erreur",
+        "type": "object"
+      },
+      "Salle": {
+        "properties": {
+          "capacite": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacite"
+          },
+          "equipements": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Equipements"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "nom": {
+            "title": "Nom",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "nom"
+        ],
+        "title": "Salle",
+        "type": "object"
+      },
+      "SalleDisponibilites": {
+        "properties": {
+          "creneaux": {
+            "items": {
+              "$ref": "#/components/schemas/Creneau"
+            },
+            "title": "Creneaux",
+            "type": "array"
+          },
+          "nom": {
+            "title": "Nom",
+            "type": "string"
+          },
+          "salle_id": {
+            "title": "Salle Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "salle_id",
+          "nom",
+          "creneaux"
+        ],
+        "title": "SalleDisponibilites",
+        "type": "object"
+      },
       "SanteReponse": {
         "properties": {
           "commit": {
@@ -27,6 +156,92 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/disponibilites": {
+      "get": {
+        "description": "Créneaux libres ou occupés des 3 salles pour un jour, de J à J+14 (H-10).\n\nProvisoirement public (DEC-011, T-013, T-020). Un samedi ou un dimanche : chaque salle\nest renvoyée avec une liste de créneaux vide. Aucune donnée de membre.",
+        "operationId": "lister_disponibilites_api_disponibilites_get",
+        "parameters": [
+          {
+            "description": "AAAA-MM-JJ",
+            "in": "query",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "description": "AAAA-MM-JJ",
+              "maxLength": 10,
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Disponibilites"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erreur"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erreur"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Lister Disponibilites"
+      }
+    },
+    "/api/salles": {
+      "get": {
+        "description": "Fiches des 3 salles (F-06). Provisoirement public (DEC-011, T-013, T-020).",
+        "operationId": "lister_salles_api_salles_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Salle"
+                  },
+                  "title": "Response Lister Salles Api Salles Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Erreur"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Lister Salles"
+      }
+    },
     "/health": {
       "get": {
         "description": "Public, sans session : SHA déployé et état de la base, rien d'autre.\n\nRépond au plus tard après `bdd.DELAI_BASE_S` (1 s) quand la base se tait, sans\nbloquer la boucle d'événements.",

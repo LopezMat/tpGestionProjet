@@ -83,6 +83,7 @@ def test_schema_openapi_versionne_est_a_jour():
     assert FICHIER_OPENAPI.exists(), "lancer une fois avec REGENERER_OPENAPI=1"
     assert FICHIER_OPENAPI.read_text(encoding="utf-8") == attendu
     assert "/health" in schema["paths"]
+    assert {"/api/salles", "/api/disponibilites"} <= set(schema["paths"])
 
 
 # --- env.example ------------------------------------------------------------------------

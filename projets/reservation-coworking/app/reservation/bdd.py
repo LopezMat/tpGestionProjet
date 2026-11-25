@@ -66,7 +66,9 @@ def moteur_applicatif() -> Engine:
         max_overflow=5,
         pool_pre_ping=True,
         pool_recycle=1800,
-        connect_args={"connect_timeout": 5},
+        # Borne l'attente d'une connexion (503 côté API) et la durée d'une requête.
+        pool_timeout=3,
+        connect_args={"connect_timeout": 5, "options": "-c statement_timeout=5000"},
     )
 
 

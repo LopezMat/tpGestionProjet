@@ -4,11 +4,12 @@ from collections.abc import Awaitable, Callable
 from pathlib import Path
 
 from fastapi import Depends, FastAPI
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import bdd, config
+from . import api, bdd, config
 
 DOSSIER_STATIQUE = Path(__file__).parent / "static"
 
@@ -49,6 +50,10 @@ def creer_app(avec_documentation: bool = False) -> FastAPI:
             status_code=503,
             content=SanteReponse(status="ko", commit=config.commit()).model_dump(),
         )
+
+    app.include_router(api.routeur)
+    app.add_exception_handler(api.BaseIndisponible, api.gerer_base_indisponible)
+    app.add_exception_handler(RequestValidationError, api.gerer_requete_invalide)
 
     # Monté en dernier : les routes de l'API restent prioritaires sur les fichiers statiques.
     app.mount("/", StaticFiles(directory=DOSSIER_STATIQUE, html=True), name="front")

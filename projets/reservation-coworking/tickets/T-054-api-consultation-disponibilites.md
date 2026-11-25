@@ -4,12 +4,12 @@ id: T-054
 titre: API de consultation des disponibilités (F-01, lecture seule)
 projet: reservation-coworking
 type: fonctionnalite        # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: EN_REVUE            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: agent:dev-backend  # agent:<nom> | salarie:<prenom>
 competence_requise: api-rest (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 1.5           # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 0            # heures équivalent humain
+temps_passe_h: 1.5            # heures équivalent humain
 depend_de: [T-011, T-012]   # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
@@ -18,7 +18,7 @@ cree_par: agent:coordinateur
 cree_le: 2026-11-25
 maj_le: 2026-11-25
 statut_depuis: 2026-11-25   # date du dernier changement de statut
-debut_le:                   # facultatif : date du premier passage EN_COURS
+debut_le: 2026-11-25        # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
@@ -49,3 +49,10 @@ termine_le:                 # facultatif : date du passage TERMINE
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-25 09:30 · agent:coordinateur · création, détachée de T-018 (priorité d'Ethan du 2026-11-25, option « Lecture seule ») · 0 h
+- 2026-11-25 10:00 · agent:dev-backend · prise en charge (T-011 et T-012 TERMINE, architecture et CDC VALIDÉS) ; lecture de DEC-011 et de l'audit securite-2026-11-25-3 · 0,2 h
+- 2026-11-25 11:15 · agent:dev-backend · **touche la sécurité** (routes anonymes provisoires, DEC-011 ; aucune donnée de membre exposée). Réalisé : `app/reservation/api.py` (routeur, 2 routes, 404 JSON pour tout `/api/*` inconnu), `app.py` (routeur, gestionnaires d'erreurs JSON), `bdd.py` (`moteur_applicatif` : `pool_timeout=3`, `statement_timeout=5000`), tests `tests/test_api_consultation.py`, `tests/test_livraison.py` (le schéma contient les 2 routes), `docs/openapi.json` régénéré · 1,0 h
+- 2026-11-25 11:30 · agent:dev-backend · conception : (1) `date` validée par regex AAAA-MM-JJ puis `date.fromisoformat` (ni timestamp ni datetime), 422 JSON `{erreur, message}` à message fixe, sans écho de la valeur ; (2) fenêtre J à J+14 : passé → 422 `date_passee`, au-delà → 422 `date_hors_fenetre` (`regles.verifier_avance`) ; (3) « maintenant » vient uniquement de `horloge` (Europe/Paris, dépendance `fournir_horloge`), jamais de la base ni d'UTC (constat 12 non corrigé ici) ; (4) samedi et dimanche : 200 avec 3 salles et `creneaux: []` ; (5) base indisponible, pool saturé ou délai dépassé → 503 JSON fixe sans détail, journal sans paramètre ; (6) la requête ne lit que `salle_id, heure_debut` (jamais `utilisateur_id` ni `reservation.id`) ; (7) accès au moteur paresseux, après validation du paramètre · 0 h
+- 2026-11-25 11:40 · agent:dev-backend · tests : suite complète sous Python 3.14 (python:3.14-slim) avec PostgreSQL 16 jetable (`TEST_DATABASE_URL` vers `app_test`) : `python -m pytest -q -rs` → 140 passed, 0 skipped (intégration comprise) ; `test_schema_openapi_versionne_est_a_jour` vert avec `docs/openapi.json` régénéré (`REGENERER_OPENAPI=1`). Conteneurs et réseau d'essai supprimés (`apercu-*` non touchés) · 0,3 h
+- 2026-11-25 11:45 · agent:dev-backend · couverture des critères (non cochés) : C1 `test_salles_renvoie_les_trois_salles` ; C2 `test_jour_ouvre_12_creneaux_par_salle_tous_libres` et `test_reservation_rend_le_creneau_occupe_sans_donnee_de_membre` (aucun nom, e-mail ni id) ; C3 les mêmes (12 créneaux de 8 h à 20 h) et `test_week_end_aucun_creneau` (samedi, dimanche) ; C4 `test_reservation_rend_le_creneau_occupe_sans_donnee_de_membre` (2 occupés, 34 libres, réservation d'un autre jour sans effet) ; C5 `test_date_invalide_422_sans_echo` (12 formes), `test_date_absente_ou_trop_longue_422`, `test_date_hors_fenetre_422` ; C6 `test_temps_de_reponse_sous_2_s_h05` (36 créneaux occupés) ; C7 **partiel** : commentaire PROVISOIRE renvoyant à T-013 et T-020 en tête de `api.py` (`test_acces_provisoire_signale_dans_le_code`) ; la ligne au journal de T-020 n'est **pas** écrite (je ne modifie que mon ticket, règle 8) : à faire par le coordinateur · 0 h
+- 2026-11-25 11:50 · agent:dev-backend · points de l'audit : `moteur_applicatif()` seul (`test_les_routes_n_utilisent_pas_la_sonde`) ; `pool_timeout` 3 s traduit en 503 et `statement_timeout` 5 s ; constat 4 (`TrustedHostMiddleware`, « au plus tard avec T-054 ») **non traité** : il demande une liste d'hôtes autorisés (hôtes de l'aperçu et de la production locale), donc un choix de configuration à valider · 0 h
+- 2026-11-25 11:50 · agent:dev-backend · livré pour revue ; aucun commit (consigne du coordinateur) · total 1,5 h
