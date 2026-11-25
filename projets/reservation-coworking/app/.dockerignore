@@ -1,0 +1,10 @@
+tests/
+docs/
+**/__pycache__/
+.pytest_cache/
+.venv/
+venv/
+README.md
+env.example
+requirements-dev.txt
+pytest.ini

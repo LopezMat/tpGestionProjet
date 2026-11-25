@@ -2,9 +2,9 @@
 titre: Registre des décisions humaines
 statut: EN_REVUE          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
 responsable: B
-version: 0.6
+version: 0.10
 maj_le: 2026-11-25
-valide_par: 
+valide_par:
 decision:
 ---
 
@@ -36,4 +36,11 @@ Un document `VALIDÉ` est figé pour les agents (R6). Pour le faire évoluer, un
 | [DEC-002](2026-11-24-DEC-002-integration-lot2-recette.md) | 2026-11-24 | Intégration du Lot 2, recette humaine, listes blanches Bash S2 | VALIDÉ |
 | [DEC-003](2026-11-24-DEC-003-production-locale-docker.md) | 2026-11-24 | Production locale Docker et workflows de contrôle (lot 5) | VALIDÉ |
 | [DEC-004](2026-11-24-DEC-004-recette-sans-claude-code.md) | 2026-11-24 | Recette par un recetteur sans Claude Code (notes déposées, tickets bug par `support`) | VALIDÉ |
+| [DEC-005](2026-11-24-DEC-005-interlocutrice-client-coworking.md) | 2026-11-24 | reservation-coworking : Claire interlocutrice client, allocation 10 % (T-002) | VALIDÉ |
+| [DEC-006](2026-11-24-DEC-006-validation-cdc-coworking.md) | 2026-11-24 | reservation-coworking : réponses du client, arbitrages et validation du CDC v0.4 (T-003) | VALIDÉ |
+| [DEC-007](2026-11-24-DEC-007-choix-techniques-coworking.md) | 2026-11-24 | reservation-coworking : choix techniques, stack A1, sauvegarde quotidienne, limite de démonstration (T-005) | VALIDÉ |
+| [DEC-008](2026-11-24-DEC-008-architecture-coherente-coworking.md) | 2026-11-24 | reservation-coworking : architecture v1.1 cohérente avec DEC-007, purge au déploiement, fin de démonstration (T-004) | VALIDÉ |
+| [DEC-009](2026-11-24-DEC-009-budget-delais-coworking.md) | 2026-11-24 | reservation-coworking : budget, délais et allocations, Should abandonnables, lot R17 sorti du projet (T-007) | VALIDÉ |
+| [DEC-010](2026-11-24-DEC-010-principe-r17.md) | 2026-11-24 | ESN : règle R17 adoptée sur le principe, PR de règles après le projet client (T-050) | VALIDÉ |
+| [DEC-011](2026-11-25-DEC-011-increment-consultation-coworking.md) | 2026-11-25 | reservation-coworking : incrément socle et consultation des disponibilités avant la soutenance, écart provisoire à F-04 (T-054, T-055) | VALIDÉ |
 | [DEC-012](2026-11-25-DEC-012-console-consultation.md) | 2026-11-25 | Console de consultation de l'ESN (outil interne, lecture seule) | VALIDÉ |

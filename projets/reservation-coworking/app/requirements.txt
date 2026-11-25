@@ -1,0 +1,9 @@
+# Dépendances de production (image Docker), épinglées sur les lignes de version
+# de architecture.md § 2. Versions confirmées par `pip index versions` le 2026-11-25.
+fastapi==0.162.7
+uvicorn==0.52.4
+SQLAlchemy==2.0.58
+alembic==1.18.5
+psycopg[binary]==3.3.9
+argon2-cffi==25.1.0
+tzdata==2026.6
