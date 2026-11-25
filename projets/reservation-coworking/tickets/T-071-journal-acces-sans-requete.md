@@ -4,12 +4,12 @@ id: T-071
 titre: Journal d'accès sans chaîne de requête (constat 15)
 projet: reservation-coworking
 type: amelioration          # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: EN_REVUE           # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: normale           # critique | haute | normale | basse
 assigne: agent:dev-backend  # agent:<nom> | salarie:<prenom>
 competence_requise: backend-python (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 0.5           # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 0            # heures équivalent humain
+temps_passe_h: 0.5            # heures équivalent humain
 depend_de: [T-010]          # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
@@ -18,7 +18,7 @@ cree_par: agent:chef-de-projet
 cree_le: 2026-11-25
 maj_le: 2026-11-25
 statut_depuis: 2026-11-25   # date du dernier changement de statut
-debut_le:                   # facultatif : date du premier passage EN_COURS
+debut_le: 2026-11-25                 # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
@@ -52,3 +52,5 @@ Hors de l'incrément de la soutenance du 2026-11-27 : ne retarde ni T-054 ni T-0
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-25 14:45 · agent:chef-de-projet · création (triage du constat 15, partie a, rapport securite-2026-11-25-4) · 0 h
+- 2026-11-25 15:05 · agent:dev-backend · prise en charge · 0 h
+- 2026-11-25 15:10 · agent:dev-backend · livré pour revue. Choix : configuration `log_config` d'Uvicorn (access_log reste actif) avec un formateur propre `FormatAcces` (app/reservation/journaux.py) ; ligne d'accès = `<date> INFO uvicorn.access GET /chemin 200` (méthode, chemin sans `?` ni fragment borné à 200 caractères avec caractères de contrôle remplacés, statut). Adresse du client, version HTTP et requête ne sont plus écrites ; forme d'arguments inattendue : message générique, rien recopié. Uvicorn : 1 worker et server_header=False inchangés. Fichiers : app/reservation/journaux.py (nouveau), app/reservation/demarrer.py (log_config), app/tests/test_journal_acces.py (nouveau). Tests : conteneur python:3.14-slim + postgres:16 jetable (base coworking_test, TEST_DATABASE_HOTES_JETABLES pour l'hôte du conteneur), `python -m pytest -q` : 214 passed. Constat sur l'image construite avec --build-arg GIT_COMMIT=$(git rev-parse HEAD) : GET /, /health, /api/salles puis /api/disponibilites?date=<9000 caractères> (422) donnent 4 lignes `uvicorn.access` (`GET / 200`, `GET /health 200`, `GET /api/salles 200`, `GET /api/disponibilites 422`) ; journal complet du conteneur 1077 octets, 0 occurrence de `?`, `date=` ou de la valeur. Couverture des critères : 1 = constat image ci-dessus + test_la_chaine_de_requete_n_est_pas_ecrite ; 2 = test_la_configuration_est_valide_et_capte_uvicorn_access et test_main_transmet_la_configuration_a_uvicorn ; 3 = test_requetes_nominales_journalisees + constat image ; 4 = suite complète verte, aucun changement de /health ni de l'API. Ne touche pas la sécurité au sens authentification/droits/données personnelles (journalisation seulement, réduit l'exposition des données). Critères non cochés. Conteneurs, réseau et image d'essai supprimés. Non commité (consigne du coordinateur). · 0.5 h

@@ -12,7 +12,7 @@ import time
 
 import uvicorn
 
-from . import bdd, config, migrer
+from . import bdd, config, journaux, migrer
 
 journal = logging.getLogger("reservation.demarrer")
 
@@ -57,6 +57,7 @@ def main() -> int:
         port=port,
         workers=1,
         server_header=False,
+        log_config=journaux.config_journaux(),
     )
     return 0
 
