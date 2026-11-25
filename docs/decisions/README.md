@@ -2,7 +2,7 @@
 titre: Registre des décisions humaines
 statut: EN_REVUE          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
 responsable: B
-version: 0.9
+version: 0.10
 maj_le: 2026-11-25
 valide_par:
 decision:
@@ -42,3 +42,4 @@ Un document `VALIDÉ` est figé pour les agents (R6). Pour le faire évoluer, un
 | [DEC-008](2026-11-24-DEC-008-architecture-coherente-coworking.md) | 2026-11-24 | reservation-coworking : architecture v1.1 cohérente avec DEC-007, purge au déploiement, fin de démonstration (T-004) | VALIDÉ |
 | [DEC-009](2026-11-24-DEC-009-budget-delais-coworking.md) | 2026-11-24 | reservation-coworking : budget, délais et allocations, Should abandonnables, lot R17 sorti du projet (T-007) | VALIDÉ |
 | [DEC-010](2026-11-24-DEC-010-principe-r17.md) | 2026-11-24 | ESN : règle R17 adoptée sur le principe, PR de règles après le projet client (T-050) | VALIDÉ |
+| [DEC-011](2026-11-25-DEC-011-increment-consultation-coworking.md) | 2026-11-25 | reservation-coworking : incrément socle et consultation des disponibilités avant la soutenance, écart provisoire à F-04 (T-054, T-055) | EN_REVUE |

@@ -8,9 +8,9 @@ statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_H
 priorite: haute             # critique | haute | normale | basse
 assigne: agent:dev-frontend # agent:<nom> | salarie:<prenom>
 competence_requise: javascript (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
-estimation_h: 7             # heures équivalent humain, quel que soit l'assigné
+estimation_h: 5.5           # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 0            # heures équivalent humain
-depend_de: [T-022]          # ex. [T-001, T-002]
+depend_de: [T-022, T-055]   # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
@@ -29,7 +29,7 @@ termine_le:                 # facultatif : date du passage TERMINE
 Écrans membres de F-01 (consulter les disponibilités et réserver) et F-02 (annuler), sur l'API de T-018 et T-019 (architecture § 3). Les règles sont appliquées par le serveur ; l'écran affiche ses messages. Parcours 1, 3, 4 et 5 du CDC § 7 côté interface.
 
 ## Critères d'acceptation
-- [ ] Pour une date choisie, l'écran affiche pour chacune des 3 salles les créneaux d'une heure de 8 h-9 h à 19 h-20 h, chacun marqué « libre » ou « occupé » ; aucun créneau le samedi et le dimanche.
+- *(Affichage des disponibilités déplacé dans [T-055](T-055-page-disponibilites-lecture.md) le 2026-11-25 ; T-023 le reprend et y ajoute la réservation.)*
 - [ ] Un membre réserve un créneau libre ; un refus (créneau indisponible, limite de 2 par jour, au-delà de 14 jours, créneau commencé) affiche le message explicite renvoyé par l'API.
 - [ ] Après la réservation, le créneau apparaît « occupé » sans rechargement manuel de la page.
 - [ ] Le membre voit la liste de ses réservations à venir et en annule une après confirmation ; un refus (créneau commencé) affiche le message de l'API ; après annulation, le créneau redevient « libre ».
@@ -45,3 +45,4 @@ termine_le:                 # facultatif : date du passage TERMINE
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-24 23:55 · agent:chef-de-projet · création · 0 h
+- 2026-11-25 09:30 · agent:coordinateur · affichage des disponibilités détaché dans T-055 (priorité d'Ethan du 2026-11-25, option « Lecture seule ») ; dépend aussi de T-055 ; estimation ramenée de 7 à 5,5 h · 0 h

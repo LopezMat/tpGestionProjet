@@ -19,9 +19,9 @@ competences:                  # niveau : debutant | confirme | expert
     niveau: expert
   - nom: securite-applicative
     niveau: confirme
-allocation: {}                # % de la capacité par projet ; total ≤ 100 ; décidée par un humain (S1-R10)
+allocation: { reservation-coworking: 15 }   # % de la capacité par projet ; total ≤ 100 ; décidée par un humain (S1-R10) ; DEC-009
 responsable: B
-maj_le: 2026-11-23
+maj_le: 2026-11-25
 ---
 <!-- modèle : templates/membre.md v0.1 · responsable du modèle : A -->
 

@@ -9,14 +9,14 @@ priorite: haute             # critique | haute | normale | basse
 assigne: agent:relecteur-code   # agent:<nom> | salarie:<prenom>
 competence_requise: revue-code (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 6             # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 0            # heures équivalent humain
+temps_passe_h: 1.4          # heures équivalent humain
 depend_de: [T-007]          # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-24
-maj_le: 2026-11-24
+maj_le: 2026-11-25
 statut_depuis: 2026-11-24   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
@@ -44,3 +44,6 @@ Pas de `depend_de` vers les tickets relus : l'avis `APPROUVÉ` est une condition
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-24 23:55 · agent:chef-de-projet · création · 0 h
+- 2026-11-25 15:00 · agent:relecteur-code · revue T-010 : APPROUVÉ · 0.5 h
+- 2026-11-25 21:00 · agent:relecteur-code · revue T-010 (passe 2, après NON CONFORME du testeur) : APPROUVÉ · 0.6 h
+- 2026-11-25 21:00 · agent:relecteur-code · revue T-056 : APPROUVÉ · 0.3 h

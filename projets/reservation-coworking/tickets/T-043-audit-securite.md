@@ -9,14 +9,14 @@ priorite: haute             # critique | haute | normale | basse
 assigne: agent:securite     # agent:<nom> | salarie:<prenom>
 competence_requise: securite-applicative (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 5             # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 0            # heures équivalent humain
+temps_passe_h: 3.0          # heures équivalent humain
 depend_de: [T-010, T-011, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022, T-023, T-024, T-025, T-026, T-027, T-028]   # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-24
-maj_le: 2026-11-24
+maj_le: 2026-11-25
 statut_depuis: 2026-11-24   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
@@ -43,3 +43,5 @@ Ticket « Audit sécurité » de l'agent `securite` (porte 3 de S3) : audit du c
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-24 23:55 · agent:chef-de-projet · création · 0 h
+- 2026-11-25 15:30 · agent:securite · audit d'incrément T-010 (socle), demandé par Ethan (DEC-011, `EN_REVUE`), sur l'état de travail non commité de `app/` (base `6c53d31`, empreintes des fichiers dans le rapport) : verdict NON BLOQUANT, 0 critique, 0 haute, 1 moyenne (dépendances transitives non verrouillées), 6 basses, aucun ticket `bug` ; rapport [securite-2026-11-25.md](../rapports/securite-2026-11-25.md). Outils absents du poste : `pip-audit`, `bandit`, `gitleaks` (revue manuelle des versions) ; image non construite. Statut laissé `A_FAIRE` sur consigne du coordinateur : l'audit avant mise en production reste à faire sur le SHA candidat · 1.5 h
+- 2026-11-25 21:30 · agent:securite · ré-audit d'incrément après la reprise de T-010 et la réalisation de T-056 (état de travail non commité de `app/`, base `6c53d31`, 8 fichiers modifiés, empreintes dans le rapport) : verdict NON BLOQUANT, 0 critique, 0 haute ; constat 3 (`server_header`) traité ; constats 1 (moyen), 2, 4, 5, 6 et 7 (bas) toujours ouverts ; 2 nouveaux constats bas (8 : `/health` sans mise en commun des sondes, d'où une amplification vers la base et des faux 503 sous rafale ; 9 : une sonde bloquée après l'ouverture de la connexion n'a pas de borne si le pair disparaît sans fermer, faute de keepalive court) ; aucun ticket `bug` (T-057 reste libre) ; nouveau rapport [securite-2026-11-25-2.md](../rapports/securite-2026-11-25-2.md), sans réécrire le premier (règle 5). Outils toujours absents : `pip-audit`, `bandit`, `gitleaks`, `trivy` ; aucune vérification dynamique (dépendances de l'app absentes du poste). Statut laissé `A_FAIRE`, comme au premier audit : l'audit avant mise en production reste à faire sur le SHA candidat · 1.5 h

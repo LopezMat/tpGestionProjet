@@ -8,46 +8,29 @@
 
 | Projet | Client | Type | État | Avancement | Budget consommé / prévu | % | Fin projetée | Deadline | Écart (j ouvrés) | BLOQUE | ATTENTE_HUMAIN | Alertes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 10,0 % | 367,50 € / 6 000,00 € | 6,1 % | 2026-12-09 | 2026-12-18 | -7 | 0 | 2 | 17 |
+| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 10,4 % | 367,50 € / 6 000,00 € | 6,1 % | 2026-12-16 | 2026-12-18 | -2 | 0 | 0 | 3 |
 
 ## Alertes
 
 | Projet | Type | Détail |
 |---|---|---|
-| reservation-coworking | Non planifiable | T-029 : salarie:nadia : allocation au projet nulle (S1-R10) |
-| reservation-coworking | Non planifiable | T-030 : salarie:karim : allocation au projet nulle (S1-R10) |
-| reservation-coworking | Non planifiable | T-031 : salarie:karim : allocation au projet nulle (S1-R10) |
-| reservation-coworking | Non planifiable | T-032 : salarie:karim : allocation au projet nulle (S1-R10) |
-| reservation-coworking | Non planifiable | T-033 : salarie:karim : allocation au projet nulle (S1-R10) |
-| reservation-coworking | Non planifiable | T-034 : salarie:karim : allocation au projet nulle (S1-R10) |
-| reservation-coworking | Non planifiable | T-035 : salarie:karim : allocation au projet nulle (S1-R10) |
-| reservation-coworking | Non planifiable | T-036 : salarie:karim : allocation au projet nulle (S1-R10) |
-| reservation-coworking | Non planifiable | T-037 : salarie:karim : allocation au projet nulle (S1-R10) |
-| reservation-coworking | Non planifiable | T-038 : salarie:karim : allocation au projet nulle (S1-R10) |
-| reservation-coworking | Non planifiable | T-044 : salarie:nadia : allocation au projet nulle (S1-R10) |
-| reservation-coworking | Non planifiable | T-045 : dépend de T-030, T-031, T-032, T-033, T-034, T-035, T-036, T-037, T-044 non planifiable |
-| reservation-coworking | Non planifiable | T-046 : dépend de T-045 non planifiable |
-| reservation-coworking | Non planifiable | T-047 : dépend de T-046, T-029 non planifiable |
-| reservation-coworking | Non planifiable | T-048 : dépend de T-047 non planifiable |
-| reservation-coworking | Non planifiable | T-049 : dépend de T-048 non planifiable |
-| reservation-coworking | Non planifiable | T-050 : salarie:karim : allocation au projet nulle (S1-R10) |
+| reservation-coworking | Utilisation (info) | claire utilisé à 31,7 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
+| reservation-coworking | Utilisation (info) | karim utilisé à 39,7 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
+| reservation-coworking | Utilisation (info) | nadia utilisé à 36,8 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
 
 ## Décisions humaines attendues
 
-| Priorité | Projet | Ticket | Titre | Question (bloque_par) |
-|---|---|---|---|---|
-| haute | reservation-coworking | T-007 | Validation du budget et des délais | validation humaine du budget et des délais |
-| haute | reservation-coworking | T-050 | Modification de règle R17 (écritures Markdown par Edit/Write uniquement) | décision humaine sur la règle R17 et le durcissement de restreindre_bash.py (R11) |
+Aucune.
 
 ## Équipe : allocation et utilisation
 
 | Salarié | Statut | Niveau | Allocation totale | Par projet | Utilisation (AF9) |
 |---|---|---|---|---|---|
-| claire | actif | expert | 10 % | reservation-coworking 10 % | reservation-coworking 67,5 % |
+| claire | actif | expert | 20 % | reservation-coworking 20 % | reservation-coworking 31,7 % |
 | hugo | actif | debutant | 0 % | aucune | — |
-| karim | actif | expert | 0 % | aucune | — |
+| karim | actif | expert | 15 % | reservation-coworking 15 % | reservation-coworking 39,7 % |
 | lea | actif | confirme | 0 % | aucune | — |
-| nadia | actif | confirme | 0 % | aucune | — |
+| nadia | actif | confirme | 20 % | reservation-coworking 20 % | reservation-coworking 36,8 % |
 
 ## Événements d'équipe à venir
 
