@@ -33,6 +33,7 @@ Revue humaine du ticket de purge F-08 exigée par le CDC § 8 (suppression de do
 ## Critères d'acceptation
 - [ ] La ligne « Revue humaine » de T-028 est remplie par Karim : prénom, date, avis.
 - [ ] La requête de purge et le calcul de la date limite (bornes 12 mois et 1 jour, 11 mois et 29 jours, 29 février) sont vérifiés ; la trace ne contient que des compteurs.
+- [ ] La revue couvre aussi `regles.date_limite_purge` et `regles.doit_etre_purgee`, livrées par T-012 sans revue humaine, qui fixent la frontière de suppression (recommandation du rapport securite-2026-11-25-3) ; l'avis le mentionne.
 - [ ] Le temps passé est noté (journal, `temps_passe_h`).
 
 ## Revue
@@ -46,3 +47,4 @@ Revue humaine du ticket de purge F-08 exigée par le CDC § 8 (suppression de do
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-24 23:55 · agent:chef-de-projet · création ; affectation conditionnelle à l'allocation de Karim proposée dans T-007 · 0 h
 - 2026-11-25 09:00 · agent:chef-de-projet · marqué abandonnable avec T-028 (Ethan, 2026-11-24, DEC-009) ; temps compté dans T-008 · 0 h
+- 2026-11-25 23:50 · agent:chef-de-projet · triage du rapport securite-2026-11-25-3 : critère ajouté, la revue couvre aussi `regles.date_limite_purge` et `regles.doit_etre_purgee` (T-012) ; estimation inchangée (fonctions courtes, déjà testées) ; temps compté dans T-008 · 0 h

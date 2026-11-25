@@ -10,13 +10,13 @@ assigne: salarie:claire     # agent:<nom> | salarie:<prenom>
 competence_requise: gestion-projet (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 0.5           # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 0            # heures équivalent humain
-depend_de: [T-042, T-043, T-045]   # ex. [T-001, T-002]
+depend_de: [T-042, T-043, T-045, T-069]   # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-24
-maj_le: 2026-11-24
+maj_le: 2026-11-25
 statut_depuis: 2026-11-24   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
@@ -47,3 +47,4 @@ Description à compléter au format R7 au moment de la présentation :
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-24 23:55 · agent:chef-de-projet · création (A_FAIRE, à présenter avec une recette CONFORME) · 0 h
+- 2026-11-25 14:45 · agent:chef-de-projet · triage (S1-R5) : dépend aussi de T-069 (API sans réponse si une connexion poolée gèle ; constat 14 du rapport securite-2026-11-25-4), dont le testeur demande la correction avant tout GO. Temps compté dans T-008 · 0 h

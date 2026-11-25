@@ -10,13 +10,13 @@ assigne: agent:dev-backend  # agent:<nom> | salarie:<prenom>
 competence_requise: api-rest (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 4.5           # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 0            # heures équivalent humain
-depend_de: [T-012, T-013]   # ex. [T-001, T-002]
+depend_de: [T-012, T-013, T-062]   # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-24
-maj_le: 2026-11-24
+maj_le: 2026-11-25
 statut_depuis: 2026-11-24   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
@@ -37,6 +37,7 @@ F-01 « Consulter les disponibilités et réserver une salle » (Must), composan
 - [ ] Un créneau déjà commencé ou passé ne peut pas être réservé (refus avec message clair, H-11).
 - [ ] Seul un membre connecté peut réserver ; la réservation est enregistrée au nom du membre connecté (identité tirée de la session, jamais d'un identifiant fourni dans la requête).
 - [ ] Après la réservation, le créneau apparaît « occupé » pour tous les utilisateurs.
+- [ ] **Instant de référence (constat 12, rapport securite-2026-11-25-3)** : le « maintenant » passé aux règles vient toujours de l'horloge injectée, jamais de la base (`SELECT now()`, `timestamptz` lu) ; un test d'API avec une horloge qui renvoie un instant en UTC refuse la réservation d'un créneau commencé.
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
@@ -49,3 +50,5 @@ F-01 « Consulter les disponibilités et réserver une salle » (Must), composan
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-24 23:55 · agent:chef-de-projet · création · 0 h
 - 2026-11-25 09:30 · agent:coordinateur · consultation (`GET /api/salles`, `GET /api/disponibilites`, mesure de temps) détachée dans T-054 (priorité d'Ethan du 2026-11-25, option « Lecture seule ») ; estimation ramenée de 6 à 4,5 h · 0 h
+- 2026-11-25 23:50 · agent:chef-de-projet · triage du rapport securite-2026-11-25-3 : dépend aussi de T-062 (constat 12, conversion du fuseau dans `regles`, à corriger avant ce ticket) ; critère ajouté sur l'instant de référence. Points de vigilance du `securite` pour ce ticket : verrou `SELECT … FOR UPDATE` du quota (H-12), contrôle de propriété et 404 identique pour l'annulation (T-019), interception de `ReglePasRespectee` seulement, jamais de `ValueError`. Temps compté dans T-008 · 0 h
+- 2026-11-25 14:45 · agent:chef-de-projet · triage des remarques sur T-054 (relecteur-code, remarque 7 ; audit securite-2026-11-25-4) : `GET /api/disponibilites` renvoie « libre » les créneaux déjà commencés du jour J ; le refus de les réserver est couvert par le critère H-11 existant (à tester par appel direct à l'API, sans s'appuyer sur l'affichage) ; l'affichage « passé » est traité côté page dans T-055 (critère ajouté). Le message `date_hors_fenetre` (« réserver ») reste correct pour `POST /api/reservations` : seule sa version de consultation est reformulée (T-065). Aucun critère ni estimation modifiés. Temps compté dans T-008 · 0 h
