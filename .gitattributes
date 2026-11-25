@@ -10,3 +10,6 @@
 *.gif  binary
 *.ico  binary
 *.zip  binary
+
+# Bibliothèque tierce minifiée (Mermaid, DEC-012) : pas de diff ligne à ligne illisible dans les PR.
+scripts/vendor/*.js -diff linguist-vendored

@@ -2,5 +2,8 @@
 # Des données et un secret local ne vont jamais dans le dépôt (S3-R8).
 /deploiement/local/
 
+# Console de consultation (DEC-012) : site généré par scripts/console.py, jamais versionné.
+/console/
+
 __pycache__/
 *.pyc
