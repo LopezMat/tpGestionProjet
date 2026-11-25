@@ -4,12 +4,12 @@ id: T-067
 titre: Tests (3/3) — vérification des correctifs de l'audit d'incrément
 projet: reservation-coworking
 type: tache                 # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: EN_COURS             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: normale           # critique | haute | normale | basse
 assigne: agent:testeur      # agent:<nom> | salarie:<prenom>
 competence_requise: tests-unitaires (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 4             # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 0            # heures équivalent humain
+temps_passe_h: 1            # heures équivalent humain
 depend_de: [T-007]          # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
@@ -18,7 +18,7 @@ cree_par: agent:chef-de-projet
 cree_le: 2026-11-25
 maj_le: 2026-11-25
 statut_depuis: 2026-11-25   # date du dernier changement de statut
-debut_le:                   # facultatif : date du premier passage EN_COURS
+debut_le: 2026-11-25         # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
@@ -47,3 +47,4 @@ Pas de `depend_de` vers les tickets vérifiés (le passage `TERMINE` en dépend)
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-25 23:50 · agent:chef-de-projet · création · 0 h
 - 2026-11-25 14:45 · agent:chef-de-projet · triage des suites de T-054 : T-069, T-070, T-071 et T-072 ajoutés, critère T-069 ajouté ; estimation 2,5 → 4 h (sous 7 h, règle 3). Temps compté dans T-008 · 0 h
+- 2026-11-25 16:15 · agent:testeur · campagne 5 (SHA 16282cc9dfe9e10af529ebf607d579961c52e9ae) : T-062 vérifié 5/5, passé TERMINE ; T-063 critères 1 à 3 cochés, critère 4 (console navigateur) non constaté, reste EN_REVUE (revue humaine T-064 manquante) ; suite complète 183 passed (Python 3.14.10, PostgreSQL 16) ; non-régression T-054, T-010, T-011 OK ; aucune régression ni bug créé, aucun test manquant. Détail : rapports/tests-2026-11-25.md, campagne 5. Reste à vérifier : T-058, T-060, T-061, T-065, T-069 à T-072 (ticket laissé EN_COURS) · 1 h

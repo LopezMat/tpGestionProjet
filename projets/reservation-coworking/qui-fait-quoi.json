@@ -10,6 +10,13 @@
       "simple": "vérifier le travail des robots"
     },
     {
+      "qui": "Karim",
+      "ticket": "T-064",
+      "quoi": "Revue humaine de T-063 (en-têtes de sécurité et Host), dont la vérification dans un vrai navigateur : aucune erreur CSP dans la console.",
+      "quand": "dès maintenant",
+      "simple": "vérifier les nouvelles serrures"
+    },
+    {
       "qui": "Johan",
       "ticket": "DEC-013",
       "quoi": "Relire DEC-013 et le passer VALIDÉ (valide_par, version 1.0), puis mettre l’index à jour.",
@@ -45,24 +52,29 @@
       "simple": "Je me réveille quand le ticket T-054 sera fini."
     },
     {
-      "qui": "testeur",
-      "quoi": "Vient de vérifier T-054 : 7 critères sur 7, 140 tests verts. A ouvert T-069 et T-070.",
-      "simple": "J’ai fini ! Tout marche (7 sur 7)."
-    },
-    {
-      "qui": "securite",
-      "quoi": "Vient d’auditer T-054 : non bloquant, aucune donnée de membre exposée.",
-      "simple": "J’ai fini : aucune faille grave."
-    },
-    {
-      "qui": "relecteur-code",
-      "quoi": "Vient d’approuver T-054 et a demandé la revue humaine de Karim.",
-      "simple": "J’ai relu, c’est bon !"
-    },
-    {
       "qui": "chef-de-projet",
       "quoi": "Vient de trier T-069 à T-072 et les constats 14 et 15.",
       "simple": "J’ai rangé tous les problèmes trouvés dans des tickets."
+    },
+    {
+      "qui": "dev-backend",
+      "quoi": "Vient de livrer T-063 et T-062.",
+      "simple": "J’ai réparé deux défauts !"
+    },
+    {
+      "qui": "relecteur-code",
+      "quoi": "Vient d’approuver T-063 et T-062.",
+      "simple": "J’ai relu les deux réparations, c’est bon !"
+    },
+    {
+      "qui": "testeur",
+      "quoi": "Vient de passer T-062 TERMINE (183 tests verts) ; T-063 attend la revue de Karim.",
+      "simple": "J’ai fini : une réparation est validée, l’autre attend Karim."
+    },
+    {
+      "qui": "securite",
+      "quoi": "Vient d’auditer T-063 et T-062 : non bloquant, constats 2, 4 et 12 fermés, nouveau constat bas 16.",
+      "simple": "J’ai fini : les portes sont bien fermées."
     }
   ],
   "etapes": [

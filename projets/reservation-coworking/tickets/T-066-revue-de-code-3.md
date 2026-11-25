@@ -4,12 +4,12 @@ id: T-066
 titre: Revue de code (3/3) — correctifs de l'audit d'incrément
 projet: reservation-coworking
 type: tache                 # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: EN_COURS            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: normale           # critique | haute | normale | basse
 assigne: agent:relecteur-code   # agent:<nom> | salarie:<prenom>
 competence_requise: revue-code (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 5             # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 0            # heures équivalent humain
+temps_passe_h: 0.8          # heures équivalent humain
 depend_de: [T-007]          # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
@@ -18,7 +18,7 @@ cree_par: agent:chef-de-projet
 cree_le: 2026-11-25
 maj_le: 2026-11-25
 statut_depuis: 2026-11-25   # date du dernier changement de statut
-debut_le:                   # facultatif : date du premier passage EN_COURS
+debut_le: 2026-11-25        # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
@@ -45,3 +45,5 @@ Pas de `depend_de` vers les tickets relus (dépendance circulaire, R13). T-058 p
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-25 23:50 · agent:chef-de-projet · création · 0 h
 - 2026-11-25 14:45 · agent:chef-de-projet · triage des suites de T-054 : T-069, T-070, T-071 et T-072 ajoutés ; estimation 3 → 5 h (toujours sous 7 h, règle 3). Temps compté dans T-008 · 0 h
+- 2026-11-25 · coordinateur pour agent:relecteur-code · revue de T-063 (commit b8b0004) : APPROUVÉ, revue humaine requise : oui (T-064) · 0.4 h
+- 2026-11-25 · coordinateur pour agent:relecteur-code · revue de T-062 (commit 16282cc) : APPROUVÉ, revue humaine non requise · 0.4 h

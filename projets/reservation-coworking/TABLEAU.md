@@ -9,10 +9,10 @@
 | Indicateur | Valeur |
 |---|---|
 | Type · état | metier · cadrage |
-| Avancement (h estimées terminées / h estimées hors ANNULE) | 17,4 % (31,0 h / 178,5 h) |
-| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 125,3 h |
-| Budget consommé / prévu | 858,00 € / 6 000,00 € (14,3 %) |
-| Coût projeté à terminaison (consommé + reste × taux) | 4 318,21 € |
+| Avancement (h estimées terminées / h estimées hors ANNULE) | 18,2 % (32,5 h / 178,5 h) |
+| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 121,0 h |
+| Budget consommé / prévu | 945,00 € / 6 000,00 € (15,8 %) |
+| Coût projeté à terminaison (consommé + reste × taux) | 4 340,71 € |
 | Fin projetée | 2026-12-15 |
 | Deadline | 2026-12-18 |
 | Écart avec la deadline | -3 j ouvrés |
@@ -28,12 +28,12 @@
 
 | Statut | Nombre |
 |---|---|
-| A_FAIRE | 52 |
-| EN_COURS | 3 |
-| EN_REVUE | 1 |
+| A_FAIRE | 48 |
+| EN_COURS | 5 |
+| EN_REVUE | 2 |
 | BLOQUE | 0 |
 | ATTENTE_HUMAIN | 1 |
-| TERMINE | 10 |
+| TERMINE | 11 |
 | ANNULE | 5 |
 | **Total** | 72 |
 
@@ -113,41 +113,41 @@ gantt
     T-013 Authentification, sessions et rôles (F-04) :t013, 2026-11-25, 2026-11-26
     T-014 Limitation des tentatives et alerte de sécurité (F-04) :t014, 2026-11-26, 2026-11-27
     T-015 Profil et changement de mot de passe (F-04, F-07) :t015, 2026-11-26, 2026-11-27
-    T-016 Gestion des comptes par l'accueil (F-07) :t016, 2026-11-27, 2026-12-01
+    T-016 Gestion des comptes par l'accueil (F-07) :t016, 2026-12-03, 2026-12-04
     T-017 Compte accueil initial (init_accueil) et commande forcer_cha :t017, 2026-11-27, 2026-11-28
-    T-018 Disponibilités et réservation (F-01) :t018, 2026-12-01, 2026-12-02
-    T-019 Annulation et vue du jour de l'accueil (F-02, F-03) :t019, 2026-12-01, 2026-12-03
-    T-020 Matrice d'autorisation et tests sur toutes les routes :t020, 2026-12-02, 2026-12-03
-    T-021 Jeu de données de recette (donnees_demo) :t021, 2026-11-27, 2026-11-28
-    T-026 Tests de bout en bout Playwright (parcours 1, 5, 7) :t026, 2026-12-02, 2026-12-04
-    T-028 Purge des réservations à 12 mois (F-08, Should) :t028, 2026-12-03, 2026-12-04
-    T-054 API de consultation des disponibilités (F-01, lecture seule) :active, t054, 2026-11-27, 2026-11-28
+    T-018 Disponibilités et réservation (F-01) :t018, 2026-11-27, 2026-12-01
+    T-019 Annulation et vue du jour de l'accueil (F-02, F-03) :t019, 2026-11-30, 2026-12-01
+    T-020 Matrice d'autorisation et tests sur toutes les routes :t020, 2026-12-03, 2026-12-05
+    T-021 Jeu de données de recette (donnees_demo) :t021, 2026-11-30, 2026-12-01
+    T-026 Tests de bout en bout Playwright (parcours 1, 5, 7) :t026, 2026-12-02, 2026-12-03
+    T-028 Purge des réservations à 12 mois (F-08, Should) :t028, 2026-12-04, 2026-12-05
+    T-054 API de consultation des disponibilités (F-01, lecture seule) :active, t054, 2026-11-30, 2026-12-01
     T-056 Test manquant T-010 (/health sous base gelée) :done, t056, 2026-11-25, 2026-11-26
-    T-060 Garde-fou de la fixture destructrice des tests de migration  :t060, 2026-11-27, 2026-11-28
-    T-061 Contraintes sur l'e-mail et les champs vides de « utilisateu :t061, 2026-11-27, 2026-11-28
-    T-062 Instant hors fuseau de Paris non converti dans « regles » (c :t062, 2026-11-30, 2026-12-02
-    T-063 En-têtes de sécurité et contrôle de l'en-tête Host (constats :t063, 2026-11-27, 2026-11-28
-    T-065 Dette de tests et de documentation de l'incrément (remarques :t065, 2026-12-04, 2026-12-05
-    T-069 API de consultation sans réponse si une connexion poolée gèl :t069, 2026-12-03, 2026-12-05
+    T-060 Garde-fou de la fixture destructrice des tests de migration  :t060, 2026-12-02, 2026-12-03
+    T-061 Contraintes sur l'e-mail et les champs vides de « utilisateu :t061, 2026-12-02, 2026-12-03
+    T-062 Instant hors fuseau de Paris non converti dans « regles » (c :done, t062, 2026-11-25, 2026-11-26
+    T-063 En-têtes de sécurité et contrôle de l'en-tête Host (constats :active, t063, 2026-12-02, 2026-12-03
+    T-065 Dette de tests et de documentation de l'incrément (remarques :t065, 2026-12-07, 2026-12-08
+    T-069 API de consultation sans réponse si une connexion poolée gèl :t069, 2026-12-04, 2026-12-05
     T-070 Test manquant T-054 (503 sur statement_timeout) :t070, 2026-12-04, 2026-12-05
-    T-071 Journal d'accès sans chaîne de requête (constat 15) :t071, 2026-12-04, 2026-12-05
+    T-071 Journal d'accès sans chaîne de requête (constat 15) :t071, 2026-12-04, 2026-12-08
     section agent dev-frontend
     T-022 Front socle (connexion, mot de passe, navigation) (F-04) :t022, 2026-11-25, 2026-11-26
-    T-023 Front membres (disponibilités, réservation, annulation) (F-0 :t023, 2026-11-27, 2026-12-01
+    T-023 Front membres (disponibilités, réservation, annulation) (F-0 :t023, 2026-12-01, 2026-12-03
     T-024 Front accueil (vue du jour, gestion des comptes) (F-03, F-07 :t024, 2026-11-25, 2026-11-27
     T-025 Page de confidentialité (texte validé par le client) :t025, 2026-11-26, 2026-11-27
-    T-027 Fiches des salles (F-06, Should) :t027, 2026-12-03, 2026-12-04
-    T-055 Page de consultation des disponibilités (F-01, lecture seule :t055, 2026-11-27, 2026-11-28
+    T-027 Fiches des salles (F-06, Should) :t027, 2026-12-04, 2026-12-05
+    T-055 Page de consultation des disponibilités (F-01, lecture seule :t055, 2026-12-01, 2026-12-02
     section agent relecteur-code
     T-039 Revue de code (1/2) — socle, authentification, réservations :active, t039, 2026-11-25, 2026-11-26
     T-040 Revue de code (2/2) — front, bout en bout, Should, outillage :t040, 2026-11-25, 2026-11-26
-    T-066 Revue de code (3/3) — correctifs de l'audit d'incrément :t066, 2026-11-25, 2026-11-27
+    T-066 Revue de code (3/3) — correctifs de l'audit d'incrément :active, t066, 2026-11-25, 2026-11-27
     section agent securite
-    T-043 Audit sécurité :t043, 2026-12-03, 2026-12-04
+    T-043 Audit sécurité :t043, 2026-12-04, 2026-12-05
     section agent testeur
     T-041 Tests (1/2) — vérification des tickets de réalisation :active, t041, 2026-11-25, 2026-11-26
-    T-042 Tests (2/2) — rapport de tests de la livraison :t042, 2026-12-03, 2026-12-05
-    T-067 Tests (3/3) — vérification des correctifs de l'audit d'incré :t067, 2026-12-04, 2026-12-05
+    T-042 Tests (2/2) — rapport de tests de la livraison :t042, 2026-12-04, 2026-12-05
+    T-067 Tests (3/3) — vérification des correctifs de l'audit d'incré :active, t067, 2026-12-04, 2026-12-08
     section salarie claire
     T-007 Validation du budget et des délais :done, t007, 2026-11-24, 2026-11-26
     T-009 Points client (mention de confidentialité, F-08, recette) :t009, 2026-11-25, 2026-11-27
