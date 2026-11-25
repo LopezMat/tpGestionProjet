@@ -766,11 +766,8 @@ def gantt(p):
     return out
 
 
-def rendre_tableau(p):
-    eq, auj = p.equipe, p.aujourdhui
-    L = [EN_TETE, "", "# Tableau de bord — {} (`{}`)".format(p.client, p.slug), "",
-         ENCADRE.format(d=auj.isoformat()), ""]
-
+def libelle_fin(p):
+    """Texte de la fin projetée d'un projet calculé (aussi utilisé par scripts/console.py)."""
     fin = "—"
     if p.fin_projetee:
         fin = p.fin_projetee.isoformat()
@@ -782,6 +779,15 @@ def rendre_tableau(p):
         fin = "— (aucun ticket)"
     elif not p.ouverts:
         fin = "— (aucun ticket ouvert)"
+    return fin
+
+
+def rendre_tableau(p):
+    eq, auj = p.equipe, p.aujourdhui
+    L = [EN_TETE, "", "# Tableau de bord — {} (`{}`)".format(p.client, p.slug), "",
+         ENCADRE.format(d=auj.isoformat()), ""]
+
+    fin = libelle_fin(p)
     ecart = "—" if p.ecart is None else fmt_jo(p.ecart, signe=bool(p.ecart))
     budget = "{} / {} ({})".format(fmt_eur(p.consomme), fmt_eur(p.budget), fmt_pct(p.part_budget)) \
         if p.budget else "{} / non renseigné".format(fmt_eur(p.consomme))
@@ -901,6 +907,25 @@ def rendre_tableau(p):
     return "\n".join(L) + "\n"
 
 
+def alertes_equipe(equipe, auj):
+    """Alertes de l'équipe hors projet : préavis de départ (S1-R8), allocation > 100 % (S1-R10).
+    Lignes [« (équipe) », type, détail] ; aussi utilisées par scripts/console.py."""
+    alertes = []
+    for cle in sorted(equipe.membres):
+        m = equipe.membres[cle]
+        dep = equipe.date_depart(cle)
+        if dep and dep >= auj and m["statut"] != "parti":
+            n = jours_ouvres_entre(auj, dep, equipe.feries)
+            if n < SEUIL_PREAVIS_JO:
+                alertes.append(["(équipe)", "Préavis de départ", "{} part le {} : {} de préavis (S1-R8)".format(
+                    m["prenom"], dep.isoformat(), fmt_jo(n))])
+        total = sum(m["allocation"].values())
+        if total > 100:
+            alertes.append(["(équipe)", "Allocation", "{} alloué(e) à {} au total, plus de 100 % (S1-R10)".format(
+                m["prenom"], fmt_nb(total, 0) + " %")])
+    return alertes
+
+
 def rendre_portfolio(projets, equipe, auj, anomalies_globales):
     L = [EN_TETE, "", "# Portefeuille des projets", "", ENCADRE.format(d=auj.isoformat()), ""]
     L += ["## Vue d'ensemble", ""]
@@ -925,19 +950,7 @@ def rendre_portfolio(projets, equipe, auj, anomalies_globales):
         L.append("Aucun projet dans `projets/`.")
 
     L += ["", "## Alertes", ""]
-    alertes = [[p.slug, a, d] for p in projets for a, d in p.alertes]
-    for cle in sorted(equipe.membres):
-        m = equipe.membres[cle]
-        dep = equipe.date_depart(cle)
-        if dep and dep >= auj and m["statut"] != "parti":
-            n = jours_ouvres_entre(auj, dep, equipe.feries)
-            if n < SEUIL_PREAVIS_JO:
-                alertes.append(["(équipe)", "Préavis de départ", "{} part le {} : {} de préavis (S1-R8)".format(
-                    m["prenom"], dep.isoformat(), fmt_jo(n))])
-        total = sum(m["allocation"].values())
-        if total > 100:
-            alertes.append(["(équipe)", "Allocation", "{} alloué(e) à {} au total, plus de 100 % (S1-R10)".format(
-                m["prenom"], fmt_nb(total, 0) + " %")])
+    alertes = [[p.slug, a, d] for p in projets for a, d in p.alertes] + alertes_equipe(equipe, auj)
     L += tableau_md(["Projet", "Type", "Détail"], alertes) if alertes else ["Aucune alerte."]
 
     L += ["", "## Décisions humaines attendues", ""]
@@ -996,6 +1009,27 @@ def ecrire_si_change(chemin, contenu):
 
 # ============================================================================ programme principal
 
+def charger(racine, aujourdhui):
+    """Lit l'équipe et tous les projets de `racine`, et calcule chaque projet.
+    Retourne (equipe, projets, anomalies globales) ; aussi utilisé par scripts/console.py. N'écrit rien."""
+    equipe = Equipe(racine)
+    anomalies = list(equipe.anomalies)
+    projets = []
+    dossier_projets = os.path.join(racine, "projets")
+    if os.path.isdir(dossier_projets):
+        for nom in sorted(os.listdir(dossier_projets)):
+            dossier = os.path.join(dossier_projets, nom)
+            if not os.path.isdir(dossier):
+                continue
+            if not os.path.isfile(os.path.join(dossier, "projet.md")):
+                anomalies.append("projets/{}/ : pas de projet.md, dossier ignoré".format(nom))
+                continue
+            p = Projet(racine, dossier, equipe, aujourdhui)
+            p.calculer()
+            projets.append(p)
+    return equipe, projets, anomalies
+
+
 def main(argv=None):
     defaut = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     ap = argparse.ArgumentParser(description="Génère TABLEAU.md (par projet) et PORTFOLIO.md (R9).")
@@ -1018,21 +1052,7 @@ def main(argv=None):
         ecrire_stdout("ERREUR: --racine introuvable : {}".format(racine))
         return 2
 
-    equipe = Equipe(racine)
-    anomalies = list(equipe.anomalies)
-    projets = []
-    dossier_projets = os.path.join(racine, "projets")
-    if os.path.isdir(dossier_projets):
-        for nom in sorted(os.listdir(dossier_projets)):
-            dossier = os.path.join(dossier_projets, nom)
-            if not os.path.isdir(dossier):
-                continue
-            if not os.path.isfile(os.path.join(dossier, "projet.md")):
-                anomalies.append("projets/{}/ : pas de projet.md, dossier ignoré".format(nom))
-                continue
-            p = Projet(racine, dossier, equipe, aujourdhui)
-            p.calculer()
-            projets.append(p)
+    equipe, projets, anomalies = charger(racine, aujourdhui)
 
     for p in projets:
         chemin = os.path.join(p.dossier, "TABLEAU.md")
