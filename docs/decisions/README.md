@@ -1,10 +1,10 @@
 ---
 titre: Registre des décisions humaines
-statut: VALIDÉ          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
+statut: EN_REVUE          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
 responsable: B
-version: 1.0
+version: 0.6
 maj_le: 2026-11-25
-valide_par: Ethan
+valide_par: 
 decision:
 ---
 
@@ -36,4 +36,4 @@ Un document `VALIDÉ` est figé pour les agents (R6). Pour le faire évoluer, un
 | [DEC-002](2026-11-24-DEC-002-integration-lot2-recette.md) | 2026-11-24 | Intégration du Lot 2, recette humaine, listes blanches Bash S2 | VALIDÉ |
 | [DEC-003](2026-11-24-DEC-003-production-locale-docker.md) | 2026-11-24 | Production locale Docker et workflows de contrôle (lot 5) | VALIDÉ |
 | [DEC-004](2026-11-24-DEC-004-recette-sans-claude-code.md) | 2026-11-24 | Recette par un recetteur sans Claude Code (notes déposées, tickets bug par `support`) | VALIDÉ |
-| [DEC-012](2026-11-25-DEC-012-console-consultation.md) | 2026-11-25 | Console de consultation de l'ESN (outil interne, lecture seule) | EN_REVUE |
+| [DEC-012](2026-11-25-DEC-012-console-consultation.md) | 2026-11-25 | Console de consultation de l'ESN (outil interne, lecture seule) | VALIDÉ |
