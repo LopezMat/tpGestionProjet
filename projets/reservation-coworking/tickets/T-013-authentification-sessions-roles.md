@@ -10,7 +10,7 @@ assigne: agent:dev-backend  # agent:<nom> | salarie:<prenom>
 competence_requise: backend-python (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 7             # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 0            # heures équivalent humain
-depend_de: [T-011]          # ex. [T-001, T-002]
+depend_de: [T-011, T-073]   # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
@@ -56,3 +56,4 @@ Composant `auth` de [architecture.md](../architecture.md) § 3, § 6 et § 7 pou
 - 2026-11-24 23:55 · agent:chef-de-projet · création · 0 h
 - 2026-11-25 23:50 · agent:chef-de-projet · triage du rapport securite-2026-11-25-3 : critère ajouté (constat 11 : normalisation de l'e-mail avant recherche, casse, empreinte invalide sans erreur 500) ; critère des en-têtes précisé (posés par T-063). Constat 10 : la décision T-057 (rôle PostgreSQL non superutilisateur) est attendue avant le début de ce ticket ; ne rien écrire qui exige des droits de superutilisateur. Temps compté dans T-008 · 0 h
 - 2026-11-25 14:45 · agent:chef-de-projet · triage du constat 15 (rapport securite-2026-11-25-4), partie (c) : critère ajouté (aucune donnée personnelle ni secret dans l'URL), règle à respecter aussi par T-014 à T-019 ; estimation de 7 h maintenue (le `POST` à corps JSON est déjà prévu, seul le test de garde s'ajoute). Parties (a) et (b) : T-071 et T-072. Temps compté dans T-008 · 0 h
+- 2026-11-25 16:40 · agent:chef-de-projet · triage du constat 16 (rapport securite-2026-11-25-5 : 500 interne sans en-têtes de sécurité) : dépend désormais de T-073 (à terminer avant ce ticket, recommandation du `securite`). T-073 ne passe `TERMINE` qu'après la revue humaine T-074 (Karim), à faire dans la même séance que T-064 : ce ticket ne démarre donc qu'après ces revues, ce qui rejoint la condition 1 du rapport `-4` (T-063 et T-064 `TERMINE` avant T-013). Critères et estimation inchangés. Temps compté dans T-008 · 0 h

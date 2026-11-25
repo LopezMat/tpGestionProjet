@@ -8,8 +8,8 @@ statut: EN_COURS            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_H
 priorite: normale           # critique | haute | normale | basse
 assigne: agent:relecteur-code   # agent:<nom> | salarie:<prenom>
 competence_requise: revue-code (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
-estimation_h: 5             # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 0.8          # heures équivalent humain
+estimation_h: 5.5           # heures équivalent humain, quel que soit l'assigné
+temps_passe_h: 1.8          # heures équivalent humain
 depend_de: [T-007]          # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
@@ -47,3 +47,7 @@ Pas de `depend_de` vers les tickets relus (dépendance circulaire, R13). T-058 p
 - 2026-11-25 14:45 · agent:chef-de-projet · triage des suites de T-054 : T-069, T-070, T-071 et T-072 ajoutés ; estimation 3 → 5 h (toujours sous 7 h, règle 3). Temps compté dans T-008 · 0 h
 - 2026-11-25 · coordinateur pour agent:relecteur-code · revue de T-063 (commit b8b0004) : APPROUVÉ, revue humaine requise : oui (T-064) · 0.4 h
 - 2026-11-25 · coordinateur pour agent:relecteur-code · revue de T-062 (commit 16282cc) : APPROUVÉ, revue humaine non requise · 0.4 h
+- 2026-11-25 16:40 · agent:chef-de-projet · triage du rapport securite-2026-11-25-5 : T-073 (constat 16, en-têtes sur la 500) ajouté à relire ; estimation 5 → 5,5 h (sous 7 h, règle 3). Le critère « date passée » ajouté à T-018 est relu avec T-018 dans T-039. Liste des critères non modifiée (le statut et la section critères restent au relecteur et au coordinateur). Temps compté dans T-008 · 0 h
+- 2026-11-25 · coordinateur pour agent:relecteur-code · revue de T-060 (commit 14398c1) : APPROUVÉ, revue humaine non requise · 0.3 h
+- 2026-11-25 · coordinateur pour agent:relecteur-code · revue de T-071 (commit 9114f9e) : APPROUVÉ, revue humaine non requise · 0.3 h
+- 2026-11-25 · coordinateur pour agent:relecteur-code · revue de T-073 (commit 748c75e) : APPROUVÉ, revue humaine requise : oui (T-074) · 0.4 h

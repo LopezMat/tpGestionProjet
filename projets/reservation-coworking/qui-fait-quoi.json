@@ -11,10 +11,10 @@
     },
     {
       "qui": "Karim",
-      "ticket": "T-064",
-      "quoi": "Revue humaine de T-063 (en-têtes de sécurité et Host), dont la vérification dans un vrai navigateur : aucune erreur CSP dans la console.",
-      "quand": "dès maintenant",
-      "simple": "vérifier les nouvelles serrures"
+      "ticket": "T-064 et T-074",
+      "quoi": "Revues humaines de T-063 et T-073 en une séance (0,75 h), au plus tard le 2026-11-26 : sinon T-013 attend et la deadline est menacée. Inclut le constat de la console en navigateur.",
+      "quand": "au plus tard le 26/11",
+      "simple": "vérifier les nouvelles serrures, vite"
     },
     {
       "qui": "Johan",
@@ -53,28 +53,28 @@
     },
     {
       "qui": "chef-de-projet",
-      "quoi": "Vient de trier T-069 à T-072 et les constats 14 et 15.",
-      "simple": "J’ai rangé tous les problèmes trouvés dans des tickets."
+      "quoi": "Vient de créer T-073 et T-074 et d’ajouter un critère à T-018.",
+      "simple": "J’ai rangé les derniers problèmes et prévenu que Karim est très attendu."
     },
     {
       "qui": "dev-backend",
-      "quoi": "Vient de livrer T-063 et T-062.",
-      "simple": "J’ai réparé deux défauts !"
+      "quoi": "Vient de livrer T-073 (216 tests verts).",
+      "simple": "J’ai fermé la dernière petite porte !"
     },
     {
       "qui": "relecteur-code",
-      "quoi": "Vient d’approuver T-063 et T-062.",
-      "simple": "J’ai relu les deux réparations, c’est bon !"
+      "quoi": "Vient d’approuver T-060, T-071 et T-073.",
+      "simple": "J’ai relu toutes les réparations, c’est bon !"
     },
     {
       "qui": "testeur",
-      "quoi": "Vient de passer T-062 TERMINE (183 tests verts) ; T-063 attend la revue de Karim.",
-      "simple": "J’ai fini : une réparation est validée, l’autre attend Karim."
+      "quoi": "Vient de passer T-060 et T-071 TERMINE (216 tests verts) ; T-073 attend Karim.",
+      "simple": "J’ai fini : deux réparations validées, la troisième attend Karim."
     },
     {
       "qui": "securite",
-      "quoi": "Vient d’auditer T-063 et T-062 : non bloquant, constats 2, 4 et 12 fermés, nouveau constat bas 16.",
-      "simple": "J’ai fini : les portes sont bien fermées."
+      "quoi": "Vient d’auditer T-060, T-071 et T-073 : non bloquant, constats 13, 15a et 16 fermés ; constats bas 17 à 19.",
+      "simple": "J’ai fini : les serrures tiennent bon."
     }
   ],
   "etapes": [
