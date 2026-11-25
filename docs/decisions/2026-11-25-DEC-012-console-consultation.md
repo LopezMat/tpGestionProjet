@@ -1,10 +1,10 @@
 ---
 titre: Console de consultation de l'ESN (outil interne, lecture seule)
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: D
-version: 0.2
+version: 1.0
 maj_le: 2026-11-25
-valide_par:                 # rempli par l'humain qui valide
+valide_par:    Ethan             # rempli par l'humain qui valide
 decision: DEC-012           # pour un fichier de décision : son propre id
 # Champs propres à la décision
 id: DEC-012
