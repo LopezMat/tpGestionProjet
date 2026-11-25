@@ -1,0 +1,49 @@
+---
+# Frontmatter propre aux tickets (lu par scripts/tableau.py, ne pas renommer les champs)
+id: T-046
+titre: GO mise en production
+projet: reservation-coworking
+type: decision              # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
+statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+priorite: haute             # critique | haute | normale | basse
+assigne: salarie:claire     # agent:<nom> | salarie:<prenom>
+competence_requise: gestion-projet (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
+estimation_h: 0.5           # heures équivalent humain, quel que soit l'assigné
+temps_passe_h: 0            # heures équivalent humain
+depend_de: [T-042, T-043, T-045]   # ex. [T-001, T-002]
+bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
+validation_humaine_requise: oui   # oui | non
+decision:                   # DEC-NNN si le ticket porte une décision humaine
+cree_par: agent:chef-de-projet
+cree_le: 2026-11-24
+maj_le: 2026-11-24
+statut_depuis: 2026-11-24   # date du dernier changement de statut
+debut_le:                   # facultatif : date du premier passage EN_COURS
+termine_le:                 # facultatif : date du passage TERMINE
+---
+<!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
+
+# T-046 — GO mise en production
+
+## Description
+Point d'arrêt humain obligatoire (S3-R3, porte 4). Créé dès le planning en `A_FAIRE` pour figurer au budget et au chemin critique ; il passe `ATTENTE_HUMAIN` (avec `bloque_par`) quand le coordinateur le présente, **seulement** avec un rapport de recette `CONFORME` sur le SHA du GO (CLAUDE.md R16). Porteur salarié (AF2) : Claire, interlocutrice client, qui a fait la recette et présente la décision ; la validation formelle reste humaine (R5).
+
+Description à compléter au format R7 au moment de la présentation :
+- **Question** : mettre en production locale le SHA `<sha40>` ?
+- **Options** : GO sur ce SHA ; pas de GO (corrections, nouveau SHA, nouvelle recette).
+- **Recommandation** et **impact** : rapports de tests (T-042), sécurité (T-043) et recette (T-045) sur ce SHA ; T-029 (sauvegarde) terminé ; mise en service (T-048) prévue le jour du déploiement ; marge restante avant le 2026-12-18.
+
+## Critères d'acceptation
+- [ ] Les rapports de tests `CONFORME`, de sécurité `NON BLOQUANT` et de recette `CONFORME` portent sur le SHA proposé.
+- [ ] Un humain a décidé ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` cite le SHA attendu et est référencé dans `decision`.
+
+## Revue
+<!-- Remplie par relecteur-code pour les tickets de réalisation -->
+- **Avis relecteur-code** : sans objet (ticket de décision)
+- **Commentaires** :
+- **Revue humaine requise** : non
+- **Revue humaine** :
+
+## Journal
+<!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
+- 2026-11-24 23:55 · agent:chef-de-projet · création (A_FAIRE, à présenter avec une recette CONFORME) · 0 h

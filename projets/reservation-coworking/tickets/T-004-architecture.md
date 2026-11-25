@@ -4,7 +4,7 @@ id: T-004
 titre: Architecture
 projet: reservation-coworking
 type: tache                 # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: EN_REVUE            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: agent:architecte   # agent:<nom> | salarie:<prenom>
 competence_requise: architecture-logicielle (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -13,13 +13,13 @@ temps_passe_h: 11.5         # heures équivalent humain
 depend_de: [T-003]          # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
-decision:                   # DEC-NNN si le ticket porte une décision humaine
+decision: DEC-008           # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:coordinateur
 cree_le: 2026-11-24
 maj_le: 2026-11-24
 statut_depuis: 2026-11-24   # date du dernier changement de statut
 debut_le: 2026-11-24        # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le: 2026-11-24      # facultatif : date du passage TERMINE
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
 
@@ -33,12 +33,12 @@ Points structurants du CDC : 5 Must (F-01 à F-04, F-07) ; authentification par 
 Repère d'estimation : 7 h pour une application métier.
 
 ## Critères d'acceptation
-- [ ] `architecture.md` existe, suit `templates/architecture.md` avec l'en-tête standard et la ligne de provenance, en `EN_REVUE`.
-- [ ] Chaque exigence Must du CDC (F-01, F-02, F-03, F-04, F-07) est rattachée à au moins un composant ou une décision d'architecture.
-- [ ] Chaque choix technique important est justifié et accompagné d'au moins une alternative écartée.
-- [ ] Le § 8 du CDC (sécurité, RGPD) est couvert : hachage des mots de passe, contrôle des rôles côté serveur, gestion des secrets, conservation des données.
-- [ ] L'hébergement suit DEC-003 (production locale Docker) ou, s'il en diffère, le point est posé comme décision humaine.
-- [ ] Un ticket `decision` « Choix techniques » est créé en `ATTENTE_HUMAIN`.
+- [x] `architecture.md` existe, suit `templates/architecture.md` avec l'en-tête standard et la ligne de provenance, en `EN_REVUE`.
+- [x] Chaque exigence Must du CDC (F-01, F-02, F-03, F-04, F-07) est rattachée à au moins un composant ou une décision d'architecture.
+- [x] Chaque choix technique important est justifié et accompagné d'au moins une alternative écartée.
+- [x] Le § 8 du CDC (sécurité, RGPD) est couvert : hachage des mots de passe, contrôle des rôles côté serveur, gestion des secrets, conservation des données.
+- [x] L'hébergement suit DEC-003 (production locale Docker) ou, s'il en diffère, le point est posé comme décision humaine.
+- [x] Un ticket `decision` « Choix techniques » est créé en `ATTENTE_HUMAIN`.
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
@@ -58,3 +58,4 @@ Repère d'estimation : 7 h pour une application métier.
 - 2026-11-24 22:00 · agent:architecte · révision de `architecture.md` en v0.3 (EN_REVUE) selon trois corrections d'Ethan (DEC-007) : seuil global de 30 échecs transformé en alerte journalisée `ALERTE_SECURITE` sans blocage (format défini pour `analyste-prod`) ; R-03 traité par une limite d'âge de 30 jours sur toute sauvegarde du projet, appliquée par `sauvegarder_local.py` avec ajout additif dans `prod_locale.py` (tests existants inchangés, tests complétés) et durée réelle de 30 jours dans la page de confidentialité ; « Pourquoi » de C repris (décision 6, § 6, R-06) ; ticket reste EN_REVUE · 1 h
 - 2026-11-24 23:00 · agent:architecte · révision v0.4 de `architecture.md` selon deux décisions d'Ethan (DEC-007) : limite de 30 jours appliquée aussi au déploiement (`purger_sauvegardes()`), `test_retention` daté par rapport à `maintenant()` ; revue de Karim reportée aux tickets d'authentification (S3-R2). **Révision interrompue** : pendant le travail, le fichier est passé `VALIDÉ` (v1.0, `valide_par: Ethan`, `decision: DEC-007`). Une partie des changements avait déjà été enregistrée : historique v0.4, schéma, § 6, § 7, première puce « Sauvegardes » du § 8. Le reste n'a pas été appliqué (R6) : fin du § 8, décision 14, § 9, § 10, R-02 à R-05. Le document validé est donc incohérent sur la limite au déploiement. Un humain doit le repasser en `EN_REVUE` pour que la révision soit terminée. Ticket reste EN_REVUE · 0,5 h
 - 2026-11-24 23:45 · agent:architecte · `architecture.md` repassé `EN_REVUE` par Ethan (v1.0) ; révision **v1.1** (EN_REVUE, `valide_par` et `decision` vides) qui complète la v0.4 interrompue et intègre DEC-008 (EN_REVUE) : limite de 30 jours au déploiement via `purger_sauvegardes()` reportée partout (§ 8 limite d'âge, modification de `prod_locale.py`, tests dont `test_retention` daté par rapport à `pl.maintenant()` et nouveau test au déploiement, liste « Rétention cohérente » ; § 9 statut et décision 14, option (d) retenue, « commande quotidienne seule » écartée ; § 10 ticket de sauvegarde 3,5 à 4,5 h ; § 11 R-02 à R-05) ; limite R-05 écrite telle quelle ; procédure PowerShell de suppression des dossiers de sauvegardes en fin de démonstration ; message « Limite d'âge » distinct de « Rétention » dans `deployer_local.py` (désormais modifié) et `sauvegarder_local.py` ; relecture de cohérence du document entier. Ticket reste EN_REVUE · 1,5 h
+- 2026-11-24 23:50 · agent:coordinateur · critères vérifiés (architecture.md v1.1 VALIDÉ par Ethan, DEC-007 et DEC-008 ; T-005 créé puis tranché) ; passage TERMINE. Dépassement : 11,5 h pour 7 h estimées (quatre révisions) · 0 h
