@@ -1,11 +1,13 @@
 """Règles métier de date et d'heure (F-01, F-02, F-08). Module pur : ni base ni HTTP.
 
-Toutes les fonctions reçoivent « maintenant » en paramètre (datetime en heure de Paris) :
-aucune n'appelle l'horloge. Un refus lève `ReglePasRespectee` avec un message en français.
+Toutes les fonctions reçoivent « maintenant » en paramètre (datetime avec fuseau, converti
+en heure de Paris par `_heure_murale`) : aucune n'appelle l'horloge. Un refus lève `ReglePasRespectee` avec un message en français.
 La garantie sous concurrence relève de T-018, pas de ce module.
 """
 
 from datetime import date, datetime, timedelta
+
+from .horloge import FUSEAU
 
 HEURE_PREMIER_CRENEAU = 8  # 8 h-9 h
 HEURE_DERNIER_CRENEAU = 19  # 19 h-20 h
@@ -23,8 +25,14 @@ def _debut(jour: date, heure: int) -> datetime:
 
 
 def _heure_murale(instant: datetime) -> datetime:
-    """Compare en heure murale de Paris : on retire l'information de fuseau."""
-    return instant.replace(tzinfo=None)
+    """Convertit l'instant en heure de Paris, puis retire le fuseau (heure murale).
+
+    Un instant sans fuseau est une erreur de programmation (TypeError), pas un refus métier :
+    on ne devine pas son fuseau, une hypothèse silencieuse rouvrirait le défaut du constat 12.
+    """
+    if instant.tzinfo is None or instant.utcoffset() is None:
+        raise TypeError("« maintenant » doit être un datetime avec fuseau horaire (aware).")
+    return instant.astimezone(FUSEAU).replace(tzinfo=None)
 
 
 def verifier_creneau_valide(jour: date, heure_debut: int) -> None:
@@ -37,7 +45,7 @@ def verifier_creneau_valide(jour: date, heure_debut: int) -> None:
 
 def verifier_avance(jour: date, maintenant: datetime) -> None:
     """F-01, H-10 : au plus 14 jours à l'avance (J+14 accepté, J+15 refusé)."""
-    if jour > maintenant.date() + timedelta(days=AVANCE_MAX_JOURS):
+    if jour > _heure_murale(maintenant).date() + timedelta(days=AVANCE_MAX_JOURS):
         raise ReglePasRespectee(
             f"Il n'est pas possible de réserver plus de {AVANCE_MAX_JOURS} jours à l'avance."
         )

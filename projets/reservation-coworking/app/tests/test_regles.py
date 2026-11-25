@@ -1,5 +1,4 @@
-import inspect
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 
 import pytest
 from fastapi import Depends, FastAPI
@@ -173,11 +172,108 @@ def test_horloge_paris_et_injection():
     assert TestClient(app).get("/h").json() == {"t": fixe.isoformat()}
 
 
-def test_regles_nappellent_pas_lhorloge(monkeypatch):
-    def interdit():
-        raise AssertionError("horloge appelée")
+def _utc(jour: date, h: int, m: int = 0) -> datetime:
+    return datetime(jour.year, jour.month, jour.day, h, m, tzinfo=UTC)
 
-    monkeypatch.setattr(horloge, "maintenant", interdit)
-    regles.verifier_reservation(LUNDI, 10, _t(LUNDI, 7), 0)
-    source = inspect.getsource(regles)
-    assert "now(" not in source and "horloge" not in source.replace("l'horloge", "")
+
+def test_instant_utc_equivalent_a_paris_creneau_commence():
+    # Lundi 2026-11-30, 10 h 30 à Paris (UTC+1) = 09 h 30 UTC : créneau de 10 h commencé.
+    paris, utc = _t(LUNDI, 10, 30), _utc(LUNDI, 9, 30)
+    assert paris == utc
+    for now in (paris, utc):
+        with pytest.raises(ReglePasRespectee, match="déjà commencé"):
+            regles.verifier_pas_commence(LUNDI, 10, now)
+        with pytest.raises(ReglePasRespectee, match="déjà commencé"):
+            regles.verifier_reservation(LUNDI, 10, now, 0)
+        with pytest.raises(ReglePasRespectee, match="a commencé"):
+            regles.verifier_annulation(LUNDI, 10, now)
+
+
+def test_instant_utc_accueil_et_avance():
+    # 10 h 59 Paris = 09 h 59 UTC : l'accueil annule encore ; 11 h 00 Paris = 10 h 00 UTC : plus.
+    regles.verifier_annulation(LUNDI, 10, _utc(LUNDI, 9, 59), est_accueil=True)
+    with pytest.raises(ReglePasRespectee, match="terminé"):
+        regles.verifier_annulation(LUNDI, 10, _utc(LUNDI, 10, 0), est_accueil=True)
+    # 23 h 30 UTC le dimanche 29/11 = lundi 30/11 00 h 30 Paris : J+14 = 14/12.
+    now = _utc(date(2026, 11, 29), 23, 30)
+    regles.verifier_avance(date(2026, 12, 14), now)
+    with pytest.raises(ReglePasRespectee, match="14 jours"):
+        regles.verifier_avance(date(2026, 12, 15), now)
+
+
+@pytest.mark.parametrize(
+    "jour,decalage_h",
+    [
+        (date(2026, 3, 30), 2),  # lundi après le passage à l'heure d'été (UTC+2)
+        (date(2026, 10, 26), 1),  # lundi après le passage à l'heure d'hiver (UTC+1)
+    ],
+)
+def test_changement_d_heure_creneau_de_8h(jour, decalage_h):
+    avant = _utc(jour, 8 - decalage_h - 1, 59)  # 7 h 59 Paris
+    debut = _utc(jour, 8 - decalage_h, 0)  # 8 h 00 Paris
+    assert avant.astimezone(horloge.FUSEAU).hour == 7
+    assert debut.astimezone(horloge.FUSEAU).hour == 8
+    regles.verifier_pas_commence(jour, 8, avant)
+    regles.verifier_annulation(jour, 8, avant)
+    with pytest.raises(ReglePasRespectee, match="déjà commencé"):
+        regles.verifier_pas_commence(jour, 8, debut)
+    with pytest.raises(ReglePasRespectee, match="a commencé"):
+        regles.verifier_annulation(jour, 8, debut)
+
+
+def test_dimanche_du_changement_d_heure_converti():
+    # 2026-03-29 : 01 h 30 UTC = 03 h 30 Paris (heure d'été) ; 2026-10-25 : 06 h UTC = 07 h Paris.
+    assert _utc(date(2026, 3, 29), 1, 30).astimezone(horloge.FUSEAU).hour == 3
+    assert _utc(date(2026, 10, 25), 6, 0).astimezone(horloge.FUSEAU).hour == 7
+    # Le lundi suivant 8 h : non commencé le dimanche soir, quel que soit le fuseau d'expression.
+    regles.verifier_pas_commence(date(2026, 3, 30), 8, _utc(date(2026, 3, 29), 22))
+    regles.verifier_pas_commence(date(2026, 10, 26), 8, _utc(date(2026, 10, 25), 22))
+
+
+@pytest.mark.parametrize(
+    "appel",
+    [
+        lambda n: regles.verifier_pas_commence(LUNDI, 10, n),
+        lambda n: regles.verifier_avance(LUNDI, n),
+        lambda n: regles.verifier_annulation(LUNDI, 10, n),
+        lambda n: regles.verifier_reservation(LUNDI, 10, n, 0),
+    ],
+)
+def test_instant_naif_erreur_de_programmation(appel):
+    naif = datetime(2026, 11, 30, 7, 0)
+    with pytest.raises(TypeError, match="fuseau") as e:
+        appel(naif)
+    assert not isinstance(e.value, ReglePasRespectee)
+
+
+def test_regles_nappellent_pas_lhorloge(monkeypatch):
+    """Double de datetime/date dans l'espace de noms de regles : now/today/utcnow lèvent."""
+
+    class DatetimeInterdit(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            raise AssertionError("regles a lu l'horloge système (now)")
+
+        @classmethod
+        def today(cls):
+            raise AssertionError("regles a lu l'horloge système (today)")
+
+        @classmethod
+        def utcnow(cls):
+            raise AssertionError("regles a lu l'horloge système (utcnow)")
+
+    class DateInterdit(date):
+        @classmethod
+        def today(cls):
+            raise AssertionError("regles a lu l'horloge système (date.today)")
+
+    monkeypatch.setattr(regles, "datetime", DatetimeInterdit)
+    monkeypatch.setattr(regles, "date", DateInterdit)
+    now = _t(LUNDI, 7)
+    regles.verifier_reservation(LUNDI, 10, now, 0)
+    regles.verifier_annulation(LUNDI, 10, now)
+    regles.verifier_annulation(LUNDI, 10, now, est_accueil=True)
+    regles.date_limite_purge(date(2026, 11, 25))
+    # Garde-fou : le double est bien actif.
+    with pytest.raises(AssertionError):
+        regles.datetime.now()
