@@ -63,11 +63,36 @@ python scripts/test_tableau.py             # macOS : python3 …  (demande PyYAM
 python scripts/test_sonde_sante.py         # macOS : python3 …
 python scripts/test_prod_locale.py         # macOS : python3 …  (test réel si Docker répond, environ 1 min 30)
 python scripts/test_verifier_validations.py  # macOS : python3 …
+python scripts/test_console.py             # macOS : python3 …  (demande PyYAML)
 ```
 
 La CI (`.github/workflows/ci.yml`) lance les mêmes tests à chaque push ; `validations.yml`, `securite.yml` et `tableau.yml` complètent le contrôle (ARCHITECTURE § 3).
 
 Détail des risques et des parades : [docs/a-integrer/lot2-C.md](docs/a-integrer/lot2-C.md) (points 10 et 11).
+
+## Console
+
+Une console de consultation permet de suivre l'ESN sans lire les fichiers Markdown bruts ([DEC-012](docs/decisions/2026-11-25-DEC-012-console-consultation.md)). C'est un outil interne, comme `tableau.py`, et non un projet client.
+
+```
+python scripts/console.py                  # macOS : python3 scripts/console.py   (demande PyYAML)
+```
+
+Ensuite, ouvrir **`console/index.html`** dans un navigateur, par double-clic : aucun serveur n'est nécessaire.
+
+| Page | Contenu |
+|---|---|
+| Notre système | vision, chiffres clés, les 4 systèmes, circuit des agents (Mermaid d'ARCHITECTURE § 5, avec un lien vers `circuit.html` en plein écran pour la projection), points d'arrêt humains, garde-fous |
+| Portefeuille | projets, avancement, budget, fin projetée, alertes, tickets BLOQUE et ATTENTE_HUMAIN |
+| Fiche projet | synthèse, Kanban des tickets par statut, Gantt coloré par statut (avec légende), utilisation AF9 ; tickets, CDC, architecture et planning rendus en HTML |
+| Équipe | salariés, compétences, allocations, utilisation, calendrier (absences, arrivées, départs) |
+| Agents et skills | agents regroupés par système : rôle, quand l'appeler, outils, modèle, points d'arrêt, phrase à taper au coordinateur |
+| Décisions | registre lu dans l'en-tête de chaque fichier `DEC`, contrôle des validations (même contrôle que `validations.yml`) |
+
+- **Lecture seule.** Le script n'écrit que dans `console/`, qui est ignoré par Git. Il ne modifie ni les tickets, ni `TABLEAU.md`, ni `PORTFOLIO.md` (R9). Pour rafraîchir la console, relancer la commande.
+- **Mêmes chiffres que les tableaux de bord.** Les calculs viennent des fonctions de `scripts/tableau.py`.
+- **Hors ligne.** Les diagrammes Mermaid utilisent la copie locale `scripts/vendor/mermaid.min.js` (Mermaid 12.3.0, licence MIT dans `scripts/vendor/mermaid-LICENSE`), copiée dans `console/assets/` à chaque génération. Aucun réseau n'est nécessaire en soutenance. Pour utiliser le CDN à la place : `--mermaid-src https://cdn.jsdelivr.net/npm/mermaid@12.3.0/dist/mermaid.min.js`.
+- **Options.** `--date AAAA-MM-JJ` fixe la date de calcul ; `--racine DIR` désigne un autre dépôt.
 
 ## État d'avancement
 
