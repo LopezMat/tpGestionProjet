@@ -17,6 +17,8 @@ from reservation import bdd, config, migrer
 from reservation.app import creer_app
 from reservation.horloge import FUSEAU, fournir_horloge
 
+from garde_base import verifier_base_jetable
+
 URL_TEST = os.environ.get("TEST_DATABASE_URL")
 integration = pytest.mark.skipif(not URL_TEST, reason="TEST_DATABASE_URL non renseignée")
 
@@ -38,9 +40,7 @@ def client():
 
 @pytest.fixture
 def base(monkeypatch):
-    assert URL_TEST
-    nom = URL_TEST.rsplit("/", 1)[-1].split("?")[0]
-    assert "test" in nom, "TEST_DATABASE_URL doit désigner une base jetable (nom contenant test)"
+    verifier_base_jetable(URL_TEST)  # avant toute connexion (T-060)
     monkeypatch.setenv("DATABASE_URL", URL_TEST)
     bdd.moteur_applicatif.cache_clear()
     moteur = create_engine(config.convertir_url_base(URL_TEST))

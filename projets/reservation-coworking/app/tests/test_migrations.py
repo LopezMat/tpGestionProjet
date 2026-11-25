@@ -14,6 +14,8 @@ from sqlalchemy.exc import IntegrityError
 
 from reservation import demarrer, migrer
 
+from garde_base import verifier_base_jetable
+
 URL_TEST = os.environ.get("TEST_DATABASE_URL")
 integration = pytest.mark.skipif(not URL_TEST, reason="TEST_DATABASE_URL non renseignée")
 
@@ -27,6 +29,7 @@ def _vider(moteur):
 @pytest.fixture
 def base(monkeypatch):
     from reservation import config
+    verifier_base_jetable(URL_TEST)  # avant toute connexion (T-060)
     url = config.convertir_url_base(URL_TEST)
     monkeypatch.setenv("DATABASE_URL", URL_TEST)
     moteur = create_engine(url)
