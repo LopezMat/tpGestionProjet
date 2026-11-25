@@ -1,10 +1,10 @@
 ---
 titre: Registre des décisions humaines
-statut: EN_REVUE          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
+statut: VALIDÉ          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
 responsable: B
-version: 0.6
+version: 1.0
 maj_le: 2026-11-25
-valide_par:
+valide_par: Ethan
 decision:
 ---
 
