@@ -22,11 +22,11 @@ def _environnement_propre(monkeypatch):
 def client_base_ok():
     app = creer_app()
     app.dependency_overrides[verifier_base] = lambda: _controle(True)
-    return TestClient(app)
+    return TestClient(app, base_url="http://localhost")
 
 
 @pytest.fixture
 def client_base_ko():
     app = creer_app()
     app.dependency_overrides[verifier_base] = lambda: _controle(False)
-    return TestClient(app)
+    return TestClient(app, base_url="http://localhost")

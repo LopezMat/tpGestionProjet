@@ -50,6 +50,6 @@ def test_health_200_de_bout_en_bout_avec_un_vrai_postgres(monkeypatch):
 
     monkeypatch.setenv("DATABASE_URL", os.environ["TEST_DATABASE_URL"])
     monkeypatch.setenv("GIT_COMMIT", "f" * 40)
-    reponse = TestClient(creer_app()).get("/health")
+    reponse = TestClient(creer_app(), base_url="http://localhost").get("/health")
     assert reponse.status_code == 200
     assert reponse.json() == {"status": "ok", "commit": "f" * 40}

@@ -28,7 +28,7 @@ MOTS_PERSONNELS = ("nom_membre", "email", "utilisateur", "@", "reservation_id", 
 def _client(horloge=MAINTENANT):
     app = creer_app()
     app.dependency_overrides[fournir_horloge] = lambda: (lambda: horloge)
-    return TestClient(app)
+    return TestClient(app, base_url="http://localhost")
 
 
 @pytest.fixture

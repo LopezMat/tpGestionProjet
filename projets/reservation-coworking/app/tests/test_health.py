@@ -45,7 +45,7 @@ def test_health_503_sans_database_url():
 
     from reservation.app import creer_app
 
-    reponse = TestClient(creer_app()).get("/health")
+    reponse = TestClient(creer_app(), base_url="http://localhost").get("/health")
     assert reponse.status_code == 503
     assert reponse.json() == {"status": "ko", "commit": "inconnu"}
 
