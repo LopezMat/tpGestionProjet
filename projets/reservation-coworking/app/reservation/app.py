@@ -5,10 +5,11 @@ from pathlib import Path
 
 from fastapi import Depends, FastAPI
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from starlette.middleware.trustedhost import TrustedHostMiddleware
+from starlette.requests import Request
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from . import api, bdd, config
@@ -56,6 +57,26 @@ class EnTetesSecurite:
         await self.app(scope, receive, envoyer)
 
 
+async def gerer_erreur_interne(_requete: Request, _exc: Exception) -> PlainTextResponse:
+    """500 sur exception non interceptée (T-073, constat 16 du rapport securite-2026-11-25-5).
+
+    Starlette sert cette réponse depuis `ServerErrorMiddleware`, qui enveloppe tous les
+    middlewares de l'application, dont `EnTetesSecurite` : les en-têtes sont donc posés ici,
+    une seule fois (la réponse ne repasse pas par `EnTetesSecurite`). Corps fixe : ni le
+    message de l'exception ni la trace ne sont renvoyés (la trace reste dans le journal serveur).
+
+    Limite acceptée : les 400 « Invalid HTTP request received. » émises par Uvicorn lui-même
+    (Host dupliqué, HTTP/1.1 sans Host) sont produites avant l'application et ne peuvent pas
+    porter ces en-têtes sans proxy devant Uvicorn (constat 16). La requête est refusée, avec un
+    texte fixe sans HTML.
+    """
+    return PlainTextResponse(
+        "Internal Server Error",
+        status_code=500,
+        headers={n.decode("ascii"): v.decode("ascii") for n, v in EN_TETES_SECURITE},
+    )
+
+
 class SanteReponse(BaseModel):
     status: str
     commit: str
@@ -99,6 +120,7 @@ def creer_app(avec_documentation: bool = False) -> FastAPI:
     app.add_middleware(EnTetesSecurite)
 
     app.include_router(api.routeur)
+    app.add_exception_handler(Exception, gerer_erreur_interne)
     app.add_exception_handler(api.BaseIndisponible, api.gerer_base_indisponible)
     app.add_exception_handler(RequestValidationError, api.gerer_requete_invalide)
 
