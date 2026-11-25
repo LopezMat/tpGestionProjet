@@ -4,21 +4,21 @@ id: T-011
 titre: Modèle de données et migrations
 projet: reservation-coworking
 type: fonctionnalite        # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: EN_REVUE            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: agent:dev-backend  # agent:<nom> | salarie:<prenom>
 competence_requise: base-de-donnees-sql (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 4             # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 0            # heures équivalent humain
+temps_passe_h: 3            # heures équivalent humain
 depend_de: [T-010]          # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-24
-maj_le: 2026-11-24
-statut_depuis: 2026-11-24   # date du dernier changement de statut
-debut_le:                   # facultatif : date du premier passage EN_COURS
+maj_le: 2026-11-25
+statut_depuis: 2026-11-25   # date du dernier changement de statut
+debut_le: 2026-11-25        # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
@@ -48,3 +48,7 @@ Schéma PostgreSQL 16 de [architecture.md](../architecture.md) § 4, créé uniq
 - 2026-11-24 23:55 · agent:chef-de-projet · création · 0 h
 - 2026-11-25 09:45 · agent:coordinateur · critère ajouté : catalogue des salles créé par migration sans dépendre de l'authentification (demande d'Ethan, DEC-011) · 0 h
 - 2026-11-25 · agent:coordinateur · à prendre en compte (remarque 1 de la revue passe 2 de T-010) : le moteur de `bdd.py` est un moteur de **sonde** (`NullPool`, `statement_timeout=1000`) ; ne pas le réutiliser pour les migrations ni pour les routes métier : créer un moteur applicatif séparé (pool) et renommer celui de la sonde · 0 h
+- 2026-11-25 10:00 · agent:dev-backend · prise en charge (A_FAIRE -> EN_COURS) · 0 h
+- 2026-11-25 11:30 · agent:dev-backend · réalisation. Choix : (1) remarque 1 de T-010 : `bdd._moteur` renommé `_moteur_sonde` (comportement de /health inchangé) ; ajout d'un moteur applicatif séparé `bdd.moteur_applicatif()` (QueuePool 5+5, pre_ping, sans statement_timeout) ; les migrations ont leur propre moteur (NullPool) dans `migrations/env.py`. (2) Alembic sans alembic.ini, dans le paquet `reservation/migrations/` (donc déjà copié par le Dockerfile, Dockerfile inchangé) ; URL passée par `config.attributes`, jamais écrite ni journalisée. (3) Module de démarrage nommé `reservation/migrer.py` (`appliquer()`), pour ne pas entrer en conflit avec le paquet `migrations/`. (4) Migration 0001 sans `downgrade` (additive uniquement) ; salles : id fixes 1 à 3, `INSERT ... ON CONFLICT (id) DO NOTHING`, aucune dépendance à `utilisateur` (DEC-011). (5) `demarrer.main` : migration après l'attente de la base ; échec -> message sans détail (l'URL peut contenir le mot de passe), code 1. (6) Base en avance : `alembic_version` inconnue de l'image -> avertissement, pas de migration, démarrage. Fichiers partagés modifiés de façon minimale : `reservation/demarrer.py` (appel de `migrer.appliquer`), `tests/test_demarrer.py` (fixture autouse qui neutralise la migration) ; `requirements*.txt`, `conftest.py` et `app.py` non touchés ; README mis à jour. Aucune dépendance ajoutée (alembic et SQLAlchemy déjà épinglés). Ne touche pas la sécurité (aucune authentification ni donnée personnelle manipulée, juste le schéma). · 2.5 h
+- 2026-11-25 12:00 · agent:dev-backend · tests : PostgreSQL 16 jetable (postgres:16) + suite complète sous Python 3.14 (python:3.14-slim), via `TEST_DATABASE_URL`. Résultat : 105 passed (dont tests/test_health_delai.py : 7 passed). Conteneurs, réseau d'essai supprimés ; aucune image créée (les images postgres:16 et python:3.14-slim préexistaient et sont conservées). Couverture des critères (sans les cocher) : 1 schéma -> tests/test_migrations.py::test_tables_et_colonnes, test_email_unique_et_role_controle, test_contraintes_de_reservation, test_suppression_utilisateur_en_cascade, test_index_attendus ; 2 et 3 salles/DEC-011 -> test_trois_salles_sur_base_vide_sans_compte (double appel, aucun compte, aucun doublon), test_upgrade_head_direct_donne_les_salles ; 4 démarrage tolérant -> test_migrer_est_appele_au_demarrage_et_applique_la_tete, test_base_en_avance_avertit_et_ne_migre_pas, test_demarrage_avec_base_en_avance_demarre ; 5 additif -> test_aucune_migration_descendante, test_demarrage_n_appelle_que_upgrade_head ; 6 PostgreSQL réel -> tous les tests d'intégration (psycopg sur postgres:16, aucun SQLite). Commit : non fait, consigne du coordinateur. · 0.5 h
+- 2026-11-25 12:00 · agent:dev-backend · livré pour revue (EN_COURS -> EN_REVUE) ; critères non cochés (rôle du testeur) · 0 h

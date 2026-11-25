@@ -7,7 +7,12 @@ le ramène à 2 s au minimum et ne couvre ni la résolution DNS ni une connexion
 ouverte) ni `statement_timeout` (côté serveur) ne le garantissent : le contrôle tourne
 donc dans un fil dédié, et l'appelant cesse d'attendre à l'échéance.
 
-Pas de pool : une sonde ouvre une connexion neuve, la ferme, et ne risque pas de
+Ce moteur (`_moteur_sonde`) ne sert qu'à la sonde de santé. L'accès métier passe par
+`moteur_applicatif()` (avec pool) et les migrations par leur propre moteur
+(`migrations/env.py`) : ne jamais les mélanger (NullPool et `statement_timeout` de 1 s
+y seraient inadaptés).
+
+Pas de pool pour la sonde : une sonde ouvre une connexion neuve, la ferme, et ne risque pas de
 réutiliser une connexion devenue muette. Au plus `_MAX_CONTROLES` sondes sont en vol ;
 si elles sont toutes bloquées (base gelée), les contrôles suivants répondent faux
 immédiatement au lieu d'empiler des fils.
@@ -32,7 +37,7 @@ _places = threading.BoundedSemaphore(_MAX_CONTROLES)
 
 
 @lru_cache(maxsize=4)
-def _moteur(url: str) -> Engine:
+def _moteur_sonde(url: str) -> Engine:
     return create_engine(
         url,
         poolclass=NullPool,
@@ -46,13 +51,32 @@ def _moteur(url: str) -> Engine:
     )
 
 
+@lru_cache(maxsize=1)
+def moteur_applicatif() -> Engine:
+    """Moteur de l'accès métier : pool de connexions, vérifiées avant emploi (T-011).
+
+    Distinct de la sonde : pas de `statement_timeout` de 1 s, connexions réutilisées.
+    """
+    url = config.url_base()
+    if url is None:
+        raise RuntimeError("DATABASE_URL n'est pas renseignée.")
+    return create_engine(
+        url,
+        pool_size=5,
+        max_overflow=5,
+        pool_pre_ping=True,
+        pool_recycle=1800,
+        connect_args={"connect_timeout": 5},
+    )
+
+
 def _sonder() -> bool:
     """Exécute `SELECT 1` sur une connexion neuve (peut bloquer : toujours via `_lancer`)."""
     url = config.url_base()
     if url is None:
         return False
     try:
-        with _moteur(url).connect() as connexion:
+        with _moteur_sonde(url).connect() as connexion:
             return connexion.execute(text("SELECT 1")).scalar() == 1
     except Exception:
         # Aucun détail renvoyé ni journalisé : il pourrait contenir l'URL de connexion,

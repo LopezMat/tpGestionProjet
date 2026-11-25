@@ -5,6 +5,12 @@ import pytest
 from reservation import config, demarrer
 
 
+@pytest.fixture(autouse=True)
+def _sans_migrations(monkeypatch):
+    """Ces tests ne couvrent pas les migrations (voir test_migrations.py, T-011)."""
+    monkeypatch.setattr(demarrer.migrer, "appliquer", lambda: True)
+
+
 def test_port_lu_dans_la_variable(monkeypatch):
     monkeypatch.setenv("PORT", "9123")
     assert config.port() == 9123

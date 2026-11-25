@@ -9,8 +9,9 @@ Référence : `../architecture.md` (v1.1). État après T-010 : socle seulement 
 |---|---|
 | `reservation/app.py` | application FastAPI, `/health`, fichiers statiques |
 | `reservation/config.py` | variables d'environnement (`PORT`, `DATABASE_URL`, `GIT_COMMIT`) |
-| `reservation/bdd.py` | connexion PostgreSQL, contrôle `SELECT 1` |
-| `reservation/demarrer.py` | point d'entrée de l'image : attend la base, lance Uvicorn (1 worker) |
+| `reservation/bdd.py` | moteur de la sonde `SELECT 1` (`_moteur_sonde`) et moteur applicatif à pool (`moteur_applicatif`) |
+| `reservation/migrer.py`, `reservation/migrations/` | migrations Alembic (schéma, 3 salles) appliquées au démarrage, de façon tolérante (T-011) |
+| `reservation/demarrer.py` | point d'entrée de l'image : attend la base, migre, lance Uvicorn (1 worker) |
 | `reservation/static/` | front HTML/CSS/JS sans build |
 | `docs/openapi.json` | schéma OpenAPI versionné pour le `dev-frontend` |
 | `tests/` | tests pytest |
