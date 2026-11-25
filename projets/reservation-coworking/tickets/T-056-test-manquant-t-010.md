@@ -4,7 +4,7 @@ id: T-056
 titre: Test manquant T-010 (/health sous base gelée)
 projet: reservation-coworking
 type: tache                 # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: EN_REVUE           # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE           # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: agent:dev-backend  # agent:<nom> | salarie:<prenom>
 competence_requise: backend-python (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -19,7 +19,7 @@ cree_le: 2026-11-25
 maj_le: 2026-11-25
 statut_depuis: 2026-11-25   # date du dernier changement de statut
 debut_le: 2026-11-25        # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le: 2026-11-25   # facultatif : date du passage TERMINE
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
 
@@ -34,8 +34,8 @@ Le critère 1 de [T-010](T-010-socle-application.md) exige que `/health` répond
 Le défaut lui-même se corrige dans T-010 (critère 1 non coché, ticket resté `EN_REVUE`). Ce ticket ajoute le test qui l'aurait détecté et que le testeur pourra rejouer : base simulée qui accepte la connexion TCP sans répondre (par exemple une socket d'écoute locale qui n'envoie rien, y compris sur une connexion déjà établie), avec une assertion sur la durée de la réponse de `/health` (503 en moins de 2 s). À écrire par le développeur (le testeur ne modifie ni code ni tests).
 
 ## Critères d'acceptation
-- [ ] Un test montre que `/health` renvoie 503 en moins de 2 s quand la base accepte la connexion mais ne répond pas, avec une connexion déjà poolée et avec une connexion neuve.
-- [ ] Le test est vert sur le correctif de T-010 et rouge sur le code actuel (état de travail du 2026-11-25).
+- [x] Un test montre que `/health` renvoie 503 en moins de 2 s quand la base accepte la connexion mais ne répond pas, avec une connexion ouverte qui devient muette et avec une connexion neuve.
+- [x] Le test est vert sur le correctif de T-010 et rouge sur le code actuel (état de travail du 2026-11-25).
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
@@ -57,3 +57,7 @@ Le défaut lui-même se corrige dans T-010 (critère 1 non coché, ticket resté
 - 2026-11-25 20:15 · agent:dev-backend · livré pour revue (EN_COURS → EN_REVUE) : `app/tests/test_health_delai.py` (nouveau). Une fausse base locale (`FausseBase`, socket TCP, aucun Docker requis) simule : (a) `tcp_muet` : connexion TCP acceptée, rien lu ni écrit ; (b) `handshake_puis_muet` : handshake PostgreSQL terminé (refus SSL/GSS, AuthenticationOk, ReadyForQuery) puis aucune réponse aux requêtes, soit une connexion ouverte qui gèle ; la sonde bloque alors dans l'ouverture de connexion/initialisation, ce qui reproduit le silence d'une connexion poolée gelée (le nouveau code n'a plus de pool). Chaque cas assert 503 `{"status":"ko", ...}` en moins de 2 s (mesuré 1,01 s). Autres tests du même fichier : nom non résolu (`.invalid`), sonde qui ne revient jamais (durée entre 1 s et 2 s), boucle d'événements libre (`GET /` en moins de 0,5 s pendant que `/health` attend), sondes bloquées sans empilement, `base_repond()` bloquant borné. Une fixture attend la fin des sondes entre deux tests pour qu'une sonde restée bloquée ne fausse pas le suivant. · 0.8 h
 - 2026-11-25 20:15 · agent:dev-backend · rouge sur l'ancien code (reconstitué dans un conteneur) : `tcp_muet` échoue (503 en 2,12 s, assertion `< 2.0`), `handshake_puis_muet` ne répond pas (interrompu à 40 s). Vert sur le correctif : suite complète sous Python 3.14.10, 44 passés, 0 ignoré (commande et détails dans le journal de T-010). Critères non cochés (rôle du testeur) : 1 couvert par les deux cas `tcp_muet` / `handshake_puis_muet` (le cas « connexion déjà poolée » n'existe plus avec `NullPool`, remplacé par la connexion ouverte qui gèle) ; 2 par la comparaison ancien / nouveau code ci-dessus. Non commité, non poussé · 0.2 h
 - 2026-11-25 21:30 · agent:securite · audit sécurité : NON BLOQUANT ; fausse base de test sans risque hors test (écoute sur 127.0.0.1, port éphémère, fermée après chaque test, `tests/` exclu de l'image, identifiants factices), rapport [securite-2026-11-25-2.md](../rapports/securite-2026-11-25-2.md) ; temps compté dans T-043 · 0 h
+- 2026-11-25 12:10 · agent:testeur · campagne SHA 9c0f8a8cf45329ef667ee7a4d4ca215006e4d47d : critère 2 coché, constaté : `tests/test_health_delai.py` vert sur le code commité (44 passés sous Python 3.14.10 ; 7 répétitions du fichier : 7 sur 7 vertes) ; rouge sur l'ancien code reconstitué par le testeur dans une copie jetable hors du dépôt (pool SQLAlchemy avec `pool_pre_ping=True`, `connect_timeout=1`, sonde synchrone sans fil dédié ni `wait_for`, `app/` non touché) : `tcp_muet` échoue (`assert 2.14 < 2.0`), `handshake_puis_muet` ne répond pas (interrompu à 40 s), les tests « ne revient jamais », « boucle libre », « sondes bloquées » et `base_repond` bloquant ne terminent pas (interrompus). Le cas « nom non résolu » reste vert sur l'ancien code dans cet environnement (échec DNS immédiat, 0,11 s) : il n'a donc pas de valeur de détection ici. Réserve : il s'agit d'une reconstitution, l'ancien code n'existant dans aucun commit.
+- 2026-11-25 12:10 · agent:testeur · critère 1 NON COCHÉ (le ticket reste EN_REVUE) : le libellé exige « une connexion déjà poolée et une connexion neuve ». Le cas poolé n'existe plus avec `NullPool` (T-010, passe 2) et aucun test ne le couvre. `handshake_puis_muet` (handshake terminé, `ReadyForQuery`, puis silence) couvre une connexion neuve qui se fige juste après l'ouverture, pas une connexion déjà utilisée avec succès puis gelée (cas réel du `docker pause` après un premier 200). Je juge l'intention (« /health ne reste pas suspendu quand une connexion ouverte devient muette ») satisfaite par ce mode et par ma mesure sur l'image (200 puis pause : 503 en 1,008 s), mais le critère ne peut pas être coché tel qu'il est écrit : reformulation à faire par le coordinateur (par exemple remplacer « connexion déjà poolée » par « connexion ouverte qui devient muette »). · temps compté dans T-041
+- 2026-11-25 23:45 · coordinateur · critère 1 reformulé sur décision humaine (option A) : « connexion déjà poolée » devient « connexion ouverte qui devient muette », le cas poolé n'existant plus avec `NullPool` depuis le correctif de T-010 (remarque 2 du relecteur, avis du testeur campagne 2) ; aucun changement de code · 0 h
+- 2026-11-25 23:55 · agent:testeur · campagne SHA 2852fe7 : critère 1 (reformulé, ligne de 23:45) coché, constaté : `tests/test_health_delai.py` rejoué sur ce SHA, 7 passés (dont `tcp_muet` et `handshake_puis_muet`, 503 `{"status":"ko"}` en moins de 2 s), 3 répétitions du fichier seul sous Python 3.14.10 : 7 sur 7 vertes à chaque fois ; suite complète 105 passés, 0 ignoré. Critère 2 déjà coché (campagne 2). Vérifié : 2/2 critères, avis relecteur APPROUVÉ, revue humaine non requise, suites vertes, SHA 2852fe7 → TERMINE · temps compté dans T-041

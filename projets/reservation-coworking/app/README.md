@@ -9,8 +9,9 @@ Référence : `../architecture.md` (v1.1). État après T-010 : socle seulement 
 |---|---|
 | `reservation/app.py` | application FastAPI, `/health`, fichiers statiques |
 | `reservation/config.py` | variables d'environnement (`PORT`, `DATABASE_URL`, `GIT_COMMIT`) |
-| `reservation/bdd.py` | connexion PostgreSQL, contrôle `SELECT 1` |
-| `reservation/demarrer.py` | point d'entrée de l'image : attend la base, lance Uvicorn (1 worker) |
+| `reservation/bdd.py` | moteur de la sonde `SELECT 1` (`_moteur_sonde`) et moteur applicatif à pool (`moteur_applicatif`) |
+| `reservation/migrer.py`, `reservation/migrations/` | migrations Alembic (schéma, 3 salles) appliquées au démarrage, de façon tolérante (T-011) |
+| `reservation/demarrer.py` | point d'entrée de l'image : attend la base, migre, lance Uvicorn (1 worker) |
 | `reservation/static/` | front HTML/CSS/JS sans build |
 | `docs/openapi.json` | schéma OpenAPI versionné pour le `dev-frontend` |
 | `tests/` | tests pytest |
@@ -32,10 +33,12 @@ python -m pytest
 Les tests qui exigent un vrai PostgreSQL sont ignorés tant que `TEST_DATABASE_URL` n'est pas renseignée :
 
 ```
-docker run --rm -d --name pg-test -e POSTGRES_PASSWORD=test -e POSTGRES_USER=esn -e POSTGRES_DB=app -p 127.0.0.1:55432:5432 postgres:16-alpine
-set TEST_DATABASE_URL=postgresql://esn:test@127.0.0.1:55432/app     # PowerShell : $env:TEST_DATABASE_URL = "..."
+docker run --rm -d --name pg-test -e POSTGRES_PASSWORD=test -e POSTGRES_USER=esn -e POSTGRES_DB=coworking_test -p 127.0.0.1:55432:5432 postgres:16-alpine
+set TEST_DATABASE_URL=postgresql://esn:test@127.0.0.1:55432/coworking_test     # PowerShell : $env:TEST_DATABASE_URL = "..."
 python -m pytest
 ```
+
+**Nommer la base de test.** Les fixtures d'intégration vident la base (`DROP SCHEMA public CASCADE` dans `test_migrations.py`) : une garde (`tests/garde_base.py`) refuse, avant toute connexion, une base dont le nom ne se termine pas par `_test` (`app`, `contest`… sont refusées) ou dont l'hôte n'est pas `localhost`, `127.0.0.1` ou `::1`. Pour lancer les tests dans un conteneur relié à la base par un réseau Docker, déclarer le nom du conteneur de base jetable : `TEST_DATABASE_HOTES_JETABLES=pg-test` (noms séparés par des virgules). Ne jamais y mettre l'hôte d'une base d'aperçu ou de production.
 
 Après une modification de l'API, régénérer le schéma versionné : `REGENERER_OPENAPI=1 python -m pytest tests/test_livraison.py` (PowerShell : `$env:REGENERER_OPENAPI = "1"`).
 

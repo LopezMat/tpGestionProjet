@@ -44,3 +44,4 @@ Un document `VALIDÉ` est figé pour les agents (R6). Pour le faire évoluer, un
 | [DEC-010](2026-11-24-DEC-010-principe-r17.md) | 2026-11-24 | ESN : règle R17 adoptée sur le principe, PR de règles après le projet client (T-050) | VALIDÉ |
 | [DEC-011](2026-11-25-DEC-011-increment-consultation-coworking.md) | 2026-11-25 | reservation-coworking : incrément socle et consultation des disponibilités avant la soutenance, écart provisoire à F-04 (T-054, T-055) | VALIDÉ |
 | [DEC-012](2026-11-25-DEC-012-console-consultation.md) | 2026-11-25 | Console de consultation de l'ESN (outil interne, lecture seule) | VALIDÉ |
+| [DEC-013](2026-11-25-DEC-013-role-postgresql-coworking.md) | 2026-11-25 | reservation-coworking : rôle PostgreSQL applicatif non superutilisateur, propriétaire de la base, repli `absent` supprimé (T-057, option A) | EN_REVUE |

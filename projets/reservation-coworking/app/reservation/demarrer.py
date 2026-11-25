@@ -1,8 +1,9 @@
 """Point d'entrée de l'image : python -m reservation.demarrer.
 
-T-010 : attente de la base, puis Uvicorn avec 1 worker (architecture.md § 8). Les migrations
-(T-011), l'avertissement « aucun compte accueil », la limitation des tentatives de connexion
-et la tâche de purge seront ajoutés par les tickets suivants.
+T-010 : attente de la base, puis Uvicorn avec 1 worker (architecture.md § 8).
+T-011 : migrations tolérantes entre l'attente de la base et Uvicorn. L'avertissement
+« aucun compte accueil », la limitation des tentatives de connexion et la tâche de purge
+seront ajoutés par les tickets suivants.
 """
 
 import logging
@@ -11,7 +12,7 @@ import time
 
 import uvicorn
 
-from . import bdd, config
+from . import bdd, config, journaux, migrer
 
 journal = logging.getLogger("reservation.demarrer")
 
@@ -40,6 +41,12 @@ def main() -> int:
         journal.error("La base n'a pas répondu dans le délai de %s s.", ATTENTE_MAX_S)
         return 1
     try:
+        migrer.appliquer()
+    except Exception:
+        # Aucun détail : le message d'une erreur de connexion peut contenir l'URL de la base.
+        journal.error("Les migrations ont échoué ; démarrage annulé.")
+        return 1
+    try:
         port = config.port()
     except ValueError as erreur:
         journal.error("%s", erreur)
@@ -50,6 +57,7 @@ def main() -> int:
         port=port,
         workers=1,
         server_header=False,
+        log_config=journaux.config_journaux(),
     )
     return 0
 

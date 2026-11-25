@@ -70,7 +70,7 @@ def test_outils_de_test_hors_de_l_image():
 
 @pytest.mark.parametrize("chemin", ["/docs", "/redoc", "/openapi.json"])
 def test_documentation_non_servie_en_production(chemin):
-    assert TestClient(creer_app()).get(chemin).status_code == 404
+    assert TestClient(creer_app(), base_url="http://localhost").get(chemin).status_code == 404
 
 
 def test_schema_openapi_versionne_est_a_jour():
@@ -83,6 +83,7 @@ def test_schema_openapi_versionne_est_a_jour():
     assert FICHIER_OPENAPI.exists(), "lancer une fois avec REGENERER_OPENAPI=1"
     assert FICHIER_OPENAPI.read_text(encoding="utf-8") == attendu
     assert "/health" in schema["paths"]
+    assert {"/api/salles", "/api/disponibilites"} <= set(schema["paths"])
 
 
 # --- env.example ------------------------------------------------------------------------

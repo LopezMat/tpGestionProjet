@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La maison de l’équipe · {{CLIENT}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700&display=swap">
+<style>
+/* Mise en page : une maison en coupe (bureau, entrée, chambre) qui se lit d'un coup d'œil, puis les détails pour les adultes. */
+:root {
+  --bg: #f3f6fb; --panel: #ffffff; --ink: #1a1d27; --muted: #5d6575; --line: #e1e6ee;
+  --accent: #3a55e0; --accent-soft: #e7ebfd;
+  --ok: #18966a; --cours: #c98400; --revue: #7356e8; --faire: #a3aab7; --humain: #db3f55; --annule: #cdd2da;
+  --ok-soft: #e2f4ec; --humain-soft: #fdeaed;
+  --mur: #c9643a; --toit: #a8432a; --toit-ombre: #8a3420;
+  --bureau-mur: #fff7d6; --bureau-sol: #e9c98f;
+  --entree-mur: #ffe4e8; --entree-sol: #e9b9a6;
+  --nuit: #26336a; --nuit-sol: #1b2452; --nuit-txt: #eef1ff; --bois: #9a6338;
+  --f-titre: "Baloo 2", "Avenir Next Rounded", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --f-texte: "Nunito", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+/* Thème sombre : suit le système, sauf si le bouton jour/nuit a imposé un choix (data-theme). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10131b; --panel: #191d28; --ink: #eceef5; --muted: #a0a7b8; --line: #2b3040;
+    --accent: #8d9bff; --accent-soft: #232a4d;
+    --ok: #3cc795; --cours: #f0b33c; --revue: #a18dff; --faire: #5d6577; --humain: #ff6f82; --annule: #3a404e;
+    --ok-soft: #15302a; --humain-soft: #3a1c23;
+    --mur: #8f4527; --toit: #7a2f1c; --toit-ombre: #5e2415;
+    --bureau-mur: #3b3522; --bureau-sol: #5a4a2c;
+    --entree-mur: #43252c; --entree-sol: #5a3a33;
+    --nuit: #18204a; --nuit-sol: #10163a; --bois: #7a4b2a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10131b; --panel: #191d28; --ink: #eceef5; --muted: #a0a7b8; --line: #2b3040;
+  --accent: #8d9bff; --accent-soft: #232a4d;
+  --ok: #3cc795; --cours: #f0b33c; --revue: #a18dff; --faire: #5d6577; --humain: #ff6f82; --annule: #3a404e;
+  --ok-soft: #15302a; --humain-soft: #3a1c23;
+  --mur: #8f4527; --toit: #7a2f1c; --toit-ombre: #5e2415;
+  --bureau-mur: #3b3522; --bureau-sol: #5a4a2c;
+  --entree-mur: #43252c; --entree-sol: #5a3a33;
+  --nuit: #18204a; --nuit-sol: #10163a; --bois: #7a4b2a;
+  color-scheme: dark;
+}
+body { transition: background-color .3s ease, color .3s ease; }
+
+/* Bouton jour / nuit */
+.entete-haut { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.theme { display: inline-flex; padding: 4px; gap: 4px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); }
+.theme button { display: inline-flex; align-items: center; gap: 6px; font: 700 14px var(--f-texte); color: var(--muted); background: transparent; border: 0; border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.theme button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.theme button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme svg { width: 18px; height: 18px; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--f-texte); }
+.page { max-width: 1160px; margin: 0 auto; padding: 32px 24px 64px; display: grid; gap: 28px; }
+h1, h2, h3 { font-family: var(--f-titre); margin: 0; text-wrap: balance; line-height: 1.15; }
+h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 800; }
+h2 { font-size: 22px; font-weight: 700; }
+.muted { color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+.sur { font: 700 13px var(--f-texte); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+header { display: grid; gap: 8px; }
+.resume { font-size: 18px; max-width: 70ch; margin: 0; }
+
+/* ---- Légende pour les enfants ---- */
+.legende-kid { display: flex; flex-wrap: wrap; gap: 10px; }
+.legende-kid span { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 8px; border-radius: 999px; background: var(--panel); border: 2px solid var(--line); font-weight: 700; font-size: 15px; }
+.legende-kid svg { width: 30px; height: 30px; }
+
+/* ---- La maison ---- */
+.maison { display: grid; justify-items: center; }
+.toit { position: relative; width: 100%; height: clamp(70px, 11vw, 120px); background: var(--toit); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.toit::after { content: ""; position: absolute; inset: auto 0 0 0; height: 14px; background: var(--toit-ombre); }
+.cheminee { position: absolute; right: 22%; top: 8%; width: 34px; height: 46%; background: var(--mur); }
+.enseigne { margin-top: -54px; position: relative; z-index: 1; background: var(--panel); border: 3px solid var(--toit); border-radius: 12px; padding: 4px 18px; font: 800 clamp(15px, 2.2vw, 20px) var(--f-titre); color: var(--toit); text-align: center; max-width: 90%; }
+.murs { width: calc(100% - 28px); margin-top: 10px; border: 10px solid var(--mur); border-top-width: 0; border-radius: 0 0 8px 8px; display: grid; grid-template-columns: 1.25fr 1fr 1.25fr; background: var(--mur); gap: 10px; }
+.piece { position: relative; min-width: 0; padding: 18px 14px 34px; display: grid; gap: 12px; align-content: start; min-height: 330px; }
+.piece::after { content: ""; position: absolute; inset: auto 0 0 0; height: 22px; background: var(--sol); }
+.piece h3 { font-size: 24px; font-weight: 800; text-align: center; }
+.piece .sous { text-align: center; font-weight: 600; font-size: 14px; margin-top: -10px; }
+.piece.bureau { background: var(--bureau-mur); --sol: var(--bureau-sol); }
+.piece.entree { background: var(--entree-mur); --sol: var(--entree-sol); }
+.piece.chambre { background: var(--nuit); --sol: var(--nuit-sol); color: var(--nuit-txt); }
+.piece.chambre .sous, .piece.chambre .qui-nom small { color: #c3cbf2; }
+.piece.entree h3 { color: var(--humain); }
+.piece.bureau h3 { color: var(--ok); }
+.soleil { position: absolute; top: 14px; left: 14px; width: 34px; height: 34px; border-radius: 50%; background: #ffc83d; box-shadow: 0 0 0 6px rgba(255, 200, 61, .25); }
+.lune { position: absolute; top: 14px; right: 16px; width: 30px; height: 30px; border-radius: 50%; box-shadow: 9px -4px 0 0 #fff4c2; }
+.etoile { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #fff; opacity: .8; }
+.occupants { position: relative; z-index: 1; display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 14px 10px; }
+.occupant { display: grid; justify-items: center; text-align: center; gap: 2px; width: 118px; }
+.occupant.au-lit { width: 150px; }
+.occupant svg { width: 100%; height: auto; overflow: visible; }
+.qui-nom { font: 800 16px var(--f-titre); line-height: 1.1; }
+.qui-nom small { display: block; font: 600 12px var(--f-texte); color: var(--muted); }
+.parole { margin-top: 6px; font-size: 13.5px; line-height: 1.35; font-weight: 600; padding: 8px 10px; border-radius: 14px; background: var(--panel); color: var(--ink); position: relative; box-shadow: 0 2px 0 var(--line); width: 100%; }
+.parole::before { content: ""; position: absolute; top: -6px; left: 50%; width: 12px; height: 12px; background: inherit; transform: translateX(-50%) rotate(45deg); }
+.chambre .parole { background: #33408a; color: var(--nuit-txt); box-shadow: none; }
+.entree .parole { border: 2px solid var(--humain); }
+.entree .parole::before { border-left: 2px solid var(--humain); border-top: 2px solid var(--humain); top: -8px; }
+.personne { font-weight: 700; font-size: 15px; opacity: .75; padding: 20px 8px; text-align: center; position: relative; z-index: 1; }
+
+/* Traits du dessin */
+.ombre { fill: #000; opacity: .12; }
+.trait { stroke: #1b1d24; }
+.zzz text { font: 800 15px var(--f-titre); fill: #fff4c2; }
+.alerte circle { fill: var(--humain); }
+.alerte text { font: 800 15px var(--f-titre); fill: #fff; }
+.bras, .tete, .corps-anim, .zzz text, .alerte, .ecran-ligne, .couverture, .tete-dort { transform-box: fill-box; }
+.bras { transform-origin: 50% 6%; }
+.tete { transform-origin: 50% 100%; }
+.couverture { transform-origin: 50% 100%; }
+.bois { fill: var(--bois); }
+.etat-attend .bras-g { transform: rotate(155deg); }
+
+/* ---- Le voyage d'un ticket ---- */
+.piste-defile { overflow-x: auto; }
+.piste { position: relative; height: 150px; min-width: 580px; margin: 0 56px; }
+.rail { position: absolute; left: 0; right: 0; top: 36px; height: 6px; border-radius: 3px; background: repeating-linear-gradient(90deg, var(--line) 0 12px, transparent 12px 20px); }
+.station { position: absolute; top: 8px; transform: translateX(-50%); display: grid; justify-items: center; gap: 6px; width: 120px; text-align: center; }
+.station .pt { width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center; background: var(--panel); border: 3px solid var(--line); }
+.station .pt svg { width: 38px; height: 38px; overflow: visible; }
+.station.fin .pt { border-color: var(--ok); color: var(--ok); font: 800 30px var(--f-titre); }
+.station b { font: 800 15px var(--f-titre); line-height: 1.1; }
+.station small { font-size: 12.5px; color: var(--muted); line-height: 1.25; }
+.jeton { position: absolute; top: -6px; left: 0; transform: translateX(-50%); padding: 4px 10px; border-radius: 8px; background: var(--accent); color: #fff; font: 800 13px var(--f-titre); box-shadow: 0 4px 10px rgba(58, 85, 224, .35); white-space: nowrap; z-index: 2; }
+.jeton::after { content: ""; position: absolute; left: 50%; bottom: -5px; width: 10px; height: 10px; background: inherit; transform: translateX(-50%) rotate(45deg); }
+
+/* ---- Détails pour les adultes ---- */
+.separateur { display: flex; align-items: center; gap: 14px; margin-top: 10px; }
+.separateur::before, .separateur::after { content: ""; flex: 1; height: 2px; background: var(--line); }
+.separateur h2 { font-size: 18px; color: var(--muted); }
+.tuiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+.tuile { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; display: grid; gap: 4px; }
+.tuile .v { font-family: var(--f-titre); font-size: 36px; font-weight: 800; line-height: 1.1; }
+.tuile .l { font-size: 14px; color: var(--muted); }
+.tuile.humain { border-color: var(--humain); background: var(--humain-soft); }
+.tuile.humain .v { color: var(--humain); }
+.jauge { height: 8px; border-radius: 8px; background: var(--line); overflow: hidden; margin-top: 6px; }
+.jauge i { display: block; height: 100%; background: var(--ok); border-radius: 8px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; gap: 6px; padding: 4px 12px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+.chip b { color: var(--ink); }
+.bloc { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+.bloc-tete { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.circuit-defile { overflow-x: auto; }
+.circuit { display: grid; gap: 4px; min-width: 620px; }
+.circuit-tete, .etape-ligne { display: grid; grid-template-columns: minmax(180px, 1.4fr) repeat(5, 1fr); gap: 6px; align-items: center; }
+.circuit-tete span { font-size: 12px; color: var(--muted); text-align: center; }
+.circuit-tete span:first-child { text-align: left; }
+.etape-ligne { padding: 10px 0; border-top: 1px solid var(--line); }
+.etape-ligne b { font-weight: 700; }
+.etape-ligne small { display: block; color: var(--muted); font-size: 13px; line-height: 1.35; margin-top: 2px; }
+.seg { height: 10px; border-radius: 5px; background: var(--line); }
+.seg.fait { background: var(--ok); }
+.seg.encours { background: repeating-linear-gradient(-45deg, var(--cours) 0 6px, transparent 6px 12px), var(--line); }
+.gens { display: grid; gap: 12px; }
+.pers { display: grid; grid-template-columns: minmax(110px, 170px) 1fr auto; gap: 12px; align-items: center; }
+.pers .nom { font-weight: 700; line-height: 1.2; }
+.pers .nom small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+.barre { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--line); }
+.barre i { display: block; height: 100%; }
+.pers .compte { font-size: 13px; color: var(--muted); white-space: nowrap; }
+.legende { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); }
+.legende span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+/* ---- Tableau de cartes ---- */
+.outils { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 18px; }
+.champ { display: grid; gap: 4px; font-size: 13px; font-weight: 700; color: var(--muted); }
+.champ input { font: 600 14px var(--f-texte); padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); min-width: 220px; max-width: 100%; }
+.case { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; padding-bottom: 6px; cursor: pointer; }
+.case input { width: 16px; height: 16px; accent-color: var(--accent); }
+.planche-defile { overflow-x: auto; margin: 0 -20px; padding: 4px 20px 8px; }
+.planche { display: flex; gap: 12px; align-items: flex-start; }
+.colonne { flex: 0 0 272px; background: var(--bg); border-radius: 12px; padding: 10px; display: grid; gap: 10px; border-top: 4px solid var(--c); }
+.colonne-tete { display: flex; justify-content: space-between; align-items: center; padding: 2px 4px; }
+.colonne-nom { font: 800 16px var(--f-titre); }
+.colonne-nb { font: 700 12px var(--f-texte); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; color: var(--muted); }
+.pile { display: grid; gap: 8px; max-height: 620px; overflow-y: auto; padding: 2px; }
+.pile-vide { font-size: 13px; color: var(--muted); text-align: center; padding: 18px 0; border: 2px dashed var(--line); border-radius: 10px; }
+.carte { display: grid; gap: 8px; padding: 10px 12px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); box-shadow: 0 1px 0 var(--line); color: var(--ink); text-decoration: none; transition: transform .12s ease, box-shadow .12s ease; }
+.carte:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(20, 30, 60, .12); border-color: var(--c); }
+.carte:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.etiquettes { display: flex; flex-wrap: wrap; gap: 4px; }
+.etiq { font: 700 11px var(--f-texte); color: #fff; padding: 2px 8px; border-radius: 999px; }
+.etiq.soutenance { background: #f2b632; color: #3b2a00; }
+.carte-titre { font-size: 14px; font-weight: 700; line-height: 1.35; }
+.carte-pied { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+.carte-id { font: 800 13px var(--f-titre); color: var(--ink); }
+.carte-h { margin-right: auto; }
+.mini-avatar { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font: 800 11px var(--f-titre); color: #fff; flex: none; }
+.mini-avatar.humain { box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--humain); }
+
+.carte { font: inherit; text-align: left; width: 100%; cursor: pointer; }
+
+/* ---- Fiche d'un ticket (fenêtre) ---- */
+dialog.fiche { width: min(760px, calc(100% - 24px)); max-height: calc(100% - 32px); padding: 0; border: 0; border-radius: 18px; background: var(--panel); color: var(--ink); box-shadow: 0 24px 60px rgba(10, 15, 35, .35); overflow: hidden; }
+dialog.fiche::backdrop { background: rgba(12, 16, 30, .55); backdrop-filter: blur(3px); }
+.fiche-cadre { display: grid; grid-template-rows: auto 1fr; max-height: calc(100vh - 32px); }
+.fiche-tete { padding: 20px 24px 16px; display: grid; gap: 10px; border-bottom: 1px solid var(--line); border-top: 6px solid var(--c); position: relative; }
+.fiche-tete h2 { font-size: 24px; padding-right: 44px; }
+.fermer { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--bg); color: var(--ink); font: 700 20px/1 var(--f-texte); cursor: pointer; }
+.fermer:hover { background: var(--line); }
+.fermer:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.fiche-ligne { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.statut-pill { display: inline-flex; align-items: center; gap: 6px; font: 700 13px var(--f-texte); padding: 3px 10px; border-radius: 999px; background: var(--bg); }
+.statut-pill::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--c); }
+.fiche-corps { overflow-y: auto; padding: 18px 24px 26px; display: grid; gap: 20px; }
+.faits { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.fait { background: var(--bg); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; min-width: 0; }
+.fait span { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.fait b { font-size: 15px; overflow-wrap: anywhere; }
+.qui-ligne { display: flex; align-items: center; gap: 8px; }
+.lien-ticket { font: 800 13px var(--f-titre); border: 0; background: var(--accent-soft); color: var(--accent); padding: 2px 8px; border-radius: 6px; cursor: pointer; margin: 0 4px 4px 0; }
+.lien-ticket:hover { background: var(--accent); color: #fff; }
+.fiche-section { display: grid; gap: 10px; }
+.fiche-section > h3 { font-size: 18px; display: flex; align-items: center; gap: 10px; }
+.fiche-section h4 { font: 800 15px var(--f-titre); margin: 6px 0 0; }
+.fiche-section p { margin: 0; line-height: 1.6; }
+.fiche-section ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.fiche-section li.sous { margin-left: 18px; }
+.fiche-section code { font: 13px ui-monospace, "SF Mono", Menlo, monospace; background: var(--bg); padding: 1px 5px; border-radius: 5px; overflow-wrap: anywhere; }
+.fiche-section a { color: var(--accent); }
+.fiche-section blockquote { margin: 0; padding: 8px 12px; border-radius: 8px; background: var(--bg); }
+.tableau-md { overflow-x: auto; }
+.tableau-md table { font-size: 13px; }
+.tableau-md td, .tableau-md th { border: 1px solid var(--line); padding: 6px 8px; text-transform: none; letter-spacing: 0; }
+.progres { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); font-weight: 700; }
+.progres .jauge { flex: 1; margin: 0; }
+.criteres { list-style: none; padding: 0 !important; }
+.criteres li { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; padding: 10px 12px; border-radius: 10px; background: var(--bg); }
+.coche { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--faire); display: grid; place-items: center; margin-top: 1px; }
+.criteres li.ok .coche { background: var(--ok); border-color: var(--ok); }
+.coche svg { width: 14px; height: 14px; }
+.frise { list-style: none; padding: 0 0 0 18px !important; border-left: 2px solid var(--line); margin-left: 6px !important; gap: 12px !important; }
+.frise li { position: relative; display: grid; gap: 2px; }
+.frise li::before { content: ""; position: absolute; left: -25px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--panel); border: 3px solid var(--accent); }
+.frise .quand { font-size: 12px; font-weight: 800; color: var(--muted); }
+.frise .qui-j { font-weight: 800; }
+.frise .duree { font-size: 12px; font-weight: 700; color: var(--accent); }
+.fiche-pied { font-size: 13px; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) {
+  dialog.fiche[open] { animation: ouvre .22s cubic-bezier(.2,.8,.3,1.1); }
+  @keyframes ouvre { from { opacity: 0; transform: translateY(16px) scale(.98); } }
+}
+
+.filtres { display: flex; flex-wrap: wrap; gap: 8px; }
+.filtre { font: 700 13px var(--f-texte); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+.filtre:hover { border-color: var(--accent); }
+.filtre[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.filtre:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+select { font: 600 13px var(--f-texte); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+.table-defile { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+td.id { font-family: var(--f-titre); font-weight: 700; white-space: nowrap; }
+td.h { text-align: right; white-space: nowrap; }
+.pastille { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 13px; }
+.pastille::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.vide { color: var(--muted); padding: 16px 0; }
+footer { font-size: 13px; color: var(--muted); }
+
+@media (max-width: 860px) {
+  .murs { grid-template-columns: 1fr; }
+  .piece { min-height: 0; }
+}
+@media (max-width: 560px) {
+  .page { padding: 24px 16px 48px; }
+  .pers { grid-template-columns: 1fr auto; }
+  .pers .barre { grid-column: 1 / -1; }
+}
+
+/* ---- Animations ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .occupant { animation: entree .6s cubic-bezier(.2,.8,.3,1.25) both; animation-delay: calc(var(--i) * 90ms); }
+  @keyframes entree { from { opacity: .001; transform: translateY(18px) scale(.92); } }
+  .yeux { animation: cligne 4s infinite; transform-box: fill-box; transform-origin: 50% 50%; }
+  @keyframes cligne { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+  .etat-travaille .corps-anim { animation: hoche 1s ease-in-out infinite; }
+  @keyframes hoche { 50% { transform: translateY(-2px); } }
+  .etat-travaille .bras-d { animation: outil .5s ease-in-out infinite alternate; }
+  @keyframes outil { from { transform: rotate(-8deg); } to { transform: rotate(-38deg); } }
+  .etat-travaille .bras-g { animation: balance 1s ease-in-out infinite alternate; }
+  @keyframes balance { from { transform: rotate(4deg); } to { transform: rotate(-6deg); } }
+  .ecran-ligne { animation: code 1.4s steps(4) infinite; transform-origin: 0 50%; }
+  @keyframes code { from { transform: scaleX(.2); } to { transform: scaleX(1); } }
+  .etat-attend .bras-g { animation: salut .8s ease-in-out infinite alternate; }
+  @keyframes salut { from { transform: rotate(140deg); } to { transform: rotate(172deg); } }
+  .etat-attend .corps-anim { animation: sautille .8s ease-in-out infinite; }
+  @keyframes sautille { 50% { transform: translateY(-4px); } }
+  .alerte { animation: rebond 1s ease-in-out infinite; transform-origin: 50% 100%; }
+  @keyframes rebond { 50% { transform: translateY(-5px) scale(1.06); } }
+  .couverture { animation: respire 3.2s ease-in-out infinite; }
+  @keyframes respire { 50% { transform: scaleY(1.08); } }
+  .zzz text { animation: dort 3s ease-in infinite; opacity: 0; }
+  .zzz text:nth-child(2) { animation-delay: 1s; }
+  .zzz text:nth-child(3) { animation-delay: 2s; }
+  @keyframes dort { 0% { opacity: 0; transform: translate(0, 8px) scale(.7); } 25% { opacity: 1; } 100% { opacity: 0; transform: translate(14px, -16px) scale(1.15); } }
+  .etoile { animation: scintille 2.4s ease-in-out infinite; }
+  @keyframes scintille { 50% { opacity: .2; } }
+  .soleil { animation: tourne 6s ease-in-out infinite; }
+  @keyframes tourne { 50% { box-shadow: 0 0 0 11px rgba(255, 200, 61, .18); } }
+  .jeton { animation: voyage 10s cubic-bezier(.6,0,.3,1) infinite; }
+  @keyframes voyage {
+    0%, 8% { left: 0%; background: var(--accent); }
+    18%, 26% { left: 25%; } 36%, 44% { left: 50%; } 54%, 62% { left: 75%; }
+    72% { left: 100%; background: var(--accent); }
+    76%, 96% { left: 100%; background: var(--ok); }
+    100% { left: 0%; background: var(--accent); }
+  }
+}
+@media (prefers-reduced-motion: reduce) { .jeton { left: 75%; } }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <div class="entete-haut">
+      <span class="sur">Projet reservation-coworking · une appli pour réserver des salles</span>
+      <div class="theme" role="group" aria-label="Thème de la page">
+        <button type="button" id="theme-jour" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg>Jour</button>
+        <button type="button" id="theme-nuit" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" fill="currentColor"/></svg>Nuit</button>
+      </div>
+    </div>
+    <h1>La maison de l’équipe</h1>
+    <p class="resume" id="resume"></p>
+    <div class="legende-kid" id="legende-kid"></div>
+  </header>
+
+  <section class="maison" aria-label="La maison de l’équipe">
+    <div class="toit"><span class="cheminee"></span></div>
+    <div class="enseigne">{{CLIENT}}</div>
+    <div class="murs">
+      <div class="piece bureau">
+        <span class="soleil" aria-hidden="true"></span>
+        <h3>Le bureau</h3>
+        <div class="sous">Debout : ils travaillent en ce moment</div>
+        <div class="occupants" id="piece-travaille"></div>
+      </div>
+      <div class="piece entree">
+        <h3>On a besoin d’eux !</h3>
+        <div class="sous">La main levée : il faut qu’un humain agisse</div>
+        <div class="occupants" id="piece-attend"></div>
+      </div>
+      <div class="piece chambre" id="chambre">
+        <span class="lune" aria-hidden="true"></span>
+        <h3>La chambre</h3>
+        <div class="sous">Au lit : rien à faire pour l’instant</div>
+        <div class="occupants" id="piece-repos"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloc" aria-labelledby="titre-voyage">
+    <div class="bloc-tete"><h2 id="titre-voyage">Le voyage d’un ticket</h2><span class="muted">Comme un devoir : un élève l’écrit, trois profs le vérifient, puis c’est validé.</span></div>
+    <div class="piste-defile">
+      <div class="piste" id="piste" aria-label="Un ticket est écrit par un développeur, relu, vérifié par la sécurité, testé, puis terminé">
+        <div class="rail"></div>
+        <span class="jeton">T-054</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="separateur"><h2>Pour les grands : les détails</h2></div>
+
+  <section class="tuiles" id="tuiles" aria-label="Chiffres clés"></section>
+  <div class="meta">
+    <span class="chip">Fin projetée <b>{{FIN}}</b></span>
+    <span class="chip">Deadline <b>{{DEADLINE}}</b></span>
+    <span class="chip">Budget consommé <b>{{BUDGET}}</b></span>
+    <span class="chip">Coût projeté <b>{{PROJETE}}</b></span>
+    <span class="chip">Soutenance <b>27/11/2026</b></span>
+  </div>
+
+  <section class="bloc">
+    <div class="bloc-tete"><h2>Incrément de la soutenance</h2><span class="muted">chaque ticket passe par tout le circuit qualité</span></div>
+    <div class="circuit-defile"><div class="circuit" id="circuit"></div></div>
+  </section>
+
+  <section class="bloc">
+    <div class="bloc-tete"><h2>Qui porte quoi</h2><span class="muted">tous les tickets du projet, par responsable</span></div>
+    <div class="legende" id="legende"></div>
+    <div class="gens" id="gens"></div>
+  </section>
+
+  <section class="bloc" id="tableau-cartes">
+    <div class="bloc-tete"><h2>Le tableau des tickets</h2><span class="muted num" id="compte"></span></div>
+    <div class="outils">
+      <label class="champ" for="recherche">Chercher
+        <input id="recherche" type="search" placeholder="T-054, page, sécurité…" autocomplete="off">
+      </label>
+      <label class="champ" for="filtre-qui">Responsable
+        <select id="filtre-qui"><option value="">Tout le monde</option></select>
+      </label>
+      <label class="case" for="voir-annules"><input id="voir-annules" type="checkbox"> Afficher les annulés</label>
+      <label class="case" for="voir-increment"><input id="voir-increment" type="checkbox"> Seulement la soutenance</label>
+    </div>
+    <div class="planche-defile"><div class="planche" id="planche"></div></div>
+    <p class="muted" style="margin:0;font-size:13px">Cliquez sur une carte pour voir tout le ticket.</p>
+  </section>
+
+  <dialog class="fiche" id="fiche" aria-labelledby="fiche-titre">
+    <div class="fiche-cadre">
+      <div class="fiche-tete">
+        <button type="button" class="fermer" id="fiche-fermer" aria-label="Fermer">×</button>
+        <div class="etiquettes" id="fiche-etiquettes"></div>
+        <h2 id="fiche-titre"></h2>
+        <div class="fiche-ligne" id="fiche-ligne"></div>
+      </div>
+      <div class="fiche-corps" id="fiche-corps"></div>
+    </div>
+  </dialog>
+
+  <footer>Page générée le {{GENERE}} à partir des fichiers <code>tickets/T-*.md</code>, seule source de vérité de l’avancement. Temps en heures équivalent humain.</footer>
+</main>
+
+<script>
+const D = {{DONNEES}};
+
+// ---- Jour / nuit : choix gardé dans le navigateur, sinon le thème du système ----
+(function () {
+  const racine = document.documentElement;
+  const jour = document.getElementById("theme-jour"), nuit = document.getElementById("theme-nuit");
+  const systemeSombre = window.matchMedia("(prefers-color-scheme: dark)");
+  let choix = null;
+  try { choix = localStorage.getItem("theme-maison"); } catch (e) { /* stockage indisponible : on suit le système */ }
+  function appliquer() {
+    const sombre = choix ? choix === "dark" : systemeSombre.matches;
+    if (choix) racine.setAttribute("data-theme", choix); else racine.removeAttribute("data-theme");
+    jour.setAttribute("aria-pressed", String(!sombre));
+    nuit.setAttribute("aria-pressed", String(sombre));
+  }
+  function choisir(v) { choix = v; try { localStorage.setItem("theme-maison", v); } catch (e) { /* ignoré */ } appliquer(); }
+  jour.addEventListener("click", () => choisir("light"));
+  nuit.addEventListener("click", () => choisir("dark"));
+  systemeSombre.addEventListener("change", () => { if (!choix) appliquer(); });
+  appliquer();
+})();
+const COUL = { TERMINE: "var(--ok)", EN_COURS: "var(--cours)", EN_REVUE: "var(--revue)", A_FAIRE: "var(--faire)", ATTENTE_HUMAIN: "var(--humain)", BLOQUE: "var(--humain)", ANNULE: "var(--annule)" };
+const ORDRE = ["TERMINE", "EN_REVUE", "EN_COURS", "ATTENTE_HUMAIN", "BLOQUE", "A_FAIRE", "ANNULE"];
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const h = (n) => n.toLocaleString("fr-FR", { maximumFractionDigits: 1 }) + " h";
+// Les dessins ci-dessous sont écrits par ce script, à partir de couleurs fixes : aucune donnée externe n'y entre.
+const svg = (markup) => { const d = document.createElement("div"); d.innerHTML = markup.trim(); return d.firstElementChild; };
+
+// Objets tenus en main, centrés sur (0, 0).
+const OBJETS = {
+  portable: (c) => `<rect x="-11" y="-8" width="22" height="15" rx="2" fill="#2b2f3a"/><rect class="ecran-ligne" x="-7" y="-4" width="11" height="2.4" rx="1" fill="${c}"/><rect class="ecran-ligne" x="-7" y="0.5" width="7" height="2.4" rx="1" fill="#8b93a7"/>`,
+  crayon: () => `<g transform="rotate(-35)"><rect x="-9" y="-2.5" width="15" height="5" rx="1" fill="#f2b632"/><path d="M6 -2.5 l5 2.5 -5 2.5z" fill="#3b2a20"/></g>`,
+  plan: () => `<rect x="-11" y="-7" width="22" height="14" rx="2" fill="#3b82f6"/><path d="M-8 0 h8 m3 0 h6 M-4 -4 v8" stroke="#dbeafe" stroke-width="1.3"/>`,
+  bloc: () => `<rect x="-8" y="-10" width="16" height="20" rx="2" fill="#a16207"/><rect x="-6" y="-7" width="12" height="15" fill="#fff"/><path d="M-4 -3 h8 M-4 1 h8 M-4 5 h5" stroke="#94a3b8" stroke-width="1.2"/>`,
+  lunettes: () => `<rect x="-9" y="-11" width="18" height="22" rx="1.5" fill="#fff" stroke="#c7ccd6"/><path d="M-6 -6 h12 M-6 -2 h12 M-6 2 h8" stroke="#94a3b8" stroke-width="1.2"/>`,
+  bouclier: () => `<path d="M0 -11 l9 3.5 v7 q0 7 -9 10.5 q-9 -3.5 -9 -10.5 v-7z" fill="#16a34a"/><path d="M-4 0 l3 3 5 -6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+  loupe: () => `<circle cx="-2" cy="-2" r="6.5" fill="#e0f2fe" stroke="#334155" stroke-width="2.4"/><path d="M3 3 l6 6" stroke="#334155" stroke-width="3.2" stroke-linecap="round"/>`,
+  fusee: () => `<path d="M0 -12 q6 6 4 16 h-8 q-2 -10 4 -16z" fill="#e5e7eb" stroke="#64748b"/><circle cx="0" cy="-4" r="2" fill="#3b82f6"/><path d="M-4 4 l-3 5 h4z M4 4 l3 5 h-4z" fill="#ef4444"/>`,
+  tasse: () => `<rect x="-6" y="-6" width="12" height="13" rx="2" fill="#f8fafc" stroke="#94a3b8"/><path d="M6 -3 q5 0 5 4 t-5 4" stroke="#94a3b8" stroke-width="1.6" fill="none"/>`,
+};
+const objet = (p) => (OBJETS[p.outil] || OBJETS.tasse)(p.haut);
+const lunettes = (p, cx, cy) => p.outil === "lunettes"
+  ? `<g fill="none" stroke="#1b1d24" stroke-width="1.6"><circle cx="${cx - 6}" cy="${cy}" r="5"/><circle cx="${cx + 6}" cy="${cy}" r="5"/><path d="M${cx - 1} ${cy} h2"/></g>` : "";
+
+// Personnage debout (au travail, ou main levée).
+function debout(p, attend) {
+  const alerte = attend ? `<g class="alerte"><circle cx="70" cy="10" r="11"/><text x="70" y="15.5" text-anchor="middle">!</text></g>` : "";
+  return `<svg viewBox="0 0 90 140" role="img" aria-label="${p.nom}, debout">
+    <ellipse class="ombre" cx="45" cy="134" rx="26" ry="4"/>
+    <g class="corps-anim">
+      <rect x="33" y="92" width="10" height="36" rx="5" fill="#3d4456"/>
+      <rect x="47" y="92" width="10" height="36" rx="5" fill="#3d4456"/>
+      <ellipse cx="37" cy="130" rx="8" ry="4" fill="#1f2330"/>
+      <ellipse cx="53" cy="130" rx="8" ry="4" fill="#1f2330"/>
+      <rect class="bras bras-g" x="18" y="54" width="10" height="34" rx="5" fill="${p.haut}"/>
+      <rect x="26" y="50" width="38" height="48" rx="13" fill="${p.haut}"/>
+      <g class="tete">
+        <circle cx="45" cy="32" r="16" fill="${p.peau}"/>
+        <path d="M29 31 Q29 13 45 13 Q61 13 61 31 Q56 21 45 22 Q34 21 29 31Z" fill="${p.cheveux}"/>
+        <g class="yeux"><circle cx="39" cy="33" r="2.2" fill="#1b1d24"/><circle cx="51" cy="33" r="2.2" fill="#1b1d24"/></g>
+        ${lunettes(p, 45, 33)}
+        <path d="M39 40 Q45 45 51 40" stroke="#1b1d24" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <circle cx="35" cy="38" r="2.4" fill="#f28b82" opacity=".45"/><circle cx="55" cy="38" r="2.4" fill="#f28b82" opacity=".45"/>
+      </g>
+      <g class="bras bras-d"><rect x="62" y="54" width="10" height="34" rx="5" fill="${p.haut}"/><g transform="translate(67 92)">${objet(p)}</g></g>
+    </g>
+    ${alerte}
+  </svg>`;
+}
+
+// Personnage couché dans son lit.
+function auLit(p) {
+  return `<svg viewBox="0 0 150 86" role="img" aria-label="${p.nom}, au lit">
+    <g class="zzz"><text x="60" y="20">z</text><text x="72" y="10">z</text><text x="84" y="2">Z</text></g>
+    <rect class="bois" x="6" y="28" width="12" height="50" rx="4"/>
+    <rect class="bois" x="132" y="44" width="10" height="34" rx="4"/>
+    <rect class="bois" x="6" y="58" width="136" height="14" rx="4"/>
+    <rect x="16" y="46" width="118" height="14" rx="6" fill="#f8fafc"/>
+    <ellipse cx="36" cy="44" rx="17" ry="8" fill="#ffffff" stroke="#dfe3ea"/>
+    <g class="tete-dort">
+      <circle cx="38" cy="36" r="12" fill="${p.peau}"/>
+      <path d="M26 34 Q27 22 38 23 Q49 22 50 33 Q45 27 38 28 Q31 27 26 34Z" fill="${p.cheveux}"/>
+      <path d="M32 37 q2.6 2.2 5.2 0 M40 37 q2.6 2.2 5.2 0" stroke="#1b1d24" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    </g>
+    <g class="couverture"><rect x="48" y="36" width="86" height="24" rx="10" fill="${p.haut}"/><path d="M56 48 h70" stroke="#ffffff" stroke-opacity=".35" stroke-width="3" stroke-linecap="round"/></g>
+  </svg>`;
+}
+
+// Qui est où ?
+const pieces = { travaille: document.getElementById("piece-travaille"), attend: document.getElementById("piece-attend"), repos: document.getElementById("piece-repos") };
+const compte = { travaille: 0, attend: 0, repos: 0 };
+D.equipe.forEach((p, i) => {
+  const enCours = D.maintenant.find(m => m.qui === p.qui);
+  const attendu = D.a_vous.filter(m => m.qui === p.qui);
+  const recent = D.prochain.find(m => m.qui === p.qui);
+  const etat = enCours ? "travaille" : attendu.length ? "attend" : "repos";
+  compte[etat]++;
+  const o = el("div", "occupant etat-" + etat + (etat === "repos" ? " au-lit" : ""));
+  o.style.setProperty("--i", i);
+  o.append(svg(etat === "repos" ? auLit(p) : debout(p, etat === "attend")));
+  const n = el("div", "qui-nom", p.nom); n.append(el("small", null, p.nature === "salarie" ? "un humain" : "un robot (agent IA)")); o.append(n);
+  let parole;
+  if (enCours) parole = enCours.simple || enCours.quoi;
+  else if (attendu.length) parole = "On m’attend pour " + attendu.map(a => a.simple + " (" + a.ticket + ")").join(" et ") + ".";
+  // Dans la chambre, pas de bulle : le lit suffit à dire « rien à faire pour l'instant ».
+  if (parole && etat !== "repos") o.append(el("div", "parole", parole));
+  o.title = p.phrase;
+  pieces[etat].append(o);
+});
+const VIDE = { travaille: "Personne ne travaille en ce moment.", attend: "Personne à attendre : tout roule !", repos: "Tout le monde est réveillé !" };
+for (const k in pieces) if (!compte[k]) pieces[k].append(el("div", "personne", VIDE[k]));
+// Étoiles de la chambre, placées une fois.
+const ch = document.getElementById("chambre");
+[[12, 18], [30, 9], [48, 22], [64, 12], [80, 26], [22, 30], [72, 6]].forEach(([x, y], i) => { const s = el("span", "etoile"); s.style.left = x + "%"; s.style.top = y + "px"; s.style.animationDelay = (i * .35) + "s"; ch.append(s); });
+
+// Légende pour les enfants, avec les mêmes petits dessins.
+const lk = document.getElementById("legende-kid");
+const exemple = D.equipe.find(p => p.qui === "testeur") || D.equipe[0];
+[["Debout = au travail", debout(exemple, false)], ["Main levée = on attend un humain", debout(D.equipe.find(p => p.nature === "salarie") || exemple, true)], ["Au lit = rien à faire", auLit(exemple)]]
+  .forEach(([t, m]) => { const s = el("span"); const d = svg(m); d.setAttribute("aria-hidden", "true"); d.removeAttribute("role"); s.append(d, document.createTextNode(t)); lk.append(s); });
+
+// Le voyage d'un ticket : les vrais personnages à chaque étape.
+const piste = document.getElementById("piste");
+const etapes = [["dev-backend", "1. J’écris", "le code"], ["relecteur-code", "2. Je relis", "le code"], ["securite", "3. Je protège", "contre les failles"], ["testeur", "4. Je teste", "que tout marche"]];
+etapes.forEach(([q, t, s], i) => {
+  const p = D.equipe.find(x => x.qui === q);
+  const st = el("div", "station"); st.style.left = (i * 25) + "%";
+  const pt = el("span", "pt"); pt.style.borderColor = p.haut;
+  pt.append(svg(`<svg viewBox="-14 -14 28 28" aria-hidden="true">${objet(p)}</svg>`));
+  st.append(pt, el("b", null, t), el("small", null, s));
+  piste.append(st);
+});
+const fin = el("div", "station fin"); fin.style.left = "100%";
+fin.append(el("span", "pt", "✓"), el("b", null, "Fini !"), el("small", null, "le ticket est validé"));
+piste.append(fin);
+
+// ---- Pour les grands ----
+const actifs = D.tickets.filter(t => t.statut !== "ANNULE");
+const nb = (s) => D.tickets.filter(t => t.statut === s).length;
+const hTot = actifs.reduce((a, t) => a + t.est, 0);
+const hFait = actifs.filter(t => t.statut === "TERMINE").reduce((a, t) => a + t.est, 0);
+const pct = hTot ? Math.round(hFait / hTot * 100) : 0;
+const attente = compte.attend ? D.a_vous.length : 0;
+
+document.getElementById("resume").textContent =
+  `L’équipe construit une appli pour réserver des salles. ${compte.travaille} robot${compte.travaille > 1 ? "s travaillent" : " travaille"} en ce moment, ` +
+  `${attente} tâche${attente > 1 ? "s attendent" : " attend"} un humain, et ${compte.repos} dorment en attendant leur tour. ` +
+  `Le projet est fini à ${pct} %.`;
+
+const tuiles = [
+  { v: pct + " %", l: `avancement (${h(hFait)} sur ${h(hTot)})`, jauge: pct },
+  { v: nb("TERMINE"), l: "tickets terminés" },
+  { v: nb("EN_COURS") + nb("EN_REVUE"), l: "en cours ou en revue" },
+  { v: attente, l: "attendent un humain", cls: "humain" },
+];
+const zt = document.getElementById("tuiles");
+for (const t of tuiles) {
+  const d = el("div", "tuile " + (t.cls || ""));
+  d.append(el("span", "v num", String(t.v)), el("span", "l", t.l));
+  if (t.jauge != null) { const j = el("div", "jauge"); const i = el("i"); i.style.width = t.jauge + "%"; j.append(i); d.append(j); }
+  zt.append(d);
+}
+
+const circ = document.getElementById("circuit");
+const tete = el("div", "circuit-tete"); tete.append(el("span", null, "Ticket"));
+D.etapes.forEach(e => tete.append(el("span", null, e)));
+circ.append(tete);
+for (const t of D.increment) {
+  const r = el("div", "etape-ligne");
+  const n = el("div"); n.append(el("b", null, t.id + " · " + t.titre));
+  const reel = D.tickets.find(x => x.id === t.id);
+  n.append(el("small", null, t.note || (reel ? D.lib[reel.statut] : "")));
+  r.append(n);
+  D.etapes.forEach((_, i) => {
+    const s = el("div", "seg");
+    if (t.etape === 4 || i < t.etape) s.classList.add("fait");
+    else if (i === t.etape) s.classList.add("encours");
+    s.title = D.etapes[i];
+    r.append(s);
+  });
+  circ.append(r);
+}
+
+const leg = document.getElementById("legende");
+ORDRE.filter(s => nb(s)).forEach(s => { const sp = el("span", null, D.lib[s]); sp.style.setProperty("--c", COUL[s]); leg.append(sp); });
+const parQui = {};
+for (const t of D.tickets) (parQui[t.qui] ||= { qui: t.qui, nature: t.nature, t: [] }).t.push(t);
+const gens = Object.values(parQui).sort((a, b) => b.t.length - a.t.length);
+const zg = document.getElementById("gens");
+for (const g of gens) {
+  const row = el("div", "pers");
+  const n = el("div", "nom", g.qui); n.append(el("small", null, g.nature === "salarie" ? "salarié" : "agent IA")); row.append(n);
+  const b = el("div", "barre"); b.setAttribute("role", "img");
+  b.setAttribute("aria-label", g.qui + " : " + ORDRE.filter(s => g.t.some(t => t.statut === s)).map(s => g.t.filter(t => t.statut === s).length + " " + D.lib[s].toLowerCase()).join(", "));
+  for (const s of ORDRE) { const k = g.t.filter(t => t.statut === s).length; if (k) { const i = el("i"); i.style.width = (k / g.t.length * 100) + "%"; i.style.background = COUL[s]; i.title = k + " " + D.lib[s].toLowerCase(); b.append(i); } }
+  row.append(b);
+  const fait = g.t.filter(t => t.statut === "TERMINE").length;
+  row.append(el("span", "compte num", `${fait}/${g.t.length} · ${h(g.t.reduce((a, t) => a + t.est, 0))}`));
+  zg.append(row);
+}
+
+// ---- Le tableau de cartes (façon Trello) ----
+const COLONNES = ["A_FAIRE", "EN_COURS", "EN_REVUE", "ATTENTE_HUMAIN", "BLOQUE", "TERMINE", "ANNULE"];
+const TYPES = { fonctionnalite: ["Fonctionnalité", "#3a55e0"], tache: ["Tâche", "#64748b"], bug: ["Bug", "#db3f55"], incident: ["Incident", "#b91c1c"],
+  decision: ["Décision", "#7356e8"], amelioration: ["Amélioration", "#0e8f7e"], formation: ["Formation", "#b7791f"], support: ["Support", "#0e7490"] };
+const PRIO = { critique: ["Critique", "#b91c1c"], haute: ["Haute", "#d9661f"] };
+const couleurDe = (qui) => (D.equipe.find(p => p.qui === qui) || {}).haut || "#64748b";
+const initiales = (q) => q.replace(/^dev-/, "").replace(/-.*/, "").slice(0, 2).toUpperCase();
+const DANS_INCREMENT = new Set(D.increment.map(t => t.id));
+
+let fQui = "", fTexte = "", voirAnnules = false, seulIncrement = false;
+const sel = document.getElementById("filtre-qui");
+gens.map(g => g.qui).sort((a, b) => a.localeCompare(b, "fr")).forEach(q => sel.append(new Option(q, q)));
+sel.addEventListener("change", () => { fQui = sel.value; rendre(); });
+document.getElementById("recherche").addEventListener("input", (e) => { fTexte = e.target.value.trim().toLowerCase(); rendre(); });
+document.getElementById("voir-annules").addEventListener("change", (e) => { voirAnnules = e.target.checked; rendre(); });
+document.getElementById("voir-increment").addEventListener("change", (e) => { seulIncrement = e.target.checked; rendre(); });
+
+function etiquettesDe(t) {
+  const etiquettes = el("div", "etiquettes");
+  const [tl, tc] = TYPES[t.type] || [t.type, "#64748b"];
+  const e1 = el("span", "etiq", tl); e1.style.background = tc; etiquettes.append(e1);
+  if (PRIO[t.priorite]) { const e2 = el("span", "etiq", PRIO[t.priorite][0]); e2.style.background = PRIO[t.priorite][1]; etiquettes.append(e2); }
+  if (DANS_INCREMENT.has(t.id)) etiquettes.append(el("span", "etiq soutenance", "★ Soutenance"));
+  return etiquettes;
+}
+function avatarDe(t) {
+  const av = el("span", "mini-avatar" + (t.nature === "salarie" ? " humain" : ""), initiales(t.qui));
+  av.style.background = couleurDe(t.qui); av.title = t.qui + (t.nature === "salarie" ? " (humain)" : " (agent IA)");
+  return av;
+}
+
+function carte(t) {
+  const a = el("button", "carte"); a.type = "button";
+  a.addEventListener("click", () => ouvrirFiche(t.id));
+  a.style.setProperty("--c", COUL[t.statut]);
+  a.append(etiquettesDe(t), el("div", "carte-titre", t.titre));
+  const pied = el("div", "carte-pied");
+  pied.append(el("span", "carte-id", t.id), el("span", "carte-h num", h(t.est)), avatarDe(t));
+  a.append(pied);
+  a.setAttribute("aria-label", `${t.id}, ${t.titre}, ${D.lib[t.statut]}, ${t.qui}`);
+  return a;
+}
+
+// ---- Fiche d'un ticket : le Markdown du fichier mis en page, sans jamais injecter de HTML ----
+const fiche = document.getElementById("fiche");
+const COCHE = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+// Texte en ligne : **gras**, `code`, [lien](cible). Un lien vers un ticket ouvre sa fiche.
+function enLigne(texte, parent, base) {
+  const morceaux = texte.split(/(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)\s]+\))/g);
+  for (const m of morceaux) {
+    if (!m) continue;
+    if (m.startsWith("**") && m.endsWith("**") && m.length > 4) parent.append(el("strong", null, m.slice(2, -2)));
+    else if (m.startsWith("`") && m.endsWith("`") && m.length > 2) parent.append(el("code", null, m.slice(1, -1)));
+    else if (/^\[[^\]]+\]\([^)\s]+\)$/.test(m)) {
+      const [, txt, cible] = m.match(/^\[([^\]]+)\]\(([^)\s]+)\)$/);
+      const idCible = (cible.match(/^(?:\.\.\/tickets\/)?(T-\d{3})-/) || [])[1];
+      if (idCible && D.tickets.some(x => x.id === idCible)) {
+        const b = el("button", "lien-ticket", txt); b.type = "button"; b.addEventListener("click", () => ouvrirFiche(idCible)); parent.append(b);
+      } else {
+        let url = null;
+        try { url = new URL(cible, base); } catch (e) { url = null; }
+        if (url && /^(https?:|file:)$/.test(url.protocol)) { const a = el("a", null, txt); a.href = url.href; a.target = "_blank"; a.rel = "noopener"; parent.append(a); }
+        else parent.append(document.createTextNode(txt));
+      }
+    } else parent.append(document.createTextNode(m));
+  }
+}
+
+function blocs(lignes, base, journal) {
+  const frag = document.createDocumentFragment();
+  let i = 0, para = [];
+  const viderPara = () => { if (para.length) { const p = el("p"); enLigne(para.join(" "), p, base); frag.append(p); para = []; } };
+  while (i < lignes.length) {
+    const l = lignes[i];
+    if (!l.trim()) { viderPara(); i++; continue; }
+    if (/^###\s/.test(l)) { viderPara(); const h4 = el("h4"); enLigne(l.replace(/^###\s+/, ""), h4, base); frag.append(h4); i++; continue; }
+    if (/^\s*\|/.test(l)) {
+      viderPara();
+      const t = el("table"), w = el("div", "tableau-md"); w.append(t);
+      let premiere = true;
+      while (i < lignes.length && /^\s*\|/.test(lignes[i])) {
+        const cells = lignes[i].trim().replace(/^\||\|$/g, "").split("|").map(c => c.trim());
+        if (!cells.every(c => /^:?-+:?$/.test(c))) {
+          const tr = el("tr");
+          cells.forEach(c => { const td = el(premiere ? "th" : "td"); enLigne(c, td, base); tr.append(td); });
+          t.append(tr); premiere = false;
+        }
+        i++;
+      }
+      frag.append(w); continue;
+    }
+    if (/^\s*-\s\[( |x|X)\]/.test(l)) {
+      viderPara();
+      const ul = el("ul", "criteres");
+      while (i < lignes.length && /^\s*-\s\[( |x|X)\]/.test(lignes[i])) {
+        const ok = /^\s*-\s\[(x|X)\]/.test(lignes[i]);
+        const li = el("li", ok ? "ok" : null); const c = el("span", "coche"); if (ok) c.innerHTML = COCHE;
+        const txt = el("div"); enLigne(lignes[i].replace(/^\s*-\s\[( |x|X)\]\s*/, ""), txt, base);
+        li.append(c, txt); ul.append(li); i++;
+      }
+      frag.append(ul); continue;
+    }
+    if (/^\s*-\s/.test(l)) {
+      viderPara();
+      const ul = el("ul", journal ? "frise" : null);
+      while (i < lignes.length && /^\s*-\s/.test(lignes[i]) && !/^\s*-\s\[( |x|X)\]/.test(lignes[i])) {
+        const brut = lignes[i]; const texte = brut.replace(/^\s*-\s+/, "");
+        const li = el("li", /^\s{2,}-/.test(brut) ? "sous" : null);
+        const parts = journal ? texte.split(" · ") : null;
+        if (journal && parts.length >= 3) {
+          li.append(el("span", "quand", parts[0]));
+          const quoi = el("div"); quoi.append(el("span", "qui-j", parts[1].replace(/^(agent|salarie):/, "") + " ")); enLigne(parts.slice(2, -1).join(" · ") || parts[2], quoi, base);
+          li.append(quoi);
+          if (parts.length >= 4) li.append(el("span", "duree", parts[parts.length - 1]));
+        } else enLigne(texte, li, base);
+        // Lignes de suite d'un élément (indentées, sans tiret).
+        while (i + 1 < lignes.length && /^\s{2,}\S/.test(lignes[i + 1]) && !/^\s*-\s/.test(lignes[i + 1])) { i++; li.append(document.createTextNode(" ")); enLigne(lignes[i].trim(), li, base); }
+        ul.append(li); i++;
+      }
+      frag.append(ul); continue;
+    }
+    if (/^>\s?/.test(l)) { viderPara(); const q = el("blockquote"); enLigne(l.replace(/^>\s?/, ""), q, base); frag.append(q); i++; continue; }
+    para.push(l.trim()); i++;
+  }
+  viderPara();
+  return frag;
+}
+
+function ouvrirFiche(id) {
+  const t = D.tickets.find(x => x.id === id); if (!t) return;
+  const base = new URL(t.fichier, location.href).href;
+  fiche.querySelector(".fiche-tete").style.setProperty("--c", COUL[t.statut]);
+  document.getElementById("fiche-etiquettes").replaceWith(Object.assign(etiquettesDe(t), { id: "fiche-etiquettes" }));
+  document.getElementById("fiche-titre").textContent = t.id + " · " + t.titre;
+  const ligne = document.getElementById("fiche-ligne"); ligne.replaceChildren();
+  const pill = el("span", "statut-pill", D.lib[t.statut]); pill.style.setProperty("--c", COUL[t.statut]);
+  const qui = el("span", "qui-ligne"); qui.append(avatarDe(t), el("b", null, t.qui), el("span", "muted", t.nature === "salarie" ? "· un humain" : "· un agent IA"));
+  ligne.append(pill, qui);
+
+  const corps = document.getElementById("fiche-corps"); corps.replaceChildren();
+  // Faits clés.
+  const faits = el("div", "faits");
+  const fait = (k, v) => { const d = el("div", "fait"); d.append(el("span", null, k)); if (typeof v === "string") d.append(el("b", null, v)); else d.append(v); faits.append(d); };
+  fait("Estimé", h(t.est)); fait("Temps passé", h(t.passe));
+  if (t.depend_de.length) { const b = el("b"); t.depend_de.forEach(dep => { const x = el("button", "lien-ticket", dep); x.type = "button"; x.title = (D.tickets.find(y => y.id === dep) || {}).titre || ""; x.addEventListener("click", () => ouvrirFiche(dep)); b.append(x); }); fait("Dépend de", b); }
+  else fait("Dépend de", "rien");
+  if (t.bloque_par) fait("Attend", t.bloque_par);
+  fait(t.termine_le ? "Terminé le" : "Mis à jour le", (t.termine_le || t.maj_le || "—"));
+  corps.append(faits);
+
+  // Sections du fichier.
+  const sections = t.corps.split(/^## /m).slice(1);
+  for (const s of sections) {
+    const lignes = s.split("\n"); const titre = lignes.shift().trim();
+    const sec = el("section", "fiche-section"); const h3 = el("h3", null, titre); sec.append(h3);
+    if (/^Crit/.test(titre)) {
+      const tot = lignes.filter(x => /^\s*-\s\[( |x|X)\]/.test(x)).length, ok = lignes.filter(x => /^\s*-\s\[(x|X)\]/.test(x)).length;
+      if (tot) { const pr = el("div", "progres"); const j = el("div", "jauge"); const b = el("i"); b.style.width = (ok / tot * 100) + "%"; j.append(b); pr.append(el("span", "num", `${ok} / ${tot} cochés`), j); sec.append(pr); }
+    }
+    sec.append(blocs(lignes, base, /^Journal/.test(titre)));
+    corps.append(sec);
+  }
+  const pied = el("p", "fiche-pied", "Fichier : "); const a = el("a", null, t.fichier); a.href = t.fichier; a.target = "_blank"; a.rel = "noopener"; pied.append(a); corps.append(pied);
+  corps.scrollTop = 0;
+  if (!fiche.open) fiche.showModal();
+}
+document.getElementById("fiche-fermer").addEventListener("click", () => fiche.close());
+fiche.addEventListener("click", (e) => { if (e.target === fiche) fiche.close(); });
+
+function rendre() {
+  const planche = document.getElementById("planche"); planche.replaceChildren();
+  const vis = D.tickets.filter(t => (!fQui || t.qui === fQui)
+    && (!seulIncrement || DANS_INCREMENT.has(t.id))
+    && (!fTexte || (t.id + " " + t.titre + " " + t.qui).toLowerCase().includes(fTexte)));
+  const montres = vis.filter(t => voirAnnules || t.statut !== "ANNULE");
+  document.getElementById("compte").textContent = montres.length + " ticket" + (montres.length > 1 ? "s" : "");
+  for (const s of COLONNES) {
+    if (s === "ANNULE" && !voirAnnules) continue;
+    const cartes = vis.filter(t => t.statut === s);
+    if (s === "BLOQUE" && !cartes.length) continue;
+    const col = el("div", "colonne"); col.style.setProperty("--c", COUL[s]);
+    const tete = el("div", "colonne-tete"); tete.append(el("span", "colonne-nom", D.lib[s]), el("span", "colonne-nb num", String(cartes.length)));
+    const pile = el("div", "pile");
+    if (cartes.length) cartes.forEach(t => pile.append(carte(t)));
+    else pile.append(el("div", "pile-vide", "Aucune carte"));
+    col.append(tete, pile);
+    planche.append(col);
+  }
+}
+rendre();
+</script>
+</body>
+</html>

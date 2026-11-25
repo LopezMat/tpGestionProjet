@@ -10,13 +10,13 @@ assigne: agent:dev-backend  # agent:<nom> | salarie:<prenom>
 competence_requise: backend-python (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 6             # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 0            # heures équivalent humain
-depend_de: [T-015]          # ex. [T-001, T-002]
+depend_de: [T-015, T-061]   # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-24
-maj_le: 2026-11-24
+maj_le: 2026-11-25
 statut_depuis: 2026-11-24   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
@@ -40,6 +40,7 @@ Composant `api.comptes` de [architecture.md](../architecture.md) § 3 et § 7 : 
 - [ ] **Réinitialisation par l'accueil uniquement** : l'accueil génère ou fixe un mot de passe temporaire pour un compte ; il est stocké haché ; l'utilisateur concerné doit le changer à sa connexion suivante, avant tout autre accès ; le mot de passe temporaire ne fonctionne plus après ce changement ; les sessions de la cible sont révoquées (tests).
 - [ ] Un membre ne peut ni créer, ni supprimer, ni lister des comptes, ni réinitialiser le mot de passe d'un autre membre, de l'accueil ou le sien par ce biais (tests d'autorisation par appel direct) ; il n'existe aucune réinitialisation en libre-service.
 - [ ] Entrées validées : nom de 100 caractères au plus, e-mail de 254 au plus, champs inconnus refusés.
+- [ ] **Casse et champs vides (constat 11, rapport securite-2026-11-25-3)** : l'e-mail est normalisé (minuscules, espaces retirés) avant toute recherche et toute insertion ; après la création de `a@x.fr`, la création de ` A@X.FR ` est refusée (409, test) ; un nom ou un e-mail vide, ou fait seulement d'espaces, est refusé (422, test).
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
@@ -51,3 +52,4 @@ Composant `api.comptes` de [architecture.md](../architecture.md) § 3 et § 7 : 
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-24 23:55 · agent:chef-de-projet · création · 0 h
+- 2026-11-25 23:50 · agent:chef-de-projet · triage du rapport securite-2026-11-25-3 : critère ajouté (constat 11 : casse de l'e-mail, champs vides) ; dépend aussi de T-061 (contraintes en base sur l'e-mail et les champs vides). Temps compté dans T-008 · 0 h

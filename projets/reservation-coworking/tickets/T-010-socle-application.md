@@ -4,7 +4,7 @@ id: T-010
 titre: Socle de l'application (/health, Dockerfile, démarrage)
 projet: reservation-coworking
 type: fonctionnalite        # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: EN_REVUE           # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE           # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: agent:dev-backend  # agent:<nom> | salarie:<prenom>
 competence_requise: backend-python (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -19,7 +19,7 @@ cree_le: 2026-11-24
 maj_le: 2026-11-25
 statut_depuis: 2026-11-25   # date du dernier changement de statut
 debut_le: 2026-11-25        # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le: 2026-11-25     # facultatif : date du passage TERMINE
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
 
@@ -31,7 +31,7 @@ Premier ticket de réalisation, socle de toutes les exigences (F-01 à F-08). Se
 Les versions exactes sont confirmées au premier ticket par `pip index versions <paquet>` (architecture § 2, écart de confiance sur FastAPI, Uvicorn, Playwright) et notées au journal.
 
 ## Critères d'acceptation
-- [ ] `GET /health` renvoie 200 `{"status": "ok", "commit": "<sha>"}` quand la base répond à `SELECT 1` (délai 1 s), et 503 `{"status": "ko", "commit": "<sha>"}` sinon ; `commit` vaut `GIT_COMMIT`, à défaut `RENDER_GIT_COMMIT`, à défaut `"inconnu"` (tests).
+- [x] `GET /health` renvoie 200 `{"status": "ok", "commit": "<sha>"}` quand la base répond à `SELECT 1` (délai 1 s), et 503 `{"status": "ko", "commit": "<sha>"}` sinon ; `commit` vaut `GIT_COMMIT`, à défaut `RENDER_GIT_COMMIT`, à défaut `"inconnu"` (tests).
 - [x] `/health` est public, sans session, et ne renvoie aucune autre information.
 - [x] `app/Dockerfile` : base `python:3.14-slim`, `ARG GIT_COMMIT` puis `ENV GIT_COMMIT=$GIT_COMMIT`, installation de `requirements.txt` seul, utilisateur non root, commande `python -m reservation.demarrer` ; une image construite avec `--build-arg GIT_COMMIT=<sha>` renvoie ce SHA sur `/health`.
 - [x] L'app écoute sur `$PORT` et lit sa base dans `DATABASE_URL` ; aucune autre variable n'est exigée au lancement ; Uvicorn tourne avec 1 worker.
@@ -85,3 +85,5 @@ Les versions exactes sont confirmées au premier ticket par `pip index versions 
 - 2026-11-25 20:15 · agent:dev-backend · vérification sur l'image : `docker build --build-arg GIT_COMMIT=$(git rev-parse HEAD)` (6c53d317003c87c596aed83a6fda759af215d4ed, SHA de base, code non commité), conteneur app + PostgreSQL 16 jetable, premier `/health` 200 en 0,010 s avec le SHA. Mesures de `/health` ensuite : base gelée (`docker pause`, connexion poolée à l'origine du défaut) : 503 en 1,004 s puis 1,006 s, `GET /` pendant le gel : 200 en 0,008 s, après `docker unpause` : 200 en 0,011 s ; base arrêtée (`docker stop`, nom non résolu) : 503 en 1,005 s et 1,006 s (était 7,8 s) ; hôte absent du DNS (`hote-absent.invalid`, Uvicorn lancé directement) : 503 en 0,98 s puis 0,006 s. Conteneurs, réseau et image d'essai supprimés.
 - 2026-11-25 20:20 · agent:dev-backend · couverture du critère 1 (non coché, c'est le rôle du testeur) : 200 + SHA : `tests/test_health.py`, `tests/test_base.py::test_health_200_de_bout_en_bout_avec_un_vrai_postgres` et mesure sur l'image ; 503 en moins de 2 s (borne de conception 1 s) : `tests/test_health_delai.py` (base qui accepte TCP sans répondre, base qui termine le handshake puis ne répond plus, nom non résolu, sonde qui ne revient jamais, boucle libre, pas d'empilement) ; mesures ci-dessus. Les autres critères sont inchangés ; le critère 3 (build-arg → SHA) est re-confirmé par la mesure sur l'image. Sécurité : `/health` ne touche pas l'authentification ni des données personnelles ; aucun détail d'erreur renvoyé ni journalisé. Fichiers modifiés : `app/reservation/{bdd,app,config,demarrer}.py`, `app/tests/{conftest,test_demarrer,test_health_delai}.py`, `app/docs/openapi.json`. Non commité, non poussé (consigne du coordinateur). Livré pour revue (EN_COURS → EN_REVUE) · 0.2 h
 - 2026-11-25 21:30 · agent:securite · audit sécurité (ré-audit de la reprise) : NON BLOQUANT (0 critique, 0 haute ; constat 3 `server_header` traité ; 2 nouveaux constats bas sur la sonde de `/health`, proposés au `chef-de-projet`), rapport [securite-2026-11-25-2.md](../rapports/securite-2026-11-25-2.md) ; temps compté dans T-043 · 0 h
+- 2026-11-25 12:10 · agent:testeur · campagne SHA 9c0f8a8cf45329ef667ee7a4d4ca215006e4d47d (HEAD ; arbre de `app/` propre, aucun fichier de `app/` modifié) : critère 1 coché, constaté : suite complète sous Python 3.14.10 (conteneur `python:3.14-slim`, `requirements-dev.txt`, `TEST_DATABASE_URL` vers PostgreSQL 16 jetable, réseau Docker dédié) : 44 passés, 0 ignoré, 0 échec (tests 200/503/SHA/replis de `tests/test_health.py`, `tests/test_base.py` avec vrai PostgreSQL, `tests/test_health_delai.py`) ; image construite avec `--build-arg GIT_COMMIT=9c0f8a8c...` : premier `/health` 200 en 0,118 s avec ce SHA ; `docker pause` de la base : 503 `{"status":"ko","commit":"9c0f8a8..."}` en 1,008 s puis 1,011 s, `GET /` pendant le gel 200 en 0,022 s ; `docker unpause` : 200 en 0,024 s puis 0,019 s ; `docker stop` : 503 en 0,121 s puis 0,008 s (était 7,8 s et aucune réponse en 60 s sur l'ancien état). Non-régression des critères 2 à 7 sur cette image : (2) corps limité à `status` et `commit`, sans session ; (3) uid=10001(app), un seul processus `python -m reservation.demarrer`, SHA du build-arg renvoyé ; (4) écoute sur 8000 (`PORT` de l'image) avec `DATABASE_URL` seule, sans `DATABASE_URL` le conteneur sort avec « DATABASE_URL n'est pas renseignée » ; (5) pytest, httpx, Playwright absents de l'image ; (6) `/docs`, `/redoc`, `/openapi.json` 404, `/` 200 ; (7) `test_env_example_sans_valeur` vert. Répétitions de `tests/test_health_delai.py` : 7 sur 7 vertes, durées stables (1,01 à 1,04 s), aucune instabilité observée sur la borne basse (remarque 4 du relecteur, non corrigée, non bloquante). Détail dans [tests-2026-11-25.md](../rapports/tests-2026-11-25.md).
+- 2026-11-25 12:10 · agent:testeur · vérifié : 7/7 critères, suites vertes, SHA 9c0f8a8 ; avis relecteur-code APPROUVÉ (passe 2), revue humaine non requise → TERMINE · temps compté dans T-041

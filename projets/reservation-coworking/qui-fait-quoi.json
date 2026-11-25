@@ -1,0 +1,270 @@
+{
+  "_note": "Instantané tenu par le coordinateur : ce qui tourne, ce qui attend un humain, l'étape de chaque ticket de l'incrément. Les statuts viennent des tickets (R9).",
+  "maintenant": [],
+  "a_vous": [
+    {
+      "qui": "Karim",
+      "ticket": "T-068",
+      "quoi": "Revue humaine de l’API de consultation, à écrire dans T-054. Seul verrou avant la page de la soutenance.",
+      "quand": "dès maintenant",
+      "simple": "vérifier le travail des robots"
+    },
+    {
+      "qui": "Karim",
+      "ticket": "T-064 et T-074",
+      "quoi": "Revues humaines de T-063 et T-073 en une séance (0,75 h), au plus tard le 2026-11-26 : sinon T-013 attend et la deadline est menacée. Inclut le constat de la console en navigateur.",
+      "quand": "au plus tard le 26/11",
+      "simple": "vérifier les nouvelles serrures, vite"
+    },
+    {
+      "qui": "Johan",
+      "ticket": "DEC-013",
+      "quoi": "Relire DEC-013 et le passer VALIDÉ (valide_par, version 1.0), puis mettre l’index à jour.",
+      "quand": "maintenant",
+      "simple": "signer la décision sur la base de données"
+    },
+    {
+      "qui": "Johan",
+      "ticket": "T-057",
+      "quoi": "Débloquer T-057 : decision DEC-013, critères 1 et 2 cochés, statut EN_COURS, ligne de journal.",
+      "quand": "après DEC-013",
+      "simple": "débloquer le ticket de cette décision"
+    },
+    {
+      "qui": "Johan",
+      "ticket": "T-043",
+      "quoi": "Choisir la ré-estimation de l’audit de sécurité : option A recommandée (clore à 7 h, ticket « Audit avant GO » de 6 h).",
+      "quand": "avant le GO",
+      "simple": "choisir comment compter l’audit de sécurité"
+    },
+    {
+      "qui": "Johan",
+      "ticket": "T-072",
+      "quoi": "Dire qui paie T-072 (projet ou ESN) et si T-071 et T-072 sont exigés avant le GO.",
+      "quand": "avant le GO",
+      "simple": "dire qui paie une petite réparation"
+    }
+  ],
+  "recent": [
+    {
+      "qui": "dev-frontend",
+      "quoi": "Prochain : la page T-055, dès que T-054 est terminé.",
+      "simple": "Je me réveille quand le ticket T-054 sera fini."
+    },
+    {
+      "qui": "chef-de-projet",
+      "quoi": "Vient de créer T-073 et T-074 et d’ajouter un critère à T-018.",
+      "simple": "J’ai rangé les derniers problèmes et prévenu que Karim est très attendu."
+    },
+    {
+      "qui": "dev-backend",
+      "quoi": "Vient de livrer T-073 (216 tests verts).",
+      "simple": "J’ai fermé la dernière petite porte !"
+    },
+    {
+      "qui": "relecteur-code",
+      "quoi": "Vient d’approuver T-060, T-071 et T-073.",
+      "simple": "J’ai relu toutes les réparations, c’est bon !"
+    },
+    {
+      "qui": "testeur",
+      "quoi": "Vient de passer T-060 et T-071 TERMINE (216 tests verts) ; T-073 attend Karim.",
+      "simple": "J’ai fini : deux réparations validées, la troisième attend Karim."
+    },
+    {
+      "qui": "securite",
+      "quoi": "Vient d’auditer T-060, T-071 et T-073 : non bloquant, constats 13, 15a et 16 fermés ; constats bas 17 à 19.",
+      "simple": "J’ai fini : les serrures tiennent bon."
+    }
+  ],
+  "etapes": [
+    "Développement",
+    "Revue de code",
+    "Sécurité",
+    "Tests",
+    "Terminé"
+  ],
+  "increment": [
+    {
+      "id": "T-010",
+      "titre": "Socle de l’application",
+      "etape": 4,
+      "note": ""
+    },
+    {
+      "id": "T-011",
+      "titre": "Base de données et 3 salles",
+      "etape": 4,
+      "note": ""
+    },
+    {
+      "id": "T-012",
+      "titre": "Règles métier et horloge",
+      "etape": 4,
+      "note": ""
+    },
+    {
+      "id": "T-056",
+      "titre": "Test de /health sur base gelée",
+      "etape": 4,
+      "note": ""
+    },
+    {
+      "id": "T-054",
+      "titre": "API des disponibilités",
+      "etape": 3,
+      "note": "Tests 7/7 · ne manque que la revue humaine de Karim (T-068)"
+    },
+    {
+      "id": "T-055",
+      "titre": "Page de consultation",
+      "etape": -1,
+      "note": "Démarre quand T-054 est terminé"
+    }
+  ],
+  "equipe": [
+    {
+      "qui": "analyste-besoin",
+      "phrase": "J’écoute le client et j’écris ce qu’il veut.",
+      "nom": "Analyste",
+      "role": "Écrit le cahier des charges",
+      "nature": "agent",
+      "haut": "#5b8def",
+      "peau": "#f2c7a5",
+      "cheveux": "#3b2a20",
+      "outil": "crayon"
+    },
+    {
+      "qui": "architecte",
+      "phrase": "Je choisis les outils pour construire l’appli.",
+      "nom": "Architecte",
+      "role": "Choisit la technique",
+      "nature": "agent",
+      "haut": "#8e6cf0",
+      "peau": "#d9a37c",
+      "cheveux": "#1d1d24",
+      "outil": "plan"
+    },
+    {
+      "qui": "chef-de-projet",
+      "phrase": "J’organise le travail de tout le monde.",
+      "nom": "Chef de projet",
+      "role": "Découpe et planifie",
+      "nature": "agent",
+      "haut": "#f08a4b",
+      "peau": "#a8724f",
+      "cheveux": "#15110e",
+      "outil": "bloc"
+    },
+    {
+      "qui": "dev-backend",
+      "phrase": "Je construis le moteur de l’appli.",
+      "nom": "Dev backend",
+      "role": "Code le serveur et la base",
+      "nature": "agent",
+      "haut": "#2fb38a",
+      "peau": "#f5d3b8",
+      "cheveux": "#b5652d",
+      "outil": "portable"
+    },
+    {
+      "qui": "dev-frontend",
+      "phrase": "Je dessine les pages qu’on voit à l’écran.",
+      "nom": "Dev frontend",
+      "role": "Code les pages",
+      "nature": "agent",
+      "haut": "#e86aa6",
+      "peau": "#8a5a3c",
+      "cheveux": "#0f0b09",
+      "outil": "portable"
+    },
+    {
+      "qui": "relecteur-code",
+      "phrase": "Je relis le travail des autres.",
+      "nom": "Relecteur",
+      "role": "Relit chaque ligne de code",
+      "nature": "agent",
+      "haut": "#c9a227",
+      "peau": "#f2c7a5",
+      "cheveux": "#9aa0aa",
+      "outil": "lunettes"
+    },
+    {
+      "qui": "securite",
+      "phrase": "Je cherche les portes mal fermées.",
+      "nom": "Sécurité",
+      "role": "Cherche les failles",
+      "nature": "agent",
+      "haut": "#3a9d5d",
+      "peau": "#d9a37c",
+      "cheveux": "#2a1a12",
+      "outil": "bouclier"
+    },
+    {
+      "qui": "testeur",
+      "phrase": "Je vérifie que tout marche bien.",
+      "nom": "Testeur",
+      "role": "Vérifie chaque critère",
+      "nature": "agent",
+      "haut": "#4b6bff",
+      "peau": "#f5d3b8",
+      "cheveux": "#e0b25a",
+      "outil": "loupe"
+    },
+    {
+      "qui": "deployeur",
+      "phrase": "J’installe l’appli pour de vrai.",
+      "nom": "Déployeur",
+      "role": "Met l’app en ligne",
+      "nature": "agent",
+      "haut": "#e2574c",
+      "peau": "#a8724f",
+      "cheveux": "#1d1d24",
+      "outil": "fusee"
+    },
+    {
+      "qui": "Johan",
+      "phrase": "Je décide et je valide les choix importants.",
+      "nom": "Johan",
+      "role": "Décide et valide",
+      "nature": "salarie",
+      "haut": "#1d4ed8",
+      "peau": "#e8b48f",
+      "cheveux": "#2a1a12",
+      "outil": "bloc"
+    },
+    {
+      "qui": "Karim",
+      "phrase": "Je vérifie la sécurité, en vrai humain.",
+      "nom": "Karim",
+      "role": "Revues humaines de sécurité",
+      "nature": "salarie",
+      "haut": "#334155",
+      "peau": "#c98e66",
+      "cheveux": "#16120f",
+      "outil": "tasse"
+    },
+    {
+      "qui": "Claire",
+      "phrase": "Je parle au client et je teste l’appli.",
+      "nom": "Claire",
+      "role": "Lien avec le client, recette, GO",
+      "nature": "salarie",
+      "haut": "#0e7490",
+      "peau": "#f2c7a5",
+      "cheveux": "#7a3b1d",
+      "outil": "tasse"
+    },
+    {
+      "qui": "Nadia",
+      "phrase": "Je garde des copies de secours.",
+      "nom": "Nadia",
+      "role": "Sauvegarde et mise en service",
+      "nature": "salarie",
+      "haut": "#9d174d",
+      "peau": "#a8724f",
+      "cheveux": "#0f0b09",
+      "outil": "tasse"
+    }
+  ]
+}

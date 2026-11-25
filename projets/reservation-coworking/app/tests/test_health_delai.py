@@ -126,7 +126,7 @@ def _health(monkeypatch, url: str) -> tuple[int, float]:
     monkeypatch.setenv("DATABASE_URL", url)
     monkeypatch.setenv("GIT_COMMIT", "a" * 40)
     debut = time.monotonic()
-    reponse = TestClient(creer_app()).get("/health")
+    reponse = TestClient(creer_app(), base_url="http://localhost").get("/health")
     duree = time.monotonic() - debut
     assert reponse.json() == {"status": "ko", "commit": "a" * 40}
     return reponse.status_code, duree
@@ -157,7 +157,7 @@ def test_health_ne_bloque_pas_les_autres_requetes(sonde_bloquee, monkeypatch):
 
     async def scenario():
         transport = httpx.ASGITransport(app=creer_app())
-        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+        async with httpx.AsyncClient(transport=transport, base_url="http://localhost") as client:
             sante = asyncio.create_task(client.get("/health"))
             await asyncio.sleep(0.1)  # /health est en attente de la base
             debut = time.monotonic()

@@ -4,12 +4,12 @@ id: T-039
 titre: Revue de code (1/2) — socle, authentification, réservations
 projet: reservation-coworking
 type: tache                 # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: EN_COURS            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: agent:relecteur-code   # agent:<nom> | salarie:<prenom>
 competence_requise: revue-code (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 6             # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 1.4          # heures équivalent humain
+temps_passe_h: 3.7          # heures équivalent humain
 depend_de: [T-007]          # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
@@ -17,8 +17,8 @@ decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-24
 maj_le: 2026-11-25
-statut_depuis: 2026-11-24   # date du dernier changement de statut
-debut_le:                   # facultatif : date du premier passage EN_COURS
+statut_depuis: 2026-11-25   # date du dernier changement de statut
+debut_le: 2026-11-25 # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
@@ -47,3 +47,6 @@ Pas de `depend_de` vers les tickets relus : l'avis `APPROUVÉ` est une condition
 - 2026-11-25 15:00 · agent:relecteur-code · revue T-010 : APPROUVÉ · 0.5 h
 - 2026-11-25 21:00 · agent:relecteur-code · revue T-010 (passe 2, après NON CONFORME du testeur) : APPROUVÉ · 0.6 h
 - 2026-11-25 21:00 · agent:relecteur-code · revue T-056 : APPROUVÉ · 0.3 h
+- 2026-11-25 23:00 · coordinateur pour agent:relecteur-code · revue de T-012 : APPROUVÉ, revue humaine non requise (le relecteur n'a pas accès à ce ticket, temps noté par le coordinateur) · 0.75 h
+- 2026-11-25 23:30 · coordinateur pour agent:relecteur-code · revue de T-011 (commit 2852fe7) : APPROUVÉ, revue humaine non requise · 0.75 h
+- 2026-11-25 23:55 · coordinateur pour agent:relecteur-code · revue de T-054 (commit 4674c76) : APPROUVÉ, revue humaine requise : oui (ticket compagnon T-068) · 0.8 h

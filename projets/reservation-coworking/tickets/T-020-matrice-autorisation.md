@@ -47,3 +47,4 @@ Contrôle transversal des autorisations de F-02, F-03, F-04 et F-07 (CDC § 8 «
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-24 23:55 · agent:chef-de-projet · création · 0 h
+- 2026-11-25 23:40 · coordinateur · à couvrir par la matrice d'autorisation (critère 7 de T-054, DEC-011) : `GET /api/salles` et `GET /api/disponibilites` sont accessibles sans connexion à titre provisoire (commentaire `PROVISOIRE` dans `app/reservation/api.py`) ; la matrice doit fixer leur règle d'accès définitive (connexion exigée, F-04) avant tout GO (T-046) · 0 h

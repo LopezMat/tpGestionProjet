@@ -8,19 +8,20 @@
 
 | Projet | Client | Type | État | Avancement | Budget consommé / prévu | % | Fin projetée | Deadline | Écart (j ouvrés) | BLOQUE | ATTENTE_HUMAIN | Alertes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 10,4 % | 367,50 € / 6 000,00 € | 6,1 % | 2026-12-16 | 2026-12-18 | -2 | 0 | 0 | 3 |
+| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 18,6 % | 1 038,75 € / 6 000,00 € | 17,3 % | 2026-12-16 | 2026-12-18 | -2 | 0 | 1 | 2 |
 
 ## Alertes
 
 | Projet | Type | Détail |
 |---|---|---|
 | reservation-coworking | Utilisation (info) | claire utilisé à 31,7 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
-| reservation-coworking | Utilisation (info) | karim utilisé à 39,7 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
-| reservation-coworking | Utilisation (info) | nadia utilisé à 36,8 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
+| reservation-coworking | Utilisation (info) | nadia utilisé à 49,9 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
 
 ## Décisions humaines attendues
 
-Aucune.
+| Priorité | Projet | Ticket | Titre | Question (bloque_par) |
+|---|---|---|---|---|
+| haute | reservation-coworking | T-057 | Rôle PostgreSQL de l'application (constat 10, moindre privilège) | décision humaine sur le rôle PostgreSQL de l'application (constat 10 du rapport securite-2026-11-25-3), avec l'accord de C sur le modèle commun |
 
 ## Équipe : allocation et utilisation
 
@@ -28,9 +29,9 @@ Aucune.
 |---|---|---|---|---|---|
 | claire | actif | expert | 20 % | reservation-coworking 20 % | reservation-coworking 31,7 % |
 | hugo | actif | debutant | 0 % | aucune | — |
-| karim | actif | expert | 15 % | reservation-coworking 15 % | reservation-coworking 39,7 % |
+| karim | actif | expert | 15 % | reservation-coworking 15 % | reservation-coworking 51,6 % |
 | lea | actif | confirme | 0 % | aucune | — |
-| nadia | actif | confirme | 20 % | reservation-coworking 20 % | reservation-coworking 36,8 % |
+| nadia | actif | confirme | 20 % | reservation-coworking 20 % | reservation-coworking 49,9 % |
 
 ## Événements d'équipe à venir
 
