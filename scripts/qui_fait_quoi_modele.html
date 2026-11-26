@@ -445,8 +445,11 @@ const COUL = { TERMINE: "var(--ok)", EN_COURS: "var(--cours)", EN_REVUE: "var(--
 const ORDRE = ["TERMINE", "EN_REVUE", "EN_COURS", "ATTENTE_HUMAIN", "BLOQUE", "A_FAIRE", "ANNULE"];
 const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
 const h = (n) => n.toLocaleString("fr-FR", { maximumFractionDigits: 1 }) + " h";
-// Les dessins ci-dessous sont écrits par ce script, à partir de couleurs fixes : aucune donnée externe n'y entre.
+// Les dessins ci-dessous sont écrits par ce script. Les seules données de l'instantané qui y entrent
+// (nom et couleurs d'un personnage) passent par attr() : elles ne peuvent pas injecter de balise (DEC-014).
 const svg = (markup) => { const d = document.createElement("div"); d.innerHTML = markup.trim(); return d.firstElementChild; };
+const attr = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const perso = (p) => Object.assign({}, p, { nom: attr(p.nom), haut: attr(p.haut), peau: attr(p.peau), cheveux: attr(p.cheveux) });
 
 // Objets tenus en main, centrés sur (0, 0).
 const OBJETS = {
@@ -460,12 +463,13 @@ const OBJETS = {
   fusee: () => `<path d="M0 -12 q6 6 4 16 h-8 q-2 -10 4 -16z" fill="#e5e7eb" stroke="#64748b"/><circle cx="0" cy="-4" r="2" fill="#3b82f6"/><path d="M-4 4 l-3 5 h4z M4 4 l3 5 h-4z" fill="#ef4444"/>`,
   tasse: () => `<rect x="-6" y="-6" width="12" height="13" rx="2" fill="#f8fafc" stroke="#94a3b8"/><path d="M6 -3 q5 0 5 4 t-5 4" stroke="#94a3b8" stroke-width="1.6" fill="none"/>`,
 };
-const objet = (p) => (OBJETS[p.outil] || OBJETS.tasse)(p.haut);
+const objet = (p) => (OBJETS[p.outil] || OBJETS.tasse)(attr(p.haut));
 const lunettes = (p, cx, cy) => p.outil === "lunettes"
   ? `<g fill="none" stroke="#1b1d24" stroke-width="1.6"><circle cx="${cx - 6}" cy="${cy}" r="5"/><circle cx="${cx + 6}" cy="${cy}" r="5"/><path d="M${cx - 1} ${cy} h2"/></g>` : "";
 
 // Personnage debout (au travail, ou main levée).
-function debout(p, attend) {
+function debout(brut, attend) {
+  const p = perso(brut);
   const alerte = attend ? `<g class="alerte"><circle cx="70" cy="10" r="11"/><text x="70" y="15.5" text-anchor="middle">!</text></g>` : "";
   return `<svg viewBox="0 0 90 140" role="img" aria-label="${p.nom}, debout">
     <ellipse class="ombre" cx="45" cy="134" rx="26" ry="4"/>
@@ -491,7 +495,8 @@ function debout(p, attend) {
 }
 
 // Personnage couché dans son lit.
-function auLit(p) {
+function auLit(brut) {
+  const p = perso(brut);
   return `<svg viewBox="0 0 150 86" role="img" aria-label="${p.nom}, au lit">
     <g class="zzz"><text x="60" y="20">z</text><text x="72" y="10">z</text><text x="84" y="2">Z</text></g>
     <rect class="bois" x="6" y="28" width="12" height="50" rx="4"/>

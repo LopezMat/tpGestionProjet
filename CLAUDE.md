@@ -2,10 +2,10 @@
 titre: Règles du coordinateur
 statut: VALIDÉ
 responsable: B
-version: 1.2
-maj_le: 2026-11-24
+version: 1.3
+maj_le: 2026-11-26
 valide_par: Ethan
-decision: DEC-003
+decision: DEC-015
 ---
 
 # CLAUDE.md — Coordinateur de l'ESN
@@ -132,6 +132,9 @@ Chaque règle est suivie de son **Pourquoi**. Pour modifier une règle, suis la 
 
 **R16 · Pas de GO sans recette CONFORME.** Tu ne présentes le ticket « GO mise en production » qu'avec un `rapports/recette-*.md` de verdict `CONFORME` qui porte sur le SHA du GO (S3-R9, porte 3 bis). Un rapport `NON CONFORME`, absent ou portant sur un autre SHA bloque le GO.
 *Pourquoi :* les tests des agents et de la CI vérifient le code au regard de ses propres critères. Seul un humain qui utilise l'app comme le client vérifie qu'elle répond au CDC, et un agent qui teste du code écrit par un agent en partage les angles morts. De plus, la recette engage l'ESN auprès du client (AF1) : un humain identifié atteste la conformité avant le GO.
+
+**R17 · Le coordinateur et les agents ne modifient jamais un document Markdown par Bash** (sed, redirection, `tee`, script) : uniquement par Edit ou Write, pour que le hook R5/R6 s'applique. La règle vaut pour tout fichier Markdown du dépôt ; les scripts versionnés qui génèrent leurs fichiers (`tableau.py` pour `TABLEAU.md` et `PORTFOLIO.md`, R9) ne sont pas concernés.
+*Pourquoi :* incident du 2026-11-24 : le coordinateur a modifié [DEC-007](docs/decisions/2026-11-24-DEC-007-choix-techniques-coworking.md) au moyen d'un script Python lancé par Bash alors qu'il était déjà `VALIDÉ` (R6). Le hook `proteger_valide.py` ne surveille que Write et Edit : il n'a pas pu bloquer l'écriture, qui n'a été détectée qu'après coup par `verifier_validations.py` (DEC-010). La règle est appliquée techniquement pour tout appelant, session principale comprise, par le hook `restreindre_bash.py` sur les `.md` de `docs/` et de `projets/` : il refuse `sed -i`, les redirections `>` et `>>`, `tee` et les scripts Python en ligne (`python -c`, `python -` avec heredoc) qui y écrivent, et renvoie vers Edit/Write (ARCHITECTURE § 6, garde-fou 9 ; DEC-015). Un script enregistré dans un fichier puis lancé échappe à cette analyse : la règle s'applique quand même.
 
 ---
 

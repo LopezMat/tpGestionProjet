@@ -19,7 +19,7 @@ description: Ouvre l'espace d'un nouveau projet client (projets/<slug>/) à part
 2. **Créer `projets/<slug>/demande.md`** à partir de `templates/demande.md` : transcription fidèle, sans interprétation ; ce qui manque va dans « Premières questions identifiées ». `statut: EN_REVUE`, `responsable: B`.
 3. **Créer `projets/<slug>/projet.md`** à partir de `templates/projet.md` :
    - `type_projet` déduit de la demande (`vitrine | ecommerce | api | metier | modernisation`) ; en cas de doute, le noter dans les questions ;
-   - `etat_projet: cadrage`, `hebergement: render` ;
+   - `etat_projet: cadrage`, `hebergement: local` (production locale Docker, DEC-003 ; un autre hébergeur exige une décision humaine), `url_prod: http://localhost:<port>`, port fixe propre au projet (8080 par défaut, ARCHITECTURE § 9) ;
    - `budget_eur` et `deadline` repris de la demande ; s'ils sont absents, les laisser vides et en faire une question ;
    - `agents_mobilises: [analyste-besoin]`, `salaries_affectes: []` ;
    - « Pourquoi ces agents et ces salariés » : la sélection initiale et sa justification (grille S4 § 4).
