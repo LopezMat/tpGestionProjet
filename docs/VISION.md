@@ -122,6 +122,34 @@ Les agents doivent détecter leurs erreurs, demander de l'aide et se corriger qu
 - l'incrémental pour livrer une démonstration avant la soutenance ;
 - DevOps pour l'exigence « un push ne suffit pas » (S3).
 
+#### Definition of Done
+Un ticket est fini (`TERMINE`) quand les trois conditions suivantes sont réunies :
+1. **Tous ses critères d'acceptation sont cochés** (S1-R4, R13). Chaque critère coché a sa preuve dans le journal du ticket : un test vert ou une vérification reproductible (règle 3 du [`testeur`](../.claude/agents/testeur.md)).
+2. **Il a été vérifié par quelqu'un d'autre que son auteur** (R13, S3-R1) :
+   - un ticket de réalisation : avis `relecteur-code` `APPROUVÉ`, ligne « Revue humaine » remplie si le ticket est critique ou touche la sécurité (S3-R2), suites de tests vertes ; c'est le `testeur` qui le passe `TERMINE` ;
+   - un ticket de déploiement : le skill `verifier-prod` a constaté que `/health` renvoie le SHA attendu (S3-R5) ; c'est le `deployeur` qui le passe `TERMINE` ;
+   - un ticket de travail d'un agent S3 : c'est le coordinateur qui le conclut, jamais l'agent ;
+   - un ticket `salarie:` : c'est l'humain qui le porte (R15).
+3. **Le passage à `TERMINE` est écrit dans le journal du ticket** : date et heure, qui, quoi, temps passé en heures équivalent humain (section « Journal » de [templates/ticket.md](../templates/ticket.md), R12).
+
+Pour une **livraison**, la Definition of Done est celle des portes 1 à 8 de [S3](systemes/S3-deploiement.md) : tests, audit de sécurité, recette humaine CONFORME sur le SHA du GO (R16), GO humain (S3-R3), puis SHA en ligne confirmé par `verifier-prod`.
+
+#### Équivalents des rituels
+Nous n'avons pas de cérémonies à date fixe. Chaque rituel de Scrum a un équivalent, déclenché par le flux de tickets :
+
+| Rituel | Notre équivalent | Quand | Où c'est écrit |
+|---|---|---|---|
+| **Point d'avancement** (mêlée quotidienne) | Skill `avancement` : `scripts/tableau.py` régénère `TABLEAU.md` et `PORTFOLIO.md`, puis le coordinateur présente l'avancement, le budget, les délais, les blocages et les attentes humaines. La CI régénère aussi les tableaux chaque jour. | Après chaque étape du pipeline, avant une décision, sur demande ; chaque jour à 6 h UTC pour la CI | [skill avancement](../.claude/skills/avancement/SKILL.md), [`tableau.yml`](../.github/workflows/tableau.yml), R9, S1-R11, S1-R12 |
+| **Revue de fin d'incrément** (revue de sprint) | Recette humaine au regard du CDC par un salarié qui n'est pas l'auteur du code, puis ticket « GO mise en production » tranché par un humain | À chaque livraison, avant la mise en production | [skill recette](../.claude/skills/recette/SKILL.md), S3 porte 3 bis, S3-R9, R16, S3-R3 |
+| **Rétrospective** | `retex.md` rédigé par le `chef-de-projet`, d'où sortent des tickets `amelioration` (agents, règles) et `formation` (salariés) ; après une crise, post-mortem sans blâme | En fin de jalon (étape 9 du pipeline, `CLAUDE.md` § 1) ; dans les 2 jours ouvrés après une crise | [templates/retex.md](../templates/retex.md), S1-R7, S2-R5 |
+
+#### La méthode appliquée cette semaine
+Les décisions de la semaine montrent la méthode en action. DEC-019 et DEC-020 sont des exercices simulés (marqués `SIMULATION`), mais traités par le circuit réel : tickets, agents, décision humaine tracée.
+- **Incrément de soutenance** ([DEC-011](decisions/2026-11-25-DEC-011-increment-consultation-coworking.md)). Ethan a limité l'incrément au socle et à la consultation des disponibilités en lecture seule. Chaque ticket passe tout le circuit (développement, relecture, sécurité, tests). Au 2026-11-26, T-010, T-011, T-012 et T-054 sont `TERMINE` et T-055 est `EN_REVUE`. L'écart provisoire au CDC (F-04) a une condition : aucun GO tant que T-013 et T-020 ne protègent pas ces routes.
+- **Arbitrage budgétaire avec effet sur le planning** ([DEC-020](decisions/2026-11-26-DEC-020-simulation-budget-4200.md)). Le budget passe de 6 000 à 4 200 € HT. F-06 est abandonné (T-027 `ANNULE`), le CDC et le planning passent en v1.1, validés sous DEC-020, et T-087, T-092 et T-078 deviennent des dépendances du GO (T-046). Au premier dépassement prévisible (le bug T-105, remonté par la recette), la condition 1 s'applique : arbitrage humain avant d'engager le correctif (T-106).
+- **Post-mortem sans blâme** ([DEC-019](decisions/2026-11-26-DEC-019-simulation-reconstruction-base.md), [post-mortem](../projets/reservation-coworking/rapports/post-mortem-2026-11-26-perte-donnees.md)). Après la perte de la base, le post-mortem cherche ce qui a permis l'erreur, pas un coupable. Leçon : « une règle sans preuve d'exécution n'est pas une garantie ». Les actions correctives deviennent des tickets `amelioration` (T-085, T-086, T-087, T-092), et T-029 (sauvegarde quotidienne) passe `critique` et devient une dépendance du GO.
+- **Boucle d'amélioration : incident → règle → garde-fou.** Le 2026-11-24, [DEC-007](decisions/2026-11-24-DEC-007-choix-techniques-coworking.md), `VALIDÉ`, est modifié par un script lancé par Bash. `verifier_validations.py` le détecte après coup et l'incident est noté dans le `retex.md`. [DEC-010](decisions/2026-11-24-DEC-010-principe-r17.md) adopte la règle R17 sur le principe. [DEC-015](decisions/2026-11-26-DEC-015-regle-r17.md) l'écrit dans `CLAUDE.md` et la fait appliquer par le hook `restreindre_bash.py` (garde-fou 9 d'[ARCHITECTURE § 6](ARCHITECTURE.md)), avec un test qui rejoue l'incident.
+
 ---
 
 ## 4. Contraintes et conventions d'architecture
