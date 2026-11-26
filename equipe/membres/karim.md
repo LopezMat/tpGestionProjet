@@ -19,9 +19,9 @@ competences:                  # niveau : debutant | confirme | expert
     niveau: expert
   - nom: securite-applicative
     niveau: confirme
-allocation: { reservation-coworking: 15 }   # % de la capacité par projet ; total ≤ 100 ; décidée par un humain (S1-R10) ; DEC-009
+allocation: { reservation-coworking: 20 }   # % de la capacité par projet ; total ≤ 100 ; décidée par un humain (S1-R10) ; DEC-009, puis DEC-020 (+5 % pour les revues imputées à l'ESN)
 responsable: B
-maj_le: 2026-11-25
+maj_le: 2026-11-26
 ---
 <!-- modèle : templates/membre.md v0.1 · responsable du modèle : A -->
 
@@ -32,6 +32,7 @@ maj_le: 2026-11-25
 - Relit les choix techniques de l'`architecte` avant leur présentation à l'équipe.
 - **Seul salarié** avec `securite-applicative` (confirme) : dépendance à une personne, qui justifie un ticket `formation` dès le premier projet sensible (AF10 b).
 - Congés prévus du 2026-12-21 au 2026-12-31 (EV-003).
+- 2026-11-26 : allocation portée de 15 % à 20 % ([DEC-020](../../docs/decisions/2026-11-26-DEC-020-simulation-budget-4200.md), révision du budget, SIMULATION) : +5 % pour les revues humaines des tickets imputés à l'ESN (crise et outillage commun).
 
 ## Formations suivies / prévues
 - aucune prévue pour l'instant

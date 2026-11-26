@@ -8,7 +8,7 @@ statut: EN_COURS            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_H
 priorite: normale           # critique | haute | normale | basse
 assigne: agent:relecteur-code   # agent:<nom> | salarie:<prenom>
 competence_requise: revue-code (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
-estimation_h: 5.5           # heures équivalent humain, quel que soit l'assigné
+estimation_h: 5             # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 1.8          # heures équivalent humain
 depend_de: [T-007]          # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
@@ -16,7 +16,7 @@ validation_humaine_requise: non   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-25
-maj_le: 2026-11-25
+maj_le: 2026-11-26
 statut_depuis: 2026-11-25   # date du dernier changement de statut
 debut_le: 2026-11-25        # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
@@ -51,3 +51,4 @@ Pas de `depend_de` vers les tickets relus (dépendance circulaire, R13). T-058 p
 - 2026-11-25 · coordinateur pour agent:relecteur-code · revue de T-060 (commit 14398c1) : APPROUVÉ, revue humaine non requise · 0.3 h
 - 2026-11-25 · coordinateur pour agent:relecteur-code · revue de T-071 (commit 9114f9e) : APPROUVÉ, revue humaine non requise · 0.3 h
 - 2026-11-25 · coordinateur pour agent:relecteur-code · revue de T-073 (commit 748c75e) : APPROUVÉ, revue humaine requise : oui (T-074) · 0.4 h
+- 2026-11-26 22:05 · agent:chef-de-projet · SIMULATION · T-065 ANNULE par DEC-020 : sa revue n'est plus à faire (le premier critère l'admet déjà : « ou le ticket est `ANNULE` ») ; estimation 5,5 → 5 h (− 0,5 h) ; statut inchangé. Temps compté dans T-008 · 0 h
