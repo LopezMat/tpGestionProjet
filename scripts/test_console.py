@@ -303,7 +303,8 @@ class TestConsoleScript(unittest.TestCase):
                      "projets/demo/tickets/T-001-test.html", "projets/demo/tickets/T-013-casse.html",
                      "projets/vide/index.html", "agents/testeur.html", "skills/avancement.html",
                      "decisions/2026-11-23-DEC-001-essai.html", "docs/VISION.html", "docs/ARCHITECTURE.html",
-                     "docs/CLAUDE.html", "docs/systemes/S1-gestion-projet.html", "assets/mermaid.min.js"]:
+                     "docs/CLAUDE.html", "docs/systemes/S1-gestion-projet.html", "assets/mermaid.min.js",
+                     "bureau.html", "assets/bureau.js"]:
             self.assertTrue(os.path.isfile(os.path.join(self.racine, "console", *page.split("/"))), page)
 
     def test_lecture_seule(self):
@@ -411,6 +412,7 @@ class TestConsoleScript(unittest.TestCase):
     def test_notre_systeme(self):
         page = lire(self.racine, "index.html")
         self.assertIn('class="actif" aria-current="page">Notre système', page)
+        self.assertIn('<a href="bureau.html">Le bureau</a>', page)                    # navigation (DEC-016)
         self.assertIn("système multi-agents", page)                                    # vision
         self.assertRegex(page, r'<div class="stat-val">2</div><div class="stat-lib">agents IA')
         self.assertRegex(page, r'<div class="stat-val">1</div><div class="stat-lib">skills')
