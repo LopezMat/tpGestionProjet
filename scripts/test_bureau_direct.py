@@ -101,7 +101,7 @@ class TestServeur(AvecServeur):
         self.assertEqual(bd.HOTE, "127.0.0.1")
         with self.assertRaises(SystemExit), redirect_stdout(io.StringIO()), \
                 unittest.mock.patch("sys.stderr", io.StringIO()):
-            bd.main(["--hote", "0.0.0.0"])                       # aucune option d'hôte
+            bd.main(["--hote", "0.0.0.0"])  # nosec B104 : test du refus de l'option --hote
 
     def test_page_servie(self):
         r, corps = self.requete("/bureau.html")
