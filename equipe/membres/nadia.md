@@ -19,9 +19,9 @@ competences:                  # niveau : debutant | confirme | expert
     niveau: confirme
   - nom: supervision
     niveau: debutant
-allocation: { reservation-coworking: 20 }   # % de la capacité par projet ; total ≤ 100 ; décidée par un humain (S1-R10) ; DEC-009
+allocation: { reservation-coworking: 30 }   # % de la capacité par projet ; total ≤ 100 ; décidée par un humain (S1-R10) ; DEC-009, puis DEC-019 (30 % jusqu'à la mise en service)
 responsable: B
-maj_le: 2026-11-25
+maj_le: 2026-11-26
 ---
 <!-- modèle : templates/membre.md v0.1 · responsable du modèle : A -->
 
@@ -31,6 +31,7 @@ maj_le: 2026-11-25
 - Revue humaine des tickets de déploiement, de sauvegarde et de rollback (AF3) ; binôme du `deployeur` sur les mises en production critiques (AF5).
 - Temps partiel à 80 % (28 h/semaine), déjà pris en compte dans `capacite_h_semaine`.
 - Journée de formation « supervision » prévue le 2026-12-03 (EV-002), pour passer de débutante à confirmée.
+- 2026-11-26 : allocation à `reservation-coworking` portée de 20 % à 30 % **jusqu'à la mise en service**, retour à 5 % ensuite (option A de T-090, [DEC-019](../../docs/decisions/2026-11-26-DEC-019-simulation-reconstruction-base.md), décision d'Ethan prise dans l'exercice de crise SIMULATION T-080). Motif : charge à 128 % de sa capacité avec les actions correctives, et dépendance à une seule personne pour la restauration.
 
 ## Formations suivies / prévues
 - supervision (2026-12-03, EV-002) : le ticket `formation` sera créé dans son premier projet alloué

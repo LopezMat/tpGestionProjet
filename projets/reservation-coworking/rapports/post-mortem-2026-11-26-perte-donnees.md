@@ -2,12 +2,12 @@
 titre: SIMULATION — Post-mortem — Perte de la base de production — 2026-11-26
 statut: EN_REVUE
 responsable: agent:gestionnaire-crise
-version: 0.2
+version: 0.3
 maj_le: 2026-11-26
 valide_par:
 decision:
 ---
-> **SIMULATION** — Exercice de crise (scénario 5, S2) demandé par l'humain le 2026-11-26, ticket incident [T-080](../tickets/T-080-simulation-perte-base-production.md), décision [DEC-019](../../../docs/decisions/2026-11-26-DEC-019-simulation-reconstruction-base.md). **Rapport complet** (version 0.2), en attente de relecture humaine. Aucun événement réel : aucune commande Docker, aucune reconstruction ni aucun déploiement n'a été exécuté, la sonde n'a pas été lancée, aucun message n'a été envoyé au client, et `deploiement/local/` n'a été ni lu ni modifié par l'agent. Les heures sont simulées à partir de 10:00, et **le retour à la normale ainsi que la sonde `DISPONIBLE ET À JOUR` sont simulés, non exécutés**.
+> **SIMULATION** — Exercice de crise (scénario 5, S2) demandé par l'humain le 2026-11-26, ticket incident [T-080](../tickets/T-080-simulation-perte-base-production.md), décision [DEC-019](../../../docs/decisions/2026-11-26-DEC-019-simulation-reconstruction-base.md). **Rapport complet** (version 0.3), en attente de relecture humaine. La v0.3 (coordinateur) intègre les décisions d'Ethan de DEC-019 v0.2 : message au client corrigé, T-084 tranché, T-082 annulé. Aucun événement réel : aucune commande Docker, aucune reconstruction ni aucun déploiement n'a été exécuté, la sonde n'a pas été lancée, aucun message n'a été envoyé au client, et `deploiement/local/` n'a été ni lu ni modifié par l'agent. Les heures sont simulées à partir de 10:00, et **le retour à la normale ainsi que la sonde `DISPONIBLE ET À JOUR` sont simulés, non exécutés**.
 
 <!-- modèle : templates/post-mortem.md v0.1 · responsable du modèle : A -->
 
@@ -23,7 +23,7 @@ decision:
   - service réduit (base vide, comptes membres à recréer) de **11:15 à environ 13:00** ;
   - **données perdues définitivement**.
 - **Gravité** : `critique`. Le runbook classe ainsi les « données de production supprimées », et la grille S2 § 4 une « production indisponible, perte de données ». L'étendue est maximale : toutes les tables, tous les comptes, des données personnelles, aucune sauvegarde.
-- **Décision humaine** : [DEC-019](../../../docs/decisions/2026-11-26-DEC-019-simulation-reconstruction-base.md) (`EN_REVUE`). Elle retient l'option (c) de T-081, la reconstruction, et fait prévenir le client (T-083). T-082 et T-084 restent ouverts (voir la dernière section).
+- **Décision humaine** : [DEC-019](../../../docs/decisions/2026-11-26-DEC-019-simulation-reconstruction-base.md) (`EN_REVUE`). Elle retient l'option (c) de T-081, la reconstruction, et fait prévenir le client (T-083). En v0.2, elle tranche aussi T-084 (recommandation au client sur la CNIL) et clôt T-082, devenu sans objet (voir la dernière section).
 
 ## Leçon principale : une règle sans preuve d'exécution n'est pas une garantie
 Les règles de sauvegarde étaient écrites, cohérentes et **validées par un humain** :
@@ -128,7 +128,7 @@ Cinq pourquoi, sans blâme. Ils portent sur ce que le système a permis, pas sur
 - **−** Les preuves sont minces : si les conteneurs ont été supprimés, leurs journaux le sont aussi, et l'origine repose sur un témoignage non encore recueilli.
 - **−** Dépendance à une seule personne. Seule Nadia sait restaurer, et elle est absente le mercredi et le 2026-12-03. Aucun salarié n'a la compétence `juridique` exigée par la décision CNIL.
 - **−** La reprise « sous environ 1 h » suppose un GO immédiat. En réalité, le circuit S3 (R16, recette `CONFORME` sur le SHA) n'est pas franchi aujourd'hui, et le délai réel serait bien plus long.
-- **−** Deux décisions sensibles restent ouvertes après le retour à la normale : T-082 et T-084.
+- **−** Deux décisions sensibles sont restées ouvertes après le retour à la normale, T-082 et T-084. Elles ont été tranchées plus tard, dans DEC-019 v0.2.
 
 ## Message au client
 Texte final rédigé par l'agent pour **Claire** (`relation-client`), qui le relit et l'envoie (AF1, T-083, DEC-019). Il ne contient aucune donnée personnelle. **Simulation : il n'a pas été envoyé.**
@@ -150,7 +150,7 @@ Texte final rédigé par l'agent pour **Claire** (`relation-client`), qui le rel
 >
 > **Reprise.** Nous remettons l'application en service sur une base neuve. Elle sera de nouveau disponible **dans environ 1 heure**, avec un compte accueil que nous vous remettrons. L'accueil pourra alors recréer les comptes des membres, environ 3 minutes par compte ; chaque membre choisira un nouveau mot de passe à sa première connexion, puis ressaisira ses réservations à venir. D'ici là, nous vous conseillons de noter à la main les réservations du jour. Nous pouvons vous accompagner pour la recréation des comptes.
 >
-> **Cause.** Une mesure de protection prévue n'était pas encore en place : la sauvegarde quotidienne de la base était définie, mais n'avait pas encore été mise en service, et rien ne nous alertait de son absence. Nous en assumons la responsabilité.
+> **Cause.** Une mesure de protection prévue n'était pas encore en place : la sauvegarde quotidienne de la base était définie, mais n'avait pas encore été mise en service, et rien ne nous alertait de son absence. Nous prenons cet incident très au sérieux et avons engagé les actions correctives décrites ci-dessous.
 >
 > **Ce que nous changeons.**
 > - La sauvegarde quotidienne devient une condition préalable à toute mise en service.
@@ -158,7 +158,7 @@ Texte final rédigé par l'agent pour **Claire** (`relation-client`), qui le rel
 > - La base sera protégée contre une suppression accidentelle.
 > - Notre procédure de crise sera complétée et testée.
 >
-> **Vos données personnelles.** En tant que responsable du traitement de ces données, il vous revient de consigner cet incident dans votre registre des violations de données et, le cas échéant, de le notifier à la CNIL dans les 72 heures. Nous vous transmettrons notre analyse et notre recommandation **au plus tard le vendredi 27 novembre à 17 h**.
+> **Vos données personnelles.** Vous êtes responsable du traitement de ces données, et nous intervenons comme sous-traitant : il vous appartient donc de décider des suites à donner. Nous vous recommandons d'inscrire cet incident dans votre registre des violations de données. Il s'agit de données de démonstration, perdues sans avoir été divulguées : le risque pour les personnes nous paraît faible, et une notification à la CNIL ne nous semble probablement pas nécessaire. Cette décision vous revient. Si vous choisissez de notifier, nous vous fournirons tous les éléments techniques utiles.
 >
 > Nous vous enverrons sous 2 jours ouvrés un compte rendu complet de l'incident. Nous vous prions de nous excuser pour la gêne occasionnée.
 >
@@ -194,9 +194,10 @@ Les tickets ont été créés par le `chef-de-projet` en `A_FAIRE` à partir des
   - retour d'expérience : T-029 `critique` et dépendance du GO, vérification régulière des sauvegardes avec alerte (T-092), leçon principale.
   
   T-081 et T-083 restent `ATTENTE_HUMAIN` jusqu'à ce que l'humain renseigne lui-même leur champ `decision`.
+- **DEC-019 v0.2** (2026-11-26, Ethan, simulation) :
+  - [T-084](../tickets/T-084-simulation-decision-notification-cnil.md) **notification CNIL** : l'ESN est sous-traitant. Elle a prévenu le client (T-083) et lui recommande d'inscrire l'incident dans son registre des violations. S'agissant de données de démonstration, sans fuite, le risque est faible et une notification à la CNIL n'est probablement pas nécessaire ; **la décision est laissée au client**, responsable du traitement. Le message au client formule cette recommandation, sans fixer d'échéance à sa place. Ticket clos.
+  - [T-082](../tickets/T-082-simulation-decision-mise-en-maintenance.md) **mise en maintenance** : **clos, devenu sans objet**. L'application est restée indisponible de fait de 10:00 à 11:15, puis le service a été rétabli (simulé).
+  - **Allocation de Nadia** : option (A) de [T-090](../tickets/T-090-simulation-planning-sans-sauvegarde.md), 30 % jusqu'à la mise en service (fiche `equipe/membres/nadia.md` mise à jour après la décision).
+  - Le message au client est corrigé : « Nous en assumons la responsabilité » est remplacé par « Nous prenons cet incident très au sérieux et avons engagé les actions correctives décrites ci-dessous ».
 
-**Décisions encore ouvertes** (`ATTENTE_HUMAIN`, non tranchées par DEC-019) :
-- [T-082](../tickets/T-082-simulation-decision-mise-en-maintenance.md) **mise en maintenance** : l'application est restée indisponible de fait de 10:00 à 11:15, sans décision de maintenance volontaire. Le service étant rétabli (simulé), la décision est devenue sans objet pour cet incident : à clore par un humain, l'agent ne la débloque pas.
-- [T-084](../tickets/T-084-simulation-decision-notification-cnil.md) **notification CNIL** : la perte est désormais **définitive**, ce qui renforce la question du risque. T-084 prévoyait de basculer vers une notification par le client en cas de perte définitive, si l'avis juridique conclut à un risque.
-  - **Échéance** : le client a été prévenu à 10:40 (simulé), donc les 72 h expirent le **dimanche 2026-11-29 vers 10:40**.
-  - La recommandation de l'ESN doit lui parvenir **au plus tard le vendredi 2026-11-27 à 17:00**, ce que le message au client annonce.
+Plus aucune décision de la crise n'est ouverte sur le fond.

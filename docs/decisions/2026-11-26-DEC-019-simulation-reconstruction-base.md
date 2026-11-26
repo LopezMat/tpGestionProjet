@@ -2,16 +2,16 @@
 titre: SIMULATION — Perte de la base de production reservation-coworking, reconstruction et communication au client
 statut: EN_REVUE
 responsable: D
-version: 0.1
+version: 0.2
 maj_le: 2026-11-26
 valide_par:                 # rempli par l'humain qui valide
 decision: DEC-019           # pour un fichier de décision : son propre id
 # Champs propres à la décision
 id: DEC-019
 date: 2026-11-26
-decide_par: Ethan (dans le rôle de Nadia, simulation)
+decide_par: Ethan (dans le rôle de Nadia pour T-081, simulation)
 projet: reservation-coworking
-ticket: T-081, T-083
+ticket: T-081, T-082, T-083, T-084, T-090
 modifie_une_regle: non      # oui → entrée obligatoire dans docs/CHANGELOG-REGLES.md
 ---
 > **SIMULATION** — Décision prise dans l'exercice de crise T-080 (scénario 5, S2) du 2026-11-26. Aucune commande Docker, aucune restauration ni reconstruction n'est exécutée, et aucun message n'est réellement envoyé au client.
@@ -44,10 +44,19 @@ T-083, communication au client : (1) message immédiat, puis un second après T-
    1. T-029 (sauvegarde quotidienne) passe en priorité `critique` et devient une dépendance du GO (T-046) ;
    2. un ticket est créé pour vérifier régulièrement qu'une sauvegarde existe et qu'elle se restaure (test de restauration), avec une alerte si elle manque ;
    3. la leçon principale du rapport : **une règle sans preuve d'exécution n'est pas une garantie**.
-4. T-082 (mise en maintenance) et T-084 (CNIL) ne sont pas tranchés par cette décision.
+4. *(v0.1)* T-082 (mise en maintenance) et T-084 (CNIL) ne sont pas tranchés par la v0.1. Ils le sont par la v0.2 (points 5 et 6).
+
+**Décisions complémentaires d'Ethan (v0.2, 2026-11-26, simulation)**
+
+5. **T-084, CNIL** : « l'ESN est sous-traitant ; elle a prévenu le client (T-083) et lui recommande d'inscrire l'incident dans son registre des violations. Données de démonstration, sans fuite : risque faible, notification CNIL probablement non nécessaire, décision laissée au client. » C'est l'option (1) de T-084, sans avis juridique externe. La notification éventuelle revient au client, responsable du traitement (RGPD, art. 33.1), et l'ESN ne fixe aucune échéance à sa place. T-084 est clos.
+6. **T-082, mise en maintenance** : clos, devenu sans objet. Le service a été rétabli (simulé) sans décision de maintenance volontaire.
+7. **Message au client (T-083)** : « Nous en assumons la responsabilité » est remplacé par « Nous prenons cet incident très au sérieux et avons engagé les actions correctives décrites ci-dessous ». Le paragraphe sur la CNIL formule une recommandation au client, sans fixer d'échéance à sa place.
+8. **Allocation de Nadia** : option (A) de T-090. Nadia passe à **30 %** sur `reservation-coworking` jusqu'à la mise en service ; T-090 prévoit le retour à 5 % ensuite, comme le dit `planning.md`. La fiche `equipe/membres/nadia.md` est mise à jour par le coordinateur après cette décision (CLAUDE.md § 5).
 
 ## Pourquoi
 Les mots d'Ethan : « aucun fichier de sauvegarde n'existe dans deploiement/local/ ; T-029 n'a jamais été réalisé et aucun déploiement n'a eu lieu, donc aucune sauvegarde avant déploiement non plus. On applique donc (c) reconstruire d'office. » Les options (a) et (b) supposent une sauvegarde valide, qui n'existe pas. Pour le retour d'expérience : « une règle sans preuve d'exécution n'est pas une garantie ». Les règles de sauvegarde (DEC-003, DEC-007, DEC-008) étaient écrites et validées, mais rien n'en prouvait l'exécution.
+
+Pour la v0.2, les mots d'Ethan : pour la CNIL, « données de démonstration, sans fuite : risque faible, notification CNIL probablement non nécessaire, décision laissée au client » ; l'ESN est sous-traitant, c'est donc au client, responsable du traitement, de décider. T-082 est « devenu sans objet ». Pour Nadia, l'option (A) de T-090 répond à sa surcharge (128 % de sa capacité avec les actions correctives) et à la dépendance à une seule personne pour la restauration. Le message au client est reformulé pour ne pas engager la responsabilité de l'ESN et ne pas imposer d'échéance au client.
 
 ## Impacts
 - Fichiers ou règles à mettre à jour :
@@ -57,4 +66,5 @@ Les mots d'Ethan : « aucun fichier de sauvegarde n'existe dans deploiement/loca
   - T-081 et T-083 sont à débloquer par l'humain (champ `decision`, statut, ligne de journal) ;
   - T-029 : priorité `critique` ; T-046 : dépendance ajoutée à T-029 (par le `chef-de-projet`, à la demande d'Ethan) ;
   - nouveau ticket de vérification périodique de l'existence et de la restauration des sauvegardes, avec alerte (par le `chef-de-projet`, en `A_FAIRE`) ;
-  - T-082 et T-084 restent en `ATTENTE_HUMAIN`.
+  - *(v0.1)* T-082 et T-084 restent en `ATTENTE_HUMAIN`. **v0.2** : T-084 passe `TERMINE` et T-082 `ANNULE`, sur instruction écrite d'Ethan, écrits par le coordinateur ;
+  - **v0.2** : `equipe/membres/nadia.md` (allocation 30 %), `projets/reservation-coworking/projet.md` (allocations, historique), post-mortem v0.3 (message au client, décisions).

@@ -4,16 +4,16 @@ id: T-082
 titre: SIMULATION — Décision mise en maintenance pendant l'opération (T-080)
 projet: reservation-coworking
 type: decision              # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: ATTENTE_HUMAIN      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: ANNULE              # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: critique          # critique | haute | normale | basse
 assigne: salarie:nadia      # agent:<nom> | salarie:<prenom>
 competence_requise: docker (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 0.5           # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 0            # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
-bloque_par: décision humaine requise (S2-R4, coupure volontaire ou mise en maintenance)
+bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
-decision:                   # DEC-NNN si le ticket porte une décision humaine
+decision: DEC-019           # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:gestionnaire-crise
 cree_le: 2026-11-26
 maj_le: 2026-11-26
@@ -71,3 +71,4 @@ La stack n'a **pas de page de maintenance** : pas de reverse proxy, une seule im
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 10:14 · agent:gestionnaire-crise · SIMULATION · création (ATTENTE_HUMAIN), runbook perte-donnees § 4 « maintenance », recommandation (1) maintenance jusqu'au retour à la normale · 0 h
+- 2026-11-26 19:00 · agent:coordinateur · SIMULATION · décision d'Ethan (DEC-019 v0.2) : ticket clos, devenu sans objet. L'application est restée indisponible de fait de 10:00 à 11:15, puis le service a été rétabli (simulé), sans décision de maintenance volontaire. Passé `ANNULE` et `decision: DEC-019` renseigné par le coordinateur, sur instruction écrite d'Ethan · 0 h

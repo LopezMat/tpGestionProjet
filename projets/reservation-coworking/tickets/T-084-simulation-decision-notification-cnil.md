@@ -4,22 +4,22 @@ id: T-084
 titre: SIMULATION — Décision notification CNIL de la violation de données (T-080)
 projet: reservation-coworking
 type: decision              # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: ATTENTE_HUMAIN      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: salarie:claire     # agent:<nom> | salarie:<prenom>
 competence_requise: juridique (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 1             # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 0            # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
-bloque_par: décision humaine requise (S2-R4, notification CNIL, compétence juridique) ; recommandation à transmettre au client avant le 2026-11-27 17:00
+bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
-decision:                   # DEC-NNN si le ticket porte une décision humaine
+decision: DEC-019           # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:gestionnaire-crise
 cree_le: 2026-11-26
 maj_le: 2026-11-26
 statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le: 2026-11-26      # facultatif : date du passage TERMINE
 ---
 > **SIMULATION** — Exercice de crise (scénario 5, S2) demandé par l'humain le 2026-11-26, ticket incident [T-080](T-080-simulation-perte-base-production.md). Aucune notification n'est réellement faite. Heures simulées. Ceci n'est pas un avis juridique : la décision revient à un humain compétent.
 
@@ -65,10 +65,10 @@ Runbook [perte-donnees](../../../runbooks/perte-donnees.md) § 4, ligne « Notif
 Le risque de non-conformité porte sur le client (sanction CNIL possible pour une violation non notifiée qui aurait dû l'être) et, par ricochet, sur la relation ESN-client. Personnes concernées : tous les comptes de la base (quelques dizaines).
 
 ## Critères d'acceptation
-- [ ] Un humain compétent a tranché (avis juridique noté au journal : interne, externe ou absent, avec la justification) ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé et référencé dans `decision`.
-- [ ] La recommandation est transmise au client par Claire avant le 2026-11-27 17:00 ; l'heure et le canal sont au journal.
-- [ ] La décision du client est notée au journal : notification CNIL faite (date, sans numéro de dossier ni donnée personnelle) ou inscription au registre seule.
-- [ ] La qualification est revue et notée si T-081 conclut à une perte définitive ou si l'origine accidentelle n'est pas confirmée.
+- [x] Un humain compétent a tranché (avis juridique noté au journal : interne, externe ou absent, avec la justification) ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé et référencé dans `decision`. *(Ethan, DEC-019 v0.2 ; avis juridique externe absent, voir le journal.)*
+- [x] La recommandation est transmise au client par Claire avant le 2026-11-27 17:00 ; l'heure et le canal sont au journal. *(Simulée : elle figure dans le message au client du post-mortem, e-mail de 10:40, non envoyé.)*
+- [x] La décision du client est notée au journal : notification CNIL faite (date, sans numéro de dossier ni donnée personnelle) ou inscription au registre seule. *(Sans objet d'après DEC-019 v0.2 : la décision est laissée au client, responsable du traitement ; l'ESN ne la suit pas dans ce ticket.)*
+- [x] La qualification est revue et notée si T-081 conclut à une perte définitive ou si l'origine accidentelle n'est pas confirmée. *(Perte définitive, sans fuite : risque faible, DEC-019 v0.2.)*
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
@@ -80,3 +80,4 @@ Le risque de non-conformité porte sur le client (sanction CNIL possible pour un
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 10:15 · agent:gestionnaire-crise · SIMULATION · création (ATTENTE_HUMAIN), qualification RGPD (perte de disponibilité, sous-traitant, art. 33.2 et 33.5), recommandation (1) sous conditions, échéance de recommandation au client le 2026-11-27 17:00 · 0 h
+- 2026-11-26 19:00 · agent:coordinateur · SIMULATION · décision d'Ethan (DEC-019 v0.2) : l'ESN, sous-traitant, a prévenu le client (T-083) et lui recommande d'inscrire l'incident dans son registre des violations ; données de démonstration, sans fuite, risque faible ; notification CNIL probablement non nécessaire, décision laissée au client. Option (1), sans avis juridique externe : la décision revient au client, responsable du traitement. Recommandation intégrée au message au client (post-mortem v0.3, sans échéance imposée). Ticket clos `TERMINE` et `decision: DEC-019` renseigné par le coordinateur, sur instruction écrite d'Ethan · 0 h
