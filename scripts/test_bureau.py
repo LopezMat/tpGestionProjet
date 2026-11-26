@@ -395,6 +395,39 @@ class TestBureauGeneration(unittest.TestCase):
                       r"new Function"):
             self.assertNotRegex(js, motif)
 
+    def test_mode_direct_present_et_desactive_par_defaut(self):
+        """DEC-018 : bouton Direct désactivé dans le HTML (file://), avec son explication ; zones masquées."""
+        bouton = re.search(r'<button[^>]*id="b-mode-direct"[^>]*>', self.page)
+        self.assertIsNotNone(bouton)
+        self.assertIn(" disabled", bouton.group(0))
+        self.assertIn('aria-describedby="b-direct-aide"', bouton.group(0))
+        aide = re.search(r'<p id="b-direct-aide"[^>]*>(.*?)</p>', self.page, re.S).group(1)
+        self.assertIn("python scripts/bureau_direct.py --installer", aide)
+        self.assertIn("relancer Claude Code", aide)
+        self.assertIn("127.0.0.1:8765/bureau.html#mode=direct", aide)
+        self.assertRegex(self.page, r'<div class="bureau-direct" id="b-direct" hidden>')
+        self.assertRegex(self.page, r'<section id="b-direct-evenements" hidden>')
+        for ident in ("b-direct-etat", "b-direct-alerte", "b-direct-liste", "b-direct-sessions"):
+            self.assertIn('id="{}"'.format(ident), self.page)
+        self.assertIn('role="status"', self.page)
+
+    def test_mode_direct_js(self):
+        with open(bureau.SCRIPT_JS, encoding="utf-8") as f:
+            js = f.read()
+        # un seul flux, relatif (même origine), ouvert seulement quand la page est servie en local
+        self.assertEqual(len(re.findall(r"EventSource\(", js)), 1)
+        self.assertIn('new EventSource("direct/flux")', js)
+        self.assertRegex(js, r'location\.protocol === "http:"')
+        self.assertIn('"127.0.0.1"', js)
+        self.assertIn('mode === "direct" && !DIRECT_DISPO', js)          # repli si file://
+        self.assertIn("reduit", js)
+        icones = re.search(r"var ICONES_ACT = \{(.*?)\};", js, re.S).group(1)
+        for cat in ("lit:", "tape:", "terminal:", "web:"):                  # Read/Grep/Glob, Edit/Write, Bash
+            self.assertIn(cat, icones)
+        for evenement in ("demande", "outil_debut", "outil_fin", "autorisation", "attente", "agent_debut",
+                          "agent_fin", "fin_tour", "session_debut", "session_fin"):
+            self.assertIn('case "{}"'.format(evenement), js)
+
     @unittest.skipUnless(shutil.which("node"), "node absent : syntaxe JavaScript non vérifiée")
     def test_syntaxe_js(self):
         r = subprocess.run(["node", "--check", bureau.SCRIPT_JS], capture_output=True)

@@ -695,6 +695,34 @@ LEGENDE = [("tape", "au travail (EN_COURS)"), ("revue", "en revue (EN_REVUE) : c
            ("bloque", "bulle rouge : bloqué (BLOQUE)"), ("cafe", "machine à café : rien en cours")]
 
 
+# Mode Direct (DEC-018) : optionnel, local au poste, disponible seulement quand la page est servie par
+# scripts/bureau_direct.py (http://127.0.0.1). En file://, le bouton reste désactivé et l'aide l'explique.
+DIRECT_AIDE = (
+    '<p id="b-direct-aide" class="b-aide">Le mode <strong>Direct</strong> montre en temps réel le coordinateur '
+    'et les sous-agents de Claude Code. Il est optionnel et local à chaque poste, et n\'est disponible que si '
+    'la page est servie par le serveur local : <code>python scripts/bureau_direct.py --installer</code> (une '
+    'fois, puis relancer Claude Code), puis <code>python scripts/bureau_direct.py</code> et ouvrir '
+    '<code>127.0.0.1:8765/bureau.html#mode=direct</code>.</p>')
+DIRECT_LEGENDE = [("livre", "lit (Read, Grep, Glob)"), ("crayon", "écrit (Edit, Write)"),
+                  ("terminal", "terminal (Bash)"), ("globe", "web"), ("main", "« ! » attend une autorisation ou "
+                                                                          "une réponse")]
+DIRECT_ZONE = (
+    '<div class="bureau-direct" id="b-direct" hidden>'
+    '<p class="b-direct-ligne"><span id="b-direct-etat" class="b-direct-etat" role="status">○ déconnecté</span> '
+    '<span id="b-direct-sessions" class="meta"></span></p>'
+    '<p id="b-direct-alerte" class="avert" role="alert" hidden>Deux sessions de coordinateur sont actives en même '
+    'temps : une seule personne au coordinateur.</p>'
+    '<ul class="legende-bureau" aria-label="Légende du mode Direct">'
+    + "".join('<li><span class="b-icone b-icone-{}" aria-hidden="true"></span>{}</li>'.format(e(k), e(v))
+              for k, v in DIRECT_LEGENDE) +
+    '</ul></div>')
+DIRECT_LISTE = (
+    '<section id="b-direct-evenements" hidden><details class="carte b-liste" open>'
+    '<summary>Derniers événements (direct)</summary>'
+    '<p class="intro">Métadonnées seulement : qui, quel type d\'outil, quand. Jamais le texte des messages, ni '
+    'les fichiers, ni les commandes.</p><ol id="b-direct-liste" class="b-direct-liste"></ol></details></section>')
+
+
 def page_html(site, donnees):
     """Corps HTML de bureau.html (le gabarit commun est ajouté par console.Site.page)."""
     projets = donnees["projets"]
@@ -707,13 +735,18 @@ def page_html(site, donnees):
          '<p class="intro">L\'ESN vue de dessus : une pièce par système, l\'open space du pôle réalisation, les '
          'bureaux des salariés et le coin café. <strong>Instantané</strong> : l\'état de chaque personnage vient des '
          'tickets du projet choisi (R9). <strong>Replay</strong> : l\'histoire racontée par les lignes « Journal » '
-         'des tickets et par les décisions ; il raconte, il n\'affirme aucun statut.</p>',
+         'des tickets et par les décisions ; il raconte, il n\'affirme aucun statut. <strong>Direct</strong> : ce que '
+         'font en ce moment le coordinateur et les sous-agents dans Claude Code (optionnel, serveur local).</p>',
          '<div class="bureau-barre">'
          '<label>Projet <select id="b-projet">{}</select></label>'
          '<div class="b-modes" role="group" aria-label="Mode">'
          '<button type="button" id="b-mode-instantane" aria-pressed="true">Instantané</button>'
-         '<button type="button" id="b-mode-replay" aria-pressed="false">Replay</button></div>'
+         '<button type="button" id="b-mode-replay" aria-pressed="false">Replay</button>'
+         '<button type="button" id="b-mode-direct" aria-pressed="false" disabled '
+         'aria-describedby="b-direct-aide">Direct</button></div>'
          '<button type="button" id="b-plein" class="b-discret">Plein écran ⤢</button></div>'.format(options),
+         DIRECT_AIDE,
+         DIRECT_ZONE,
          '<div class="bureau-replay" id="b-replay" hidden>'
          '<button type="button" id="b-prec" aria-label="Événement précédent">◀</button>'
          '<button type="button" id="b-lecture" aria-label="Lecture">▶ Lecture</button>'
@@ -728,6 +761,7 @@ def page_html(site, donnees):
          '</canvas></div>'
          '<aside class="carte bureau-fiche" id="b-fiche" aria-live="polite"><p class="vide">Survolez ou cliquez '
          'un personnage, ou choisissez-le dans la liste ci-dessous.</p></aside></div>',
+         DIRECT_LISTE,
          '<noscript><p class="avert">La vue dessinée demande JavaScript ; les listes ci-dessous (personnages, '
          'événements) restent lisibles.</p></noscript>',
          '<p id="b-annonce" class="b-sr" aria-live="polite"></p>',
@@ -825,5 +859,22 @@ CSS = """
 .b-liste li.ev-statut strong { color: #6d28d9; }
 .b-liste li[aria-current="true"] { outline: 2px solid var(--marque-2); background: #e0e7ff; }
 .b-masque { display: none !important; }
+/* ---- mode Direct (DEC-018) ---- */
+.bureau-barre button:disabled { opacity: .45; cursor: not-allowed; }
+.b-aide { font-size: .86rem; color: var(--doux); margin: .2rem 0 .6rem; }
+.b-aide.b-dispo { color: #166534; }
+.bureau-direct[hidden], .b-aide[hidden], #b-direct-evenements[hidden] { display: none; }
+.b-direct-ligne { display: flex; flex-wrap: wrap; gap: .4rem 1rem; align-items: center; margin: .4rem 0; }
+.b-direct-etat { font-weight: 700; padding: .15rem .6rem; border-radius: 999px; background: #fee2e2; color: #991b1b; }
+.b-direct-etat.b-connecte { background: #dcfce7; color: #166534; }
+.b-direct-liste { list-style: none; padding-left: .2rem !important; max-height: 16rem !important; }
+.b-direct-liste li.ev-attente strong { color: #b45309; }
+.b-icone { display: inline-block; width: .95rem; height: .95rem; border-radius: 3px; border: 1px solid #1f2430;
+  background: #f8fafc; vertical-align: -.15em; }
+.b-icone-livre { background: linear-gradient(90deg, #2563eb 45%, #1f2430 45% 55%, #60a5fa 55%); }
+.b-icone-crayon { background: linear-gradient(135deg, #f8fafc 35%, #f59e0b 35% 65%, #f8fafc 65%); }
+.b-icone-terminal { background: #111827; box-shadow: inset 2px -2px 0 #111827, inset 3px -4px 0 #22c55e; }
+.b-icone-globe { background: radial-gradient(circle, #60a5fa 55%, #16a34a 56%); border-radius: 50%; }
+.b-icone-main { background: #facc15; }
 @media (max-width: 1000px) { .bureau-scene { grid-template-columns: 1fr; } .bureau-fiche { position: static; } }
 """
