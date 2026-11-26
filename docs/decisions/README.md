@@ -2,7 +2,7 @@
 titre: Registre des décisions humaines
 statut: EN_REVUE          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
 responsable: B
-version: 0.12
+version: 0.13
 maj_le: 2026-11-26
 valide_par:
 decision:
@@ -48,3 +48,4 @@ Un document `VALIDÉ` est figé pour les agents (R6). Pour le faire évoluer, un
 | [DEC-014](2026-11-26-DEC-014-page-qui-fait-quoi.md) | 2026-11-26 | Page de pilotage « qui fait quoi » (outil interne, régularisation de la PR #14, page générée hors Git) | VALIDÉ |
 | [DEC-015](2026-11-26-DEC-015-regle-r17.md) | 2026-11-26 | ESN : règle R17 mise en œuvre (Markdown par Edit/Write uniquement, détection dans `restreindre_bash.py` pour tout appelant ; DEC-010) | VALIDÉ |
 | [DEC-016](2026-11-26-DEC-016-page-le-bureau.md) | 2026-11-26 | Page « Le bureau » de la console : vue de dessus en pixel art, instantané tiré des tickets, replay des journaux (outil interne, lecture seule) | VALIDÉ |
+| [DEC-017](2026-11-26-DEC-017-membres-humains-equipe.md) | 2026-11-26 | Membres humains de l'équipe projet (Ethan, Johan, Stéphane, Matthieu) dans `equipe/humains.md`, toujours présents à l'accueil du bureau, acteurs rattachés sans doublon | VALIDÉ |

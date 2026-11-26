@@ -198,6 +198,8 @@ class TestEtats(unittest.TestCase):
                          [("visiteur:equipe", "attente", None), ("agent:dev-backend", "attend", None)])
         # un prénom inclus dans un mot (« Claireval ») ne compte pas
         self.assertEqual(bureau.humain_attendu("agent:x", "voir Claireval", self.salaries), "visiteur:equipe")
+        # un ticket assigné à un membre humain de l'équipe projet l'attend lui-même (DEC-017)
+        self.assertEqual(self.contrib("ATTENTE_HUMAIN", "humain:ethan"), [("humain:ethan", "attente", None)])
 
     def test_autres_statuts(self):
         self.assertEqual(self.contrib("BLOQUE", "agent:dev-backend"), [("agent:dev-backend", "bloque", None)])
@@ -245,15 +247,16 @@ class TestPlan(unittest.TestCase):
         specs += [("agent:s3-{}".format(i), "agent", "S3") for i in range(7)]
         specs += [("agent:dev", "agent", "realisation"), ("agent:maison", "agent", "autres"),
                   ("agent:chef", "agent", "S1"), ("salarie:lea", "salarie", "salarie"),
-                  ("visiteur:ethan", "visiteur", "visiteur")]
+                  ("humain:ethan", "humain", "humain"), ("visiteur:prof", "visiteur", "visiteur")]
         _, poste = self.verifier(self.persos(specs))
+        for pid in ("humain:ethan", "visiteur:prof"):                    # accueil, sans bureau
+            self.assertEqual((poste[pid]["piece"], poste[pid]["y"], poste[pid]["bureau"]), ("couloir", 14, False))
         dans_s3 = [i for i in range(7) if poste["agent:s3-{}".format(i)]["piece"] == "s3"]
         self.assertEqual(len(dans_s3), 6)
         self.assertEqual(poste["agent:s3-6"]["piece"], "realisation")    # débordement
         self.assertEqual(poste["agent:maison"]["piece"], "realisation")  # hors catalogue : annexe
         self.assertEqual(poste["agent:chef"]["piece"], "s1")
         self.assertEqual(poste["salarie:lea"]["piece"], "salaries")
-        self.assertEqual(poste["visiteur:ethan"]["piece"], "couloir")
         self.assertEqual(poste["coordinateur"]["piece"], "couloir")
 
     def test_beaucoup_de_personnages(self):
@@ -402,6 +405,178 @@ class TestBureauGeneration(unittest.TestCase):
         self.assertIn('data-perso="agent:testeur"', self.page)
         self.assertIn('id="b-jalons" checked', self.page)               # jalons seulement, par défaut
         self.assertIn('aria-live="polite"', self.page)
+
+
+# ---------------------------------------------------------------------------- membres humains (DEC-017)
+
+def humains_md(*prenoms):
+    return "---\ntitre: Membres humains\nstatut: EN_REVUE\nresponsable: B\nversion: 0.1\nmaj_le: 2026-11-26\n" \
+           "valide_par:\ndecision:\nhumains:\n{}---\n# Membres humains\n".format(
+               "".join("  - prenom: {}\n".format(p) for p in prenoms))
+
+
+QUATRE = ("Ethan", "Johan", "Stéphane", "Matthieu")
+
+TICKET_HUMAINS = """
+    ---
+    id: T-030
+    titre: Arbitrage humain
+    projet: demo
+    type: tache
+    statut: ATTENTE_HUMAIN
+    priorite: normale
+    assigne: salarie:ethan
+    estimation_h: 1
+    temps_passe_h: 0
+    depend_de: []
+    bloque_par: arbitrage attendu
+    validation_humaine_requise: oui
+    decision:
+    cree_par: agent:coordinateur
+    cree_le: 2026-11-18
+    maj_le: 2026-11-24
+    ---
+    # T-030 — arbitrage humain
+
+    ## Journal
+    - 2026-11-18 09:00 · agent:testeur · création · 0 h
+    - 2026-11-18 10:00 · Ethan · avis 1 · 0 h
+    - 2026-11-18 10:05 · salarie:ethan · avis 2 · 0 h
+    - 2026-11-18 10:10 · ETHAN · avis 3 · 0 h
+    - 2026-11-18 10:15 · Stéphane · avis 4 · 0 h
+    - 2026-11-18 10:20 · stephane · avis 5 · 0 h
+    - 2026-11-18 10:25 · salarie:Stéphane · avis 6 · 0 h
+    - 2026-11-18 10:30 · coordinateur pour Johan · avis 7 · 0 h
+    - 2026-11-18 10:35 · Le professeur · avis 8 · 0 h
+    - 2026-11-18 10:40 · Stéphane Martin (Johan) · avis 9 · 0 h
+    - 2026-11-18 10:45 · agent:testeur · passage ATTENTE_HUMAIN · 0 h
+    """
+
+
+def generer(racine, *prenoms):
+    """Données du bureau d'un dépôt de test, avec equipe/humains.md si des prénoms sont donnés."""
+    if prenoms:
+        ecrire(racine, "equipe/humains.md", humains_md(*prenoms))
+    code, sortie = tc.lancer(racine, "--date", DATE)
+    if code != 0:
+        raise AssertionError(sortie)
+    page = tc.lire(racine, "bureau.html")
+    return page, json.loads(extraire_json(page))
+
+
+class TestLireHumains(unittest.TestCase):
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.racine = self._tmp.name
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def lire(self, contenu):
+        ecrire(self.racine, "equipe/humains.md", contenu)
+        return bureau.lire_humains(self.racine)
+
+    def test_fichier_absent(self):
+        self.assertEqual(bureau.lire_humains(self.racine), ([], []))
+
+    def test_quatre_humains(self):
+        humains, anomalies = self.lire(humains_md(*QUATRE))
+        self.assertEqual(humains, [("ethan", "Ethan"), ("johan", "Johan"), ("stephane", "Stéphane"),
+                                   ("matthieu", "Matthieu")])
+        self.assertEqual(anomalies, [])
+
+    def test_doublons_et_entrees_invalides(self):
+        humains, anomalies = self.lire("---\nhumains:\n  - prenom: Stéphane\n  - stephane\n  - prenom: STÉPHANE\n"
+                                       "  - prenom:\n  - 42\n  - Ethan\n---\n")
+        self.assertEqual(humains, [("stephane", "Stéphane"), ("ethan", "Ethan")])
+        self.assertEqual(sum("en double" in a for a in anomalies), 2)
+        self.assertEqual(sum("sans prénom" in a for a in anomalies), 2)
+
+    def test_fichier_mal_forme(self):
+        for contenu in ("---\nhumains: [Ethan\n---\n", "---\nhumains: Ethan\n---\n", "# pas d'en-tête\n",
+                        "---\ntitre: x\n---\n", "---\nhumains:\n---\n", ""):
+            humains, anomalies = self.lire(contenu)
+            self.assertEqual(humains, [], contenu)
+            self.assertEqual(len(anomalies), 1, contenu)
+            self.assertIn("equipe/humains.md", anomalies[0])
+
+
+class TestHumainsGeneration(unittest.TestCase):
+    """Les membres humains de l'équipe projet dans la page générée (DEC-017)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls._tmp = tempfile.TemporaryDirectory()
+        cls.racine = cls._tmp.name
+        tc.creer_depot(cls.racine)
+        ecrire(cls.racine, "projets/demo/tickets/T-030-humains.md", TICKET_HUMAINS)
+        cls.page, cls.d = generer(cls.racine, *QUATRE)
+        cls.persos = {p["id"]: p for p in cls.d["personnages"]}
+        cls.postes = {p["id"]: p for p in cls.d["plan"]["postes"]}
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._tmp.cleanup()
+
+    def test_quatre_humains_a_l_accueil(self):
+        for cle, prenom in (("ethan", "Ethan"), ("johan", "Johan"), ("stephane", "Stéphane"),
+                            ("matthieu", "Matthieu")):          # Matthieu n'est cité par aucun journal
+            p = self.persos["humain:" + cle]
+            self.assertEqual((p["nom"], p["nature"], p["modele"]), (prenom, "humain", "humain"))
+            poste = self.postes[p["poste"]]
+            self.assertEqual((poste["piece"], poste["y"], poste["bureau"]), ("couloir", 14, False))
+            self.assertIn('data-perso="humain:{}"'.format(cle), self.page)
+        ids = [p["id"] for p in self.d["personnages"]]
+        self.assertEqual(ids[:5], ["coordinateur", "humain:ethan", "humain:johan", "humain:stephane",
+                                   "humain:matthieu"])
+
+    def test_rattachement_sans_doublon(self):
+        evs = [e for e in self.d["evenements"] if e["ticket"] == "T-030"]
+        self.assertEqual([e["perso"] for e in evs],
+                         ["agent:testeur"] + ["humain:ethan"] * 3 + ["humain:stephane"] * 3 +
+                         ["humain:johan", "visiteur:le-professeur", "humain:stephane", "agent:testeur"])
+        self.assertEqual(evs[7]["note"], "saisi par le coordinateur")
+        for nom in ("ethan", "stephane", "johan", "matthieu"):
+            self.assertEqual(sum(bureau.normal(p["nom"]) == nom for p in self.d["personnages"]), 1, nom)
+            self.assertNotIn("visiteur:" + nom, self.persos)
+        dec = {e["dec"]: e for e in self.d["evenements"] if e["type"] == "decision"}
+        self.assertEqual(dec["DEC-002"]["perso"], "humain:ethan")                   # decide_par: Ethan
+
+    def test_autres_acteurs_restent_visiteurs(self):
+        for pid, nom in (("visiteur:le-professeur", "Le professeur"), ("visiteur:equipe", "Équipe ESN")):
+            self.assertEqual((self.persos[pid]["nature"], self.persos[pid]["nom"]), ("visiteur", nom))
+
+    def test_instantane(self):
+        demo = next(p for p in self.d["projets"] if p["slug"] == "demo")
+        etat = {i["perso"]: i for i in demo["instantane"]}
+        self.assertEqual(etat["humain:ethan"]["etat"], "attente")         # T-030 assigné à salarie:ethan
+        self.assertEqual([t["id"] for t in etat["humain:ethan"]["tickets"]], ["T-030"])
+        self.assertNotIn("humain:matthieu", etat)                         # rien en cours : à l'accueil
+
+    def test_humain_ajoute_apparait(self):
+        with tempfile.TemporaryDirectory() as racine:
+            tc.creer_depot(racine)
+            _, d = generer(racine, *(QUATRE + ("Zoé",)))
+            persos = {p["id"]: p for p in d["personnages"]}
+            self.assertEqual((persos["humain:zoe"]["nom"], persos["humain:zoe"]["nature"]), ("Zoé", "humain"))
+            self.assertEqual(sum(p["nature"] == "humain" for p in d["personnages"]), 5)
+
+    def test_fichier_absent_sans_plantage(self):
+        with tempfile.TemporaryDirectory() as racine:
+            tc.creer_depot(racine)
+            _, d = generer(racine)                                     # aucun equipe/humains.md
+            persos = {p["id"]: p for p in d["personnages"]}
+            self.assertFalse([i for i in persos if i.startswith("humain:")])
+            self.assertEqual(persos["visiteur:ethan"]["nature"], "visiteur")   # comportement d'avant DEC-017
+            self.assertFalse([a for a in d["anomalies"] if "humains.md" in a])
+
+    def test_fichier_mal_forme_sans_plantage(self):
+        with tempfile.TemporaryDirectory() as racine:
+            tc.creer_depot(racine)
+            ecrire(racine, "equipe/humains.md", "---\nhumains: [Ethan\n---\n")
+            _, d = generer(racine)
+            self.assertTrue(any("equipe/humains.md : YAML invalide" in a for a in d["anomalies"]))
 
 
 class TestDepotVide(unittest.TestCase):

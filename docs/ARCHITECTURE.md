@@ -2,10 +2,10 @@
 titre: Architecture du système multi-agents
 statut: VALIDÉ
 responsable: B
-version: 1.4
+version: 1.5
 maj_le: 2026-11-26
 valide_par: Ethan
-decision:  DEC-016
+decision: DEC-017
 ---
 
 # ARCHITECTURE — le « comment » de l'ESN virtuelle
@@ -72,7 +72,7 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
 │   └── decisions/                    AAAA-MM-JJ-DEC-NNN-<sujet>.md
 ├── templates/                        (A) _ENTETE.md + un template par livrable
 ├── runbooks/                         (D) perte-donnees, coupure-serveur, intrusion, rollback
-├── equipe/                           (B) membres/<prenom>.md, agents.md, calendrier.md
+├── equipe/                           (B) membres/<prenom>.md, agents.md, calendrier.md, humains.md (DEC-017)
 │                                     écrit uniquement par le coordinateur, après décision humaine ;
 │                                     les agents le lisent
 ├── veille/AAAA-Sxx.md                (D) veille commune à l'ESN
