@@ -4,8 +4,9 @@
 Responsable : D · outil interne de l'ESN (DEC-012), comme tableau.py ; ce n'est pas un projet client.
 
 La console présente le système (vision, 4 systèmes, circuit des agents, points d'arrêt, garde-fous), le
-portefeuille, chaque projet (synthèse, Kanban, Gantt, tickets et documents rendus en HTML), l'équipe, les
-agents et skills, et le registre des décisions. Elle s'ouvre directement dans un navigateur
+portefeuille, le bureau vu de dessus (scripts/bureau.py et bureau.js, DEC-016), chaque projet (synthèse,
+Kanban, Gantt, tickets et documents rendus en HTML), l'équipe, les agents et skills, et le registre des
+décisions. Elle s'ouvre directement dans un navigateur
 (console/index.html), sans serveur.
 
 Lecture seule : le script n'écrit QUE dans <racine>/console/ (dossier ignoré par Git). Tous les chiffres
@@ -50,6 +51,7 @@ try:  # contrôle des validations (garde-fou 4) ; facultatif si le hook est abse
     validations = _module("verifier_validations", os.path.join(ICI, "verifier_validations.py"))
 except Exception:  # pragma: no cover - dépôt incomplet
     validations = None
+bureau = _module("bureau", os.path.join(ICI, "bureau.py"))    # page « Le bureau » (DEC-016)
 
 MERMAID_VERSION = "12.3.0"
 MERMAID_CDN = "https://cdn.jsdelivr.net/npm/mermaid@{}/dist/mermaid.min.js".format(MERMAID_VERSION)
@@ -555,7 +557,7 @@ class Site:
     def page(self, rel, titre, corps, actif=None, fil=None):
         racine = self.lien(rel, "index.html").rsplit("index.html", 1)[0]
         nav = [("index.html", "Notre système", "systeme"), ("portefeuille.html", "Portefeuille", "portefeuille"),
-               ("equipe.html", "Équipe", "equipe"), ("agents.html", "Agents et skills", "agents"),
+               ("bureau.html", "Le bureau", "bureau"), ("equipe.html", "Équipe", "equipe"), ("agents.html", "Agents et skills", "agents"),
                ("decisions.html", "Décisions", "decisions")]
         liens = "".join('<a href="{}"{}>{}</a>'.format(e(self.lien(rel, h)),
                                                          ' class="actif" aria-current="page"' if c == actif else "",
@@ -732,7 +734,7 @@ class Site:
     def generer(self):
         self.equipe, self.projets, self.anomalies = tableau.charger(self.racine, self.auj)
         self.inventaire()
-        self.ecrire("style.css", CSS)
+        self.ecrire("style.css", CSS + bureau.CSS)
         if not self.mermaid_src:
             if os.path.isfile(MERMAID_LOCAL):
                 with open(MERMAID_LOCAL, "rb") as f:
@@ -751,6 +753,7 @@ class Site:
         self.page_equipe()
         self.page_agents()
         self.page_decisions()
+        self.page_bureau()
         for source, page, libelle in self.docs:
             self.page_document(source, page, [("Notre système", "index.html"), (libelle, None)])
         return self.nettoyer()
@@ -980,8 +983,9 @@ class Site:
             chips.append('<a class="chip doc" href="{}">{} {}</a>'.format(
                 e(self.lien(rel, "{}/{}.html".format(base, d))), e(lib),
                 self.badge_doc(fm.get("statut")) if fm.get("statut") else ""))
-        L.append('<div class="chips grandes">{}</div>'.format("".join(chips) or
-                                                               '<span class="vide">Aucun document.</span>'))
+        chips.append('<a class="chip doc" href="{}">Le bureau (vue de dessus, replay)</a>'.format(
+            e(self.lien(rel, "bureau.html#projet=" + quote(p.slug)))))
+        L.append('<div class="chips grandes">{}</div>'.format("".join(chips)))
         # Synthèse
         budget_det = "{} sur {}".format(tableau.fmt_eur(p.consomme), tableau.fmt_eur(p.budget)) if p.budget \
             else "{} · budget non renseigné".format(tableau.fmt_eur(p.consomme))
@@ -1283,6 +1287,19 @@ class Site:
             self.page_document(a["source"], a["page"], [("Agents et skills", "agents.html"), (a["nom"], None)])
         for s in self.skills:
             self.page_document(s["source"], s["page"], [("Agents et skills", "agents.html#skills"), (s["nom"], None)])
+
+    # ======================================================================== Le bureau
+    def page_bureau(self):
+        """Page « Le bureau » (DEC-016) : données et HTML calculés par scripts/bureau.py, rendu Canvas par
+        scripts/bureau.js copié dans console/assets/. Comme toute la console, écrit seulement dans console/."""
+        rel = "bureau.html"
+        if os.path.isfile(bureau.SCRIPT_JS):
+            with open(bureau.SCRIPT_JS, "rb") as f:
+                self.ecrire("assets/bureau.js", f.read())
+        else:
+            self.avertissements.append("scripts/bureau.js absent : la vue dessinée du bureau est indisponible")
+        donnees = bureau.Donnees(self, rel).calculer()
+        self.ecrire(rel, self.page(rel, "Le bureau", bureau.page_html(self, donnees), actif="bureau"))
 
     # ======================================================================== Décisions
     def page_decisions(self):
