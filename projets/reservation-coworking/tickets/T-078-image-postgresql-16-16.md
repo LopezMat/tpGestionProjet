@@ -81,3 +81,4 @@ Règle 7 du `chef-de-projet` : à défaut d'agent, un salarié compétent. Nadia
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 16:30 · agent:chef-de-projet · création (veille 2026-S48, proposition P-1, constat 1 ; assigné à Nadia faute d'agent compétent sur le modèle commun ; estimation 1 h portée à 1,5 h ; non planifié, développement en pause) · 0 h
+- 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h

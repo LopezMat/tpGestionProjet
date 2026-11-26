@@ -4,7 +4,7 @@ id: T-027
 titre: Fiches des salles (F-06, Should)
 projet: reservation-coworking
 type: fonctionnalite        # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: ANNULE              # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: normale           # critique | haute | normale | basse
 assigne: agent:dev-frontend # agent:<nom> | salarie:<prenom>
 competence_requise: html-css (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -16,8 +16,8 @@ validation_humaine_requise: non   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-24
-maj_le: 2026-11-25
-statut_depuis: 2026-11-24   # date du dernier changement de statut
+maj_le: 2026-11-26
+statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
 ---
@@ -46,3 +46,4 @@ F-06 « Fiches des salles » : affichage du nom, de la capacité et des équipem
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-24 23:55 · agent:chef-de-projet · création · 0 h
 - 2026-11-25 09:00 · agent:chef-de-projet · marqué « Should, abandonnable » (Ethan, 2026-11-24, DEC-009) ; depend_de [T-018, T-023] → [T-014, T-020, T-025, T-026] (après tous les Must) ; temps compté dans T-008 · 0 h
+- 2026-11-26 22:00 · agent:chef-de-projet · SIMULATION · A_FAIRE → ANNULE : F-06 (Should) abandonné par DEC-020 (révision du budget à 4 200 € HT, scénario B en gardant F-08) ; retiré de depend_de de T-042, T-043 et T-045 ; sa revue de code (0,5 h) retirée de T-040 et son critère de recette retiré de T-045 ; à reprendre seulement par une nouvelle demande du client (CDC v1.1 à venir). Temps compté dans T-008 · 0 h

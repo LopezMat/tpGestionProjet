@@ -70,3 +70,4 @@ Une option explicite permet de passer outre. Elle est réservée à la reconstru
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 17:30 · agent:chef-de-projet · SIMULATION · création à partir de l'incident T-080 et du post-mortem rapports/post-mortem-2026-11-26-perte-donnees.md, proposition P-3 ; assignée à Nadia (seule salariée ci-cd ; Karim écarté par AF7 et AF3) ; dépend de T-029 et T-086 (mêmes scripts) ; non planifié (développement en pause) · 0 h
+- 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h

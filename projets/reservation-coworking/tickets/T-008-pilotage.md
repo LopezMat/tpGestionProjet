@@ -8,8 +8,8 @@ statut: EN_COURS            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_H
 priorite: normale           # critique | haute | normale | basse
 assigne: agent:chef-de-projet   # agent:<nom> | salarie:<prenom>
 competence_requise: gestion-projet (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
-estimation_h: 9             # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 10.25        # heures équivalent humain
+estimation_h: 13.25         # heures équivalent humain, quel que soit l'assigné
+temps_passe_h: 11           # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
@@ -34,6 +34,7 @@ Estimation : planification initiale 4 h (découpage, estimation, affectation, pl
 - [ ] `planning.md` produit et soumis à validation (T-007).
 - [ ] Chaque intervention du `chef-de-projet` a une ligne de journal et son temps.
 - [ ] `retex.md` complété en fin de projet, avec ses tickets `amelioration` et `formation`.
+- [ ] **Condition 1 de DEC-020 (SIMULATION)** : à chaque passage du skill `avancement`, le **coût client** (coût projeté de `TABLEAU.md` moins la part imputée à l'ESN, recalculée sur les tickets qui portent la ligne « imputé à l'ESN (DEC-020) ») est comparé à 4 200 € HT, et le calcul est noté au journal de ce ticket. Dès que le consommé client atteint 90 % (3 780 €), ou dès qu'un dépassement de 4 200 € est prévisible, un ticket `decision` `ATTENTE_HUMAIN` est créé **avant** d'engager le travail concerné (options : avenant ou retrait de périmètre, discussion avec le client par Claire, AF1) ; aucun dépassement n'est absorbé d'office par l'ESN.
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
@@ -53,3 +54,4 @@ Estimation : planification initiale 4 h (découpage, estimation, affectation, pl
 - 2026-11-26 16:30 · agent:chef-de-projet · création des tickets issus de la veille 2026-S48 (`veille/2026-S48.md`) : T-078 (P-1, image PostgreSQL 16.16, Nadia) et T-079 (P-2, verrou des dépendances, `dev-backend`), en `A_FAIRE`, non planifiés (développement en pause) ; aucun ticket existant modifié ; ligne reportée par le coordinateur · 0,5 h
 - 2026-11-26 18:00 · agent:chef-de-projet · SIMULATION · exercice de crise T-080 : création des actions correctives T-085 à T-091 (P-1 à P-6, P-9 ; P-7 et P-8 non créés, DEC-009 point E), analyse de charge de Nadia dans T-090 ; ligne reportée par le coordinateur · 1,5 h
 - 2026-11-26 18:30 · agent:chef-de-projet · SIMULATION · retour d'expérience DEC-019 : T-029 haute → critique, T-029 ajouté à `depend_de` de T-046, création de T-092 (vérification quotidienne des sauvegardes), T-088 annulé (couvert par T-092), T-090 annoté ; ligne reportée par le coordinateur · 1 h
+- 2026-11-26 22:20 · agent:chef-de-projet · SIMULATION · application de DEC-020 (budget 4 200 € HT, scénario B en gardant F-08) : T-027, T-065 et T-076 passés ANNULE (titre de T-076 mis entre guillemets) ; T-027 retiré de depend_de de T-042, T-043 et T-045 ; revues et vérifications des tickets annulés retirées de T-040 (4 → 3,5 h), T-041 (6 → 5,7 h), T-066 (5,5 → 5 h) et T-067 (4 → 3,6 h) ; F-06 retiré de la recette T-045 (5 → 4,75 h) ; points F-06 et F-08 de T-009 retirés (2,5 → 2 h) ; ligne « imputé à l'ESN (DEC-020) » dans T-029, T-038, T-058, T-059, T-072, T-078, T-085 à T-087, T-089 à T-092 ; T-094 créé (message au client, Claire, condition 2) ; critère de la condition 1 ajouté ici ; estimation de ce ticket 9 → 13,25 h (10,25 h passées + 3 h de pilotage jusqu'au retex, hypothèse de T-093 § 1 comprise dans les 4 169,43 € de DEC-020) ; `tableau.py` lancé et coût client calculé dans le message au coordinateur · 0,75 h

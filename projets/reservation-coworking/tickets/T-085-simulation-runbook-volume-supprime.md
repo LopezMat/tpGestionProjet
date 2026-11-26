@@ -71,3 +71,4 @@ Fichier modifié : `runbooks/perte-donnees.md`, hors du périmètre d'écriture 
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 17:30 · agent:chef-de-projet · SIMULATION · création à partir de l'incident T-080 et du post-mortem rapports/post-mortem-2026-11-26-perte-donnees.md, proposition P-1 ; assignée à Nadia (seule salariée sauvegarde-restauration, aucun agent n'écrit dans runbooks/) ; sans dépendance ; non planifié (développement en pause) · 0 h
+- 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h

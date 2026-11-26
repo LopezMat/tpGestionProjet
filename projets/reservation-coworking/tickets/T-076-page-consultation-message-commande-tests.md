@@ -1,10 +1,10 @@
 ---
 # Frontmatter propre aux tickets (lu par scripts/tableau.py, ne pas renommer les champs)
 id: T-076
-titre: Page de consultation : message sur réponse inattendue et commande des tests JS
+titre: "Page de consultation : message sur réponse inattendue et commande des tests JS"
 projet: reservation-coworking
 type: amelioration          # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: ANNULE              # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: basse             # critique | haute | normale | basse
 assigne: agent:dev-frontend # agent:<nom> | salarie:<prenom>
 competence_requise: javascript (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -46,3 +46,4 @@ termine_le:                 # facultatif : date du passage TERMINE
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 14:00 · agent:coordinateur · création (remarque 3 du relecteur-code sur T-055, remarque de l'audit securite-2026-11-26), non traité : périmètre gelé · 0 h
+- 2026-11-26 22:00 · agent:chef-de-projet · SIMULATION · A_FAIRE → ANNULE par DEC-020 (révision du budget à 4 200 € HT, scénario B : gêne mineure, hors Must et hors sécurité). Valeur de `titre` mise entre guillemets doubles, sans changer le texte : le « : » rendait le YAML invalide et `tableau.py` ignorait le ticket. Aucun ticket n'en dépend ; aucune revue ni vérification ne le couvrait. Temps compté dans T-008 · 0 h
