@@ -1,9 +1,11 @@
 /* bureau.js : rendu Canvas 2D de la page « Le bureau » de la console (DEC-016). Responsable : D.
  *
  * Copié tel quel dans console/assets/ par scripts/console.py. Les données viennent du bloc
- * <script type="application/json" id="donnees-bureau"> écrit par scripts/bureau.py : aucune requête réseau,
- * aucune ressource externe, fonctionne en file:// et hors ligne. Tout est dessiné par le code (pixel art
- * 16 bits) : aucun sprite, aucune police ni image externe.
+ * <script type="application/json" id="donnees-bureau"> écrit par scripts/bureau.py : aucune ressource
+ * externe, fonctionne en file:// et hors ligne. Tout est dessiné par le code (pixel art 16 bits) : aucun
+ * sprite, aucune police ni image externe. Seule exception, le mode Direct (DEC-018) : quand la page est
+ * servie par scripts/bureau_direct.py sur 127.0.0.1, il ouvre le flux SSE relatif « direct/flux » (même
+ * origine) ; en file://, il reste désactivé.
  *
  * Sécurité : les textes venus des fichiers ne passent que par textContent et fillText ; jamais d'insertion
  * de HTML. Les liens sont revalidés (chemin relatif .html de la console) avant d'être utilisés.
@@ -170,6 +172,13 @@
   };
   var COULEURS_ICONES = { k: "#1f2430", w: "#f8fafc", b: "#60a5fa", g: "#16a34a", r: "#dc2626", y: "#facc15",
                           o: "#f97316", p: "#a855f7", n: "#8b5a2b", s: "#cbd5e1" };
+  // Icônes d'activité du mode Direct (7 × 7), dessinées au-dessus du personnage.
+  var ICONES_ACT = {
+    lit: ["kkkkkkk", "kbbkbbk", "kbbkbbk", "kbbkbbk", "kbbkbbk", "kkkkkkk", "...k..."],
+    tape: ["......k", ".....ky", "....kyk", "...kyk.", "..kyk..", ".kok...", "kk....."],
+    terminal: ["kkkkkkk", "kkkkkkk", "kgkkkkk", "kkgkkkk", "kgkkkkk", "kkkkggk", "kkkkkkk"],
+    web: ["..bbb..", ".bgbbb.", "bggbbgb", "bbgbggb", "bbbbggb", ".bbbgb.", "..bbb.."]
+  };
   var cacheSprites = {};
 
   function pix(c, x, y, w, h, coul) { c.fillStyle = coul; c.fillRect(x, y, w, h); }
@@ -535,6 +544,19 @@
         var st = STYLES_BULLE[p.bulle.type] || STYLES_BULLE.defaut;
         bulleRect(c, cx, haut, p.bulle.texte, st[0], st[1], st[2], bulles);
       }
+      // icône d'activité du mode Direct, à droite de la tête
+      if (etat.mode === "direct" && p.act && ICONES_ACT[p.act.cat]) {
+        var ic = ICONES_ACT[p.act.cat], u = Math.max(2, Math.round(k * 1.5)), w = ic.length * u;
+        var ix = Math.round(cx + 7 * k), iy = Math.round(((p.y + 1) * T - 22) * k) - w;
+        c.fillStyle = "#1f2430"; c.fillRect(ix - u - 1, iy - u - 1, w + 2 * u + 2, w + 2 * u + 2);
+        c.fillStyle = "#f8fafc"; c.fillRect(ix - u, iy - u, w + 2 * u, w + 2 * u);
+        for (var yy = 0; yy < ic.length; yy++) {
+          for (var xx = 0; xx < ic[yy].length; xx++) {
+            var chi = ic[yy].charAt(xx);
+            if (chi !== ".") { c.fillStyle = COULEURS_ICONES[chi] || "#000"; c.fillRect(ix + xx * u, iy + yy * u, u, u); }
+          }
+        }
+      }
     });
     // bannière de décision
     if (banniere && (reduit || t < banniere.fin)) {
@@ -590,6 +612,12 @@
       canvas.setAttribute("aria-label", "Vue de dessus du bureau, " + projetCourant().libelle + " : " + n.tape +
         " au travail, " + n.revue + " en revue, " + n.attente + " décision(s) humaine(s) attendue(s), " + n.bloque +
         " bloqué(s). Détail dans la liste « Personnages et état ».");
+    } else if (etat.mode === "direct") {
+      var actifs = ordre.filter(function (id) { return persos[id].d.nature === "agent" && DR.instances[id]; })
+        .map(function (id) { return persos[id].d.nom; });
+      canvas.setAttribute("aria-label", "Bureau en direct : " + sessionsActives() + " session(s) de coordinateur, " +
+        (actifs.length ? "agents au travail : " + actifs.join(", ") : "aucun agent au travail") +
+        ". Détail dans la liste « Derniers événements (direct) ».");
     } else {
       canvas.setAttribute("aria-label", "Replay du bureau, " + projetCourant().libelle +
         ". Détail dans la liste « Événements du replay ».");
@@ -626,6 +654,8 @@
     if (etat.mode === "instantane") {
       ligneFiche(dl, "État (" + projetCourant().libelle + ")", libelleEtat(i ? i.etat :
         (aLAccueil(d) ? "accueil" : "cafe")));
+    } else if (etat.mode === "direct") {
+      ligneFiche(dl, "En direct", texteActivite(p));
     } else if (p.bulle && p.bulle.texte) {
       ligneFiche(dl, "Dernière action du replay", p.bulle.long || p.bulle.texte);
     }
@@ -773,6 +803,224 @@
       "Pause à l'événement " + (R.i + 1) + " sur " + R.liste.length + ".");
   }
 
+  // ------------------------------------------------------------------ mode Direct (DEC-018)
+  // Disponible seulement quand la page est servie par scripts/bureau_direct.py (127.0.0.1) : en file://,
+  // le bouton reste désactivé. Flux SSE relatif (même origine) ; les textes ne passent que par textContent.
+  var DIRECT_DISPO = location.protocol === "http:" &&
+    (location.hostname === "127.0.0.1" || location.hostname === "localhost") && typeof window.EventSource === "function";
+  var TYPES_DIRECT = { session_debut: 1, demande: 1, outil_debut: 1, outil_fin: 1, autorisation: 1, attente: 1,
+                       agent_debut: 1, agent_fin: 1, fin_tour: 1, session_fin: 1 };
+  var RE_ACTEUR = /^[a-z0-9][a-z0-9-]{0,39}$/, RE_COURT = /^[A-Za-z0-9_:.+-]{0,40}$/;
+  var LIB_CATEGORIE = { lit: "lit", tape: "écrit", terminal: "terminal", delegue: "lance un agent", web: "cherche sur le web",
+                        autre: "outil" };
+  var LIB_ATTENTE = { permission_prompt: "attend une autorisation", idle_prompt: "attend une réponse",
+                      elicitation_dialog: "attend une saisie" };
+  var FENETRE_SESSION = 15 * 60 * 1000, RECENT = 10000, MIN_ACT = 1200, MAX_ACT = 120000;
+  var DR = { source: null, pret: false, sessions: {}, instances: {}, vus: {}, nVus: 0, annonce: 0, controle: 0 };
+  var olDirect = $("b-direct-liste");
+
+  function evValide(ev) {
+    return ev && typeof ev === "object" && TYPES_DIRECT[ev.evenement] === 1 && typeof ev.ts === "string" &&
+      typeof ev.session === "string" && RE_COURT.test(ev.session) && typeof ev.acteur === "string" &&
+      RE_ACTEUR.test(ev.acteur) && RE_COURT.test(String(ev.outil || "")) && RE_COURT.test(String(ev.categorie || "")) &&
+      RE_COURT.test(String(ev.detail || "")) && RE_COURT.test(String(ev.instance || ""));
+  }
+  function persoDirect(acteur) {
+    if (acteur === "coordinateur") { return "coordinateur"; }
+    return persos["agent:" + acteur] ? "agent:" + acteur : null;
+  }
+  function bulleDirect(p, texte, type, ms, anime) {
+    if (!anime) { return; }
+    p.bulle = { texte: texte, type: type, expire: performance.now() + ms, long: texte };
+  }
+  function texteDirect(ev) {
+    switch (ev.evenement) {
+      case "demande": return "nouvelle demande";
+      case "outil_debut": return (LIB_CATEGORIE[ev.categorie] || "outil") + " (" + ev.outil + ")";
+      case "outil_fin": return "échec de " + ev.outil;
+      case "autorisation": return "attend une autorisation (" + ev.outil + ")";
+      case "attente": return LIB_ATTENTE[ev.detail] || "attend";
+      case "agent_debut": return "agent lancé";
+      case "agent_fin": return "agent terminé";
+      case "fin_tour": return "fin du tour";
+      case "session_debut": return "session ouverte" + (ev.detail ? " (" + ev.detail + ")" : "");
+      case "session_fin": return "session fermée";
+    }
+    return ev.evenement;
+  }
+  function ajouterListeDirect(ev, id) {
+    if (!olDirect || (ev.evenement === "outil_fin" && ev.detail !== "echec")) { return; }
+    var li = el("li", "ev ev-" + ev.evenement), heure = /T(\d{2}:\d{2}:\d{2})/.exec(ev.ts);
+    li.appendChild(el("time", null, heure ? heure[1] : "--:--:--"));
+    li.appendChild(document.createTextNode(" "));
+    li.appendChild(el("strong", null, id ? nomDe(id) : ev.acteur + " (hors catalogue)"));
+    li.appendChild(document.createTextNode(" " + texteDirect(ev)));
+    olDirect.insertBefore(li, olDirect.firstChild);
+    while (olDirect.childNodes.length > 30) { olDirect.removeChild(olDirect.lastChild); }
+  }
+  function annoncerDirect(ev, id, anime) {
+    var marquant = { demande: 1, agent_debut: 1, autorisation: 1, attente: 1, fin_tour: 1 };
+    var t = performance.now();
+    if (!anime || !marquant[ev.evenement] || t - DR.annonce < 3000) { return; }
+    DR.annonce = t;
+    annoncer("Direct : " + (id ? nomDe(id) : ev.acteur) + ", " + texteDirect(ev) + ".");
+  }
+  function activite(p, cat, tsMs, recent) {
+    var maintenant = performance.now();
+    if (!recent || !ICONES_ACT[cat]) { return; }
+    p.act = { cat: cat, ts: tsMs, depuis: maintenant, fin: tsMs <= (p.dernierFin || 0) };
+    if (p.d.nature === "agent") { p.etat = cat === "tape" ? "tape" : "poste"; }
+  }
+  function sessionsActives() {
+    var n = 0, t = Date.now();
+    Object.keys(DR.sessions).forEach(function (s) {
+      var x = DR.sessions[s];
+      if (!x.fin && t - x.dernier < FENETRE_SESSION) { n++; }
+    });
+    return n;
+  }
+  function controlerSessions() {
+    var n = sessionsActives(), al = $("b-direct-alerte"), sp = $("b-direct-sessions");
+    if (al) { al.hidden = n < 2; }
+    if (sp) { sp.textContent = n + " session(s) de coordinateur active(s) · 15 dernières minutes"; }
+    if (etat.mode === "direct") { resume(); }
+  }
+  function rentrer(p, anime) {
+    p.act = null; p.marque = false; p.bulle = null; p.etat = "cafe";
+    aller(p, domicile(p), anime ? undefined : 0);
+  }
+  function appliquerDirect(ev, anime) {
+    var tsMs = Date.parse(ev.ts) || Date.now(), recent = Date.now() - tsMs < RECENT;
+    var s = DR.sessions[ev.session] || (DR.sessions[ev.session] = { dernier: 0, fin: false });
+    s.dernier = Math.max(s.dernier, tsMs);
+    if (ev.evenement === "session_fin") { s.fin = true; } else { s.fin = false; }
+    var id = persoDirect(ev.acteur), p = id ? persos[id] : null, coord = persos.coordinateur;
+    var duree = anime ? undefined : 0;
+    switch (ev.evenement) {
+      case "demande":
+        if (p) { p.marque = false; bulleDirect(p, "nouvelle demande", "creation", 4000, anime || recent); }
+        break;
+      case "outil_debut":
+        if (p) {
+          p.marque = false;
+          if (p.d.nature === "agent" && !DR.instances[id]) { DR.instances[id] = {}; aller(p, auPoste(p), duree); }
+          activite(p, ev.categorie, tsMs, anime || recent);
+          if (ev.categorie === "delegue") { bulleDirect(p, "lance un agent", "creation", 3000, anime || recent); }
+        }
+        break;
+      case "outil_fin":
+        if (p) {
+          p.marque = false;
+          p.dernierFin = Math.max(p.dernierFin || 0, tsMs);
+          if (p.act && tsMs >= p.act.ts) { p.act.fin = true; }
+          if (ev.detail === "echec") { bulleDirect(p, "échec", "bloque", 1500, anime || recent); }
+        }
+        break;
+      case "autorisation":
+      case "attente":
+        if (p) { p.marque = true; bulleDirect(p, texteDirect(ev), "attente", 6000, anime || recent); }
+        break;
+      case "agent_debut":
+        if (p) {
+          var inst = DR.instances[id] || (DR.instances[id] = {});
+          inst[ev.instance || "?"] = true;
+          p.etat = "poste"; p.marque = false;
+          aller(p, auPoste(p), duree);
+          bulleDirect(p, "au travail", "creation", 2500, anime || recent);
+        }
+        if (coord) { bulleDirect(coord, "lance " + ev.acteur, "creation", 3000, anime || recent); }
+        break;
+      case "agent_fin":
+        if (p) {
+          var ins = DR.instances[id] || {};
+          delete ins[ev.instance || "?"];
+          if (!Object.keys(ins).length) { delete DR.instances[id]; rentrer(p, anime); }
+        }
+        break;
+      case "fin_tour":
+        if (p) { p.act = null; p.marque = false; aller(p, domicile(p), duree); bulleDirect(p, "tour terminé", "defaut", 2500, anime || recent); }
+        break;
+      case "session_debut":
+        if (p) { bulleDirect(p, "session ouverte", "defaut", 2500, anime || recent); }
+        break;
+      case "session_fin":
+        if (!sessionsActives()) {
+          DR.instances = {};
+          ordre.forEach(function (pid) { rentrer(persos[pid], anime); });
+        }
+        break;
+    }
+    ajouterListeDirect(ev, id);
+    annoncerDirect(ev, id, anime);
+    redessiner = true;
+  }
+  function majConnexion(connecte, texte) {
+    var b = $("b-direct-etat");
+    if (!b) { return; }
+    b.textContent = connecte ? "● connecté" : "○ " + (texte || "déconnecté");
+    b.classList.toggle("b-connecte", !!connecte);
+  }
+  function connecterDirect() {
+    if (DR.source || !DIRECT_DISPO || etat.mode !== "direct") { return; }
+    DR.pret = false;
+    majConnexion(false, "connexion…");
+    var es = new EventSource("direct/flux");
+    DR.source = es;
+    es.onopen = function () { majConnexion(true); };
+    es.addEventListener("pret", function () { DR.pret = true; controlerSessions(); redessiner = true; });
+    es.addEventListener("evenement", function (m) {
+      if (m.lastEventId) {
+        if (DR.vus[m.lastEventId]) { return; }
+        if (DR.nVus > 5000) { DR.vus = {}; DR.nVus = 0; }
+        DR.vus[m.lastEventId] = true; DR.nVus++;
+      }
+      var ev;
+      try { ev = JSON.parse(m.data); } catch (err) { return; }
+      if (evValide(ev)) { appliquerDirect(ev, DR.pret); }
+    });
+    es.onerror = function () {
+      DR.pret = false;
+      if (es.readyState === 2) {           // fermé : nouvelle tentative dans 5 s
+        majConnexion(false, "déconnecté, nouvelle tentative…");
+        es.close(); DR.source = null;
+        window.setTimeout(connecterDirect, 5000);
+      } else {
+        majConnexion(false, "déconnecté, reconnexion…");
+      }
+    };
+  }
+  function fermerDirect() {
+    if (DR.source) { DR.source.close(); DR.source = null; }
+    ordre.forEach(function (id) { persos[id].act = null; });
+  }
+  function entrerDirect() {
+    reinitialiserReplay();
+    DR.sessions = {}; DR.instances = {}; DR.vus = {}; DR.nVus = 0;
+    ordre.forEach(function (id) { persos[id].act = null; persos[id].dernierFin = 0; });
+    if (olDirect) { vider(olDirect); }
+    controlerSessions();
+    connecterDirect();
+  }
+  function entretenirDirect() {
+    var t = performance.now(), change = false;
+    ordre.forEach(function (id) {
+      var p = persos[id];
+      if (p.bulle && p.bulle.expire && t >= p.bulle.expire) { p.bulle = null; change = true; }
+      if (p.act && ((p.act.fin && t - p.act.depuis >= MIN_ACT) || t - p.act.depuis >= MAX_ACT)) {
+        p.act = null; change = true;
+        if (p.d.nature === "agent" && p.etat === "tape") { p.etat = "poste"; }
+      }
+    });
+    if (t - DR.controle > 1000) { DR.controle = t; controlerSessions(); }
+    if (change) { redessiner = true; }
+  }
+  function texteActivite(p) {
+    if (p.marque) { return "attend une autorisation ou une réponse"; }
+    if (p.act) { return LIB_CATEGORIE[p.act.cat] || "au travail"; }
+    if (p.d.nature === "agent" && DR.instances[p.d.id]) { return "à son poste"; }
+    return aLAccueil(p.d) ? "à l'accueil" : "au café";
+  }
+
   // ------------------------------------------------------------------ modes et commandes
   function lireHash() {
     var res = {};
@@ -787,15 +1035,25 @@
     catch (err) { /* file:// selon le navigateur */ }
   }
   function changerMode(mode, immediat) {
+    if (mode === "direct" && !DIRECT_DISPO) { mode = "instantane"; }
+    var avant = etat.mode;
     etat.mode = mode;
-    var bi = $("b-mode-instantane"), br = $("b-mode-replay"), zone = $("b-replay");
+    var bi = $("b-mode-instantane"), br = $("b-mode-replay"), bd = $("b-mode-direct"), zone = $("b-replay");
     if (bi) { bi.setAttribute("aria-pressed", String(mode === "instantane")); }
     if (br) { br.setAttribute("aria-pressed", String(mode === "replay")); }
+    if (bd) { bd.setAttribute("aria-pressed", String(mode === "direct")); }
     if (zone) { zone.hidden = mode !== "replay"; }
+    if ($("b-direct")) { $("b-direct").hidden = mode !== "direct"; }
+    if ($("b-direct-evenements")) { $("b-direct-evenements").hidden = mode !== "direct"; }
+    if (selProjet) { selProjet.disabled = mode === "direct"; }
     R.lecture = false;
+    if (avant === "direct" && mode !== "direct") { fermerDirect(); }
     if (mode === "instantane") {
       appliquerInstantane(immediat);
       if (courantLi) { courantLi.removeAttribute("aria-current"); courantLi = null; }
+    } else if (mode === "direct") {
+      if (courantLi) { courantLi.removeAttribute("aria-current"); courantLi = null; }
+      if (avant !== "direct" || !DR.source) { entrerDirect(); }
     } else {
       construireListe(); R.i = -1; allerA(0, false); annoncerEvenement();
     }
@@ -813,6 +1071,17 @@
   if (selProjet) { selProjet.addEventListener("change", function () { changerProjet(selProjet.value); }); }
   if ($("b-mode-instantane")) { $("b-mode-instantane").addEventListener("click", function () { changerMode("instantane"); }); }
   if ($("b-mode-replay")) { $("b-mode-replay").addEventListener("click", function () { changerMode("replay"); }); }
+  if ($("b-mode-direct")) {
+    var aide = $("b-direct-aide");
+    if (DIRECT_DISPO) {
+      $("b-mode-direct").disabled = false;
+      $("b-mode-direct").addEventListener("click", function () { changerMode("direct"); });
+      if (aide) { aide.textContent = "Mode Direct disponible : la page est servie par le serveur local."; aide.classList.add("b-dispo"); }
+    } else if (aide) {
+      aide.insertBefore(document.createTextNode("Mode Direct désactivé ici (page ouverte sans le serveur local). "),
+        aide.firstChild);
+    }
+  }
   if ($("b-lecture")) { $("b-lecture").addEventListener("click", function () { lecture(!R.lecture); }); }
   if ($("b-prec")) { $("b-prec").addEventListener("click", function () { R.lecture = false; allerA(R.i - 1, false); annoncerEvenement(); }); }
   if ($("b-suiv")) { $("b-suiv").addEventListener("click", function () { R.lecture = false; allerA(R.i + 1, true); annoncerEvenement(); }); }
@@ -885,6 +1154,7 @@
       if (R.i >= R.liste.length - 1) { lecture(false); }
       else { allerA(R.i + 1, true); R.prochain = t + periode() * 1000; }
     }
+    if (etat.mode === "direct") { entretenirDirect(); }
     if (!reduit || bouge || redessiner || (banniere && t < banniere.fin)) {
       dessiner(t);
       redessiner = false;
@@ -900,7 +1170,7 @@
   dimensionner();
   construireListe();
   ordre.forEach(function (id) { var p = persos[id], d = domicile(p); p.x = d.x; p.y = d.y; p.dir = d.dir; });
-  changerMode(h.mode === "replay" ? "replay" : "instantane", true);
+  changerMode(h.mode === "replay" ? "replay" : (h.mode === "direct" ? "direct" : "instantane"), true);
   if (h.mode === "replay" && h.ev) { allerA(parseInt(h.ev, 10) || 0, false); }
   if (h.perso && persos[h.perso]) { selection = h.perso; afficherFiche(h.perso); }
   window.requestAnimationFrame(boucle);
