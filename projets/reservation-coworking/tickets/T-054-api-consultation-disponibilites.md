@@ -4,7 +4,7 @@ id: T-054
 titre: API de consultation des disponibilités (F-01, lecture seule)
 projet: reservation-coworking
 type: fonctionnalite        # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: EN_REVUE            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: agent:dev-backend  # agent:<nom> | salarie:<prenom>
 competence_requise: api-rest (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -16,10 +16,10 @@ validation_humaine_requise: non   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:coordinateur
 cree_le: 2026-11-25
-maj_le: 2026-11-25
-statut_depuis: 2026-11-25   # date du dernier changement de statut
+maj_le: 2026-11-26
+statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le: 2026-11-25        # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le: 2026-11-26      # facultatif : date du passage TERMINE
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
 
@@ -63,7 +63,7 @@ termine_le:                 # facultatif : date du passage TERMINE
   - Commit unique préfixé `T-054`. Le nombre de tests (140) n'est pas vérifié ici : à confirmer par le testeur.
   Non cochés par le relecteur : critères d'acceptation (porte 2 du testeur).
 - **Revue humaine requise** : oui (S3-R2 : le journal porte « touche la sécurité » ; routes sans authentification à titre provisoire, DEC-011). Ticket compagnon « Revue humaine T-054 » ABSENT : à créer par le chef-de-projet (AF3), ou à rattacher à T-036 (revue humaine de T-020) par décision explicite.
-- **Revue humaine** :
+- **Revue humaine** : Karim (joué par Ethan), 2026-11-26 — FAVORABLE. Vérifié : accès sans connexion signalé PROVISOIRE (DEC-011, protection par T-013/T-020 avant tout GO) ; aucune donnée de membre (requêtes limitées à salle et salle_id/heure_debut, modèles de réponse sans champ personnel) ; erreurs 422/503 à message fixe, sans écho de l'entrée. Réserves non bloquantes, déjà tracées : T-069 (connexion poolée gelée), T-070 (test 503 statement_timeout).
 
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
@@ -77,3 +77,5 @@ termine_le:                 # facultatif : date du passage TERMINE
 - 2026-11-25 11:50 · agent:dev-backend · livré pour revue ; aucun commit (consigne du coordinateur) · total 1,5 h
 - 2026-11-25 14:20 · agent:securite · audit sécurité : NON BLOQUANT sur `4674c76`, rapport [securite-2026-11-25-4.md](../rapports/securite-2026-11-25-4.md) ; 0 critique, 0 haute ; 2 nouveaux constats bas (14 : moteur applicatif sans borne côté client si la base gèle ; 15 : journal d'accès Uvicorn avec chaîne de requête brute) ; aucune donnée de membre exposée, `date` validée sans écho, requêtes paramétrées, 503 sans fuite (vérifié sur instance jetable) ; accès sans connexion = écart provisoire DEC-011 ; report des constats 2 et 4 dans T-063 jugé acceptable sous conditions (temps compté dans T-043) · 0 h
 - 2026-11-25 13:35 · agent:testeur · vérifié sur le SHA 4674c76 : 7/7 critères cochés, suites vertes, avis relecteur APPROUVÉ ; **reste EN_REVUE : il ne manque que la revue humaine** (ligne « Revue humaine » vide, ticket compagnon T-068 non fait), R13. Preuves : suite complète sous Python 3.14.10 (`python:3.14-slim`, copie de `git archive 4674c76`) avec `TEST_DATABASE_URL` vers `postgres:16` jetable (`app_test`) : 140 passés, 0 ignoré, 0 échec. Image construite avec `--build-arg GIT_COMMIT=4674c76dbf06dee18ca1d28d819a850f2d70f333`, conteneur + base vide : (1) `GET /api/salles` 200, 3 salles (Salle 1 à 3, `capacite` et `equipements` null) en 0,015 s ; (2, 3) `GET /api/disponibilites?date=2026-12-01` (mardi) 200 : 3 salles × 12 créneaux (8-9 h à 19-20 h), tous `libre` ; 2026-11-28 (samedi) et 2026-11-29 (dimanche) : 200, 3 salles, `creneaux: []` ; (4) deux réservations insérées en SQL (salle 2 à 10 h, salle 1 à 19 h, compte « Zoe Secrete ») : exactement ces 2 créneaux `occupe`, les 34 autres `libre` ; réponse sans nom, e-mail, `@` ni id (clés : `salle_id`, `nom` de salle, `creneaux[heure_debut, heure_fin, etat]`) ; (5) `date=pas-une-date`, `2026-13-45`, `date=` vide, absente, chiffres pleine chasse `２０２６-12-01`, `2020-01-01` (passée), `2027-06-01` (hors J+14) : tous 422 JSON `{erreur, message}` sans écho, aucun 500 ; (6) temps mesuré à la main : 4 à 8 ms (36 créneaux occupés) ; `test_temps_de_reponse_sous_2_s_h05` vert ; (7) commentaire `PROVISOIRE (DEC-011)` renvoyant à T-013 et T-020 en tête de `app/reservation/api.py` (lu) et ligne du 2026-11-25 23:40 au journal de T-020 (lue). Non-régression : `/health` 200 `{"status":"ok","commit":"4674c76d..."}` en 0,04 s, `/` 200 (HTML), `/api/inconnu` 404 JSON `{erreur: introuvable}`. Remarque 6 du relecteur, constatée à la main (sans test écrit) : (a) verrou `ACCESS EXCLUSIVE` sur `reservation` tenu 14 s → `GET /api/disponibilites` 503 JSON fixe en 5,02 s (`statement_timeout`), journal « Base indisponible pour /api/disponibilites » sans détail, `/health` 200, retour 200 après libération : conforme ; (b) base gelée (`docker pause`), connexion neuve : 503 en 5,04 s, conforme ; (c) base gelée avec une connexion **déjà poolée** : **aucune réponse en 130 s** (défaut hors critères, même famille que T-010/T-056) → ticket `bug` T-069 ; les appels suivants renvoient 503 en 5 s, `/health` 503 en 1,01 s, reprise à 200 après `unpause`. Ticket `tache` T-070 « Test manquant T-054 » (503 sur `statement_timeout` non couvert par un test). Ces deux points sont hors critères ; T-069 est à trier (S1-R5). Aucun `app/` modifié ; conteneurs, réseau et image d'essai supprimés ; rapport [tests-2026-11-25.md](../rapports/tests-2026-11-25.md) (campagne 4) · temps compté dans T-041
+- 2026-11-26 09:30 · salarie:karim (Ethan) · revue humaine : favorable, réserves tracées dans T-069 et T-070 (T-068) · 0,5 h
+- 2026-11-26 10:20 · agent:testeur · campagne 7, SHA 011ac347bd3674518d9592347125cd948580669b (code de app/ identique à 748c75e) : revue humaine désormais remplie (Karim, 2026-11-26, FAVORABLE ; T-068 TERMINE), avis relecteur APPROUVÉ ; 7/7 critères maintenus : suite complète 216 passés, 0 ignoré, 0 échec (Python 3.14.10, PostgreSQL 16 jetable), tests `test_salles_renvoie_les_trois_salles`, `test_reservation_rend_le_creneau_occupe_sans_donnee_de_membre`, `test_date_invalide_422_sans_echo`, `test_temps_de_reponse_sous_2_s_h05` verts ; image construite avec `--build-arg GIT_COMMIT=011ac34...` : `/api/salles` 200 (3 salles), `/api/disponibilites?date=2026-12-01` 200 (3 salles x 12 créneaux), `2026-11-28` (samedi) 200 sans créneau, `pas-une-date` et `2020-01-01` 422 ; commentaire `PROVISOIRE (DEC-011)` toujours en tête de `api.py`. Vérifié : 7/7 critères, suites vertes, SHA 011ac34 → TERMINE (réserves T-069 et T-070 ouvertes, hors critères) · temps compté dans T-067

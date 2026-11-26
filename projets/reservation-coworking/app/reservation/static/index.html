@@ -3,12 +3,28 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Réservation de salles - Les Arcades</title>
+  <title>Disponibilités des salles - Les Arcades</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/disponibilites.js"></script>
 </head>
 <body>
+  <header class="entete">
+    <p class="marque">Coworking Les Arcades</p>
+  </header>
   <main>
-    <h1>Réservation de salles - Les Arcades</h1>
-    <p>L'application démarre. Les écrans arrivent avec les prochains tickets.</p>
+    <h1>Disponibilités des salles</h1>
+    <p class="aide">Consultation seulement : la réservation arrive avec une prochaine version.</p>
+
+    <div class="choix-date">
+      <label for="date">Date à consulter</label>
+      <input type="date" id="date" name="date" aria-describedby="aide-date">
+      <p id="aide-date" class="aide">Jusqu'à 14&nbsp;jours à l'avance. Heures d'ouverture : 8&nbsp;h à 20&nbsp;h, du lundi au vendredi.</p>
+    </div>
+
+    <p id="message" role="status" aria-live="polite" hidden></p>
+
+    <div id="salles"></div>
+    <noscript><p class="message-erreur">Cette page a besoin de JavaScript pour afficher les disponibilités.</p></noscript>
   </main>
 </body>
 </html>

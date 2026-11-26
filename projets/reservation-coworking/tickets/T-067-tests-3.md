@@ -9,14 +9,14 @@ priorite: normale           # critique | haute | normale | basse
 assigne: agent:testeur      # agent:<nom> | salarie:<prenom>
 competence_requise: tests-unitaires (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 4             # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 1.9          # heures équivalent humain
+temps_passe_h: 2.5          # heures équivalent humain
 depend_de: [T-007]          # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-25
-maj_le: 2026-11-25
+maj_le: 2026-11-26
 statut_depuis: 2026-11-25   # date du dernier changement de statut
 debut_le: 2026-11-25         # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
@@ -50,3 +50,4 @@ Pas de `depend_de` vers les tickets vérifiés (le passage `TERMINE` en dépend)
 - 2026-11-25 16:15 · agent:testeur · campagne 5 (SHA 16282cc9dfe9e10af529ebf607d579961c52e9ae) : T-062 vérifié 5/5, passé TERMINE ; T-063 critères 1 à 3 cochés, critère 4 (console navigateur) non constaté, reste EN_REVUE (revue humaine T-064 manquante) ; suite complète 183 passed (Python 3.14.10, PostgreSQL 16) ; non-régression T-054, T-010, T-011 OK ; aucune régression ni bug créé, aucun test manquant. Détail : rapports/tests-2026-11-25.md, campagne 5. Reste à vérifier : T-058, T-060, T-061, T-065, T-069 à T-072 (ticket laissé EN_COURS) · 1 h
 - 2026-11-25 15:30 · agent:testeur · campagne 6 (SHA 9114f9e4ff26b35c6fd219b05da94165b47c1a78) : T-060 vérifié 3/3 et T-071 vérifié 4/4, passés TERMINE ; suite complète 214 passés (Python 3.14.10, PostgreSQL 16) ; non-régression T-054, T-062, T-063, T-010, T-011 OK ; aucune régression ni bug créé, aucun test manquant. Détail : rapports/tests-2026-11-25.md, campagne 6. Reste à vérifier : T-058, T-061, T-065, T-069, T-070, T-072 (ticket laissé EN_COURS) · 0.6 h
 - 2026-11-25 16:30 · agent:testeur · campagne 6 (suite) : T-073 vérifié sur le SHA 748c75e3a2b458d144f63d1327e7bcd83255f31c (216 passés, 4/4 critères cochés), laissé EN_REVUE (seule manque la revue humaine T-074) ; suite aussi rejouée sur 748c75e pour T-060 et T-071 (verdict maintenu sur 9114f9e) · 0.3 h
+- 2026-11-26 10:30 · agent:testeur · campagne 7 (SHA 011ac347bd3674518d9592347125cd948580669b, code de app/ identique à 748c75e) : suite complète 216 passés, 0 ignoré, 0 échec ; T-054 vérifié 7/7 et passé TERMINE (revue humaine T-068 faite) ; T-063 critère 4 constaté dans Chrome headless via DevTools (0 erreur CSP, témoin positif OK), 4/4 cochés, reste EN_REVUE (revue humaine T-064 manquante) ; T-073 4/4 maintenus, reste EN_REVUE (revue humaine T-074 manquante) ; aucune régression, aucun bug ni tâche créé. Détail : rapports/tests-2026-11-25.md, campagne 7. Reste à vérifier : T-058, T-061, T-065, T-069, T-070, T-072 (ticket laissé EN_COURS) · 0.6 h

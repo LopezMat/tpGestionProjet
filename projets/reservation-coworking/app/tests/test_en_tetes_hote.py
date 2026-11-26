@@ -23,12 +23,8 @@ def test_404_porte_les_en_tetes(client_base_ok):
     assert reponse.headers["content-security-policy"] == CSP
 
 
-def test_page_statique_sans_script_ni_style_en_ligne():
-    from reservation.app import DOSSIER_STATIQUE
-
-    html = (DOSSIER_STATIQUE / "index.html").read_text(encoding="utf-8").lower()
-    for interdit in ("<script", "<style", "style=", "onclick=", "onload="):
-        assert interdit not in html
+# Le contrôle « aucun script ni style en ligne » de toutes les pages et fichiers du front
+# est dans test_front_statique.py (T-055).
 
 
 @pytest.mark.parametrize(
