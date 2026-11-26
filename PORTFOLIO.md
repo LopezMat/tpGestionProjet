@@ -2,20 +2,19 @@
 
 # Portefeuille des projets
 
-> **Fichier généré** le 2026-11-25 par `scripts/tableau.py` à partir des tickets, seule source de vérité (R9). Toute modification à la main sera écrasée à la prochaine génération.
+> **Fichier généré** le 2026-11-26 par `scripts/tableau.py` à partir des tickets, seule source de vérité (R9). Toute modification à la main sera écrasée à la prochaine génération.
 
 ## Vue d'ensemble
 
 | Projet | Client | Type | État | Avancement | Budget consommé / prévu | % | Fin projetée | Deadline | Écart (j ouvrés) | BLOQUE | ATTENTE_HUMAIN | Alertes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 18,6 % | 1 038,75 € / 6 000,00 € | 17,3 % | 2026-12-16 | 2026-12-18 | -2 | 0 | 1 | 2 |
+| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 19,7 % | 1 087,04 € / 6 000,00 € | 18,1 % | 2026-12-17 | 2026-12-18 | -1 | 0 | 1 | 1 |
 
 ## Alertes
 
 | Projet | Type | Détail |
 |---|---|---|
-| reservation-coworking | Utilisation (info) | claire utilisé à 31,7 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
-| reservation-coworking | Utilisation (info) | nadia utilisé à 49,9 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
+| reservation-coworking | Utilisation (info) | claire utilisé à 33,6 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
 
 ## Décisions humaines attendues
 
@@ -27,11 +26,11 @@
 
 | Salarié | Statut | Niveau | Allocation totale | Par projet | Utilisation (AF9) |
 |---|---|---|---|---|---|
-| claire | actif | expert | 20 % | reservation-coworking 20 % | reservation-coworking 31,7 % |
+| claire | actif | expert | 20 % | reservation-coworking 20 % | reservation-coworking 33,6 % |
 | hugo | actif | debutant | 0 % | aucune | — |
-| karim | actif | expert | 15 % | reservation-coworking 15 % | reservation-coworking 51,6 % |
+| karim | actif | expert | 15 % | reservation-coworking 15 % | reservation-coworking 51,8 % |
 | lea | actif | confirme | 0 % | aucune | — |
-| nadia | actif | confirme | 20 % | reservation-coworking 20 % | reservation-coworking 49,9 % |
+| nadia | actif | confirme | 20 % | reservation-coworking 20 % | reservation-coworking 53,0 % |
 
 ## Événements d'équipe à venir
 

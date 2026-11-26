@@ -4,22 +4,22 @@ id: T-068
 titre: Revue humaine T-054 (API de consultation sans connexion)
 projet: reservation-coworking
 type: tache                 # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: salarie:karim      # agent:<nom> | salarie:<prenom>
 competence_requise: securite-applicative (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 0.5           # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 0            # heures équivalent humain
+temps_passe_h: 0.5          # heures équivalent humain
 depend_de: [T-007]          # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: coordinateur
 cree_le: 2026-11-25
-maj_le: 2026-11-25
-statut_depuis: 2026-11-25   # date du dernier changement de statut
-debut_le:                   # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+maj_le: 2026-11-26
+statut_depuis: 2026-11-26   # date du dernier changement de statut
+debut_le:     2026-11-26              # facultatif : date du premier passage EN_COURS
+termine_le:       2026-11-26          # facultatif : date du passage TERMINE
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
 
@@ -35,10 +35,10 @@ Points à examiner : aucune donnée de membre exposée (DEC-011) ; validation de
 **Ticket salarié (AF11, R15)** : à faire par un humain.
 
 ## Critères d'acceptation
-- [ ] La ligne « Revue humaine » de T-054 est remplie par Karim : prénom, date, avis (favorable, ou réserves listées).
-- [ ] Aucune réponse des deux routes ne contient de donnée de membre, et l'accès sans connexion est bien limité à la lecture (DEC-011).
-- [ ] Chaque réserve donne un commentaire à traiter dans T-054 ou un ticket `bug`.
-- [ ] Le temps passé est noté (journal, `temps_passe_h`).
+- [x] La ligne « Revue humaine » de T-054 est remplie par Karim : prénom, date, avis (favorable, ou réserves listées).
+- [x] Aucune réponse des deux routes ne contient de donnée de membre, et l'accès sans connexion est bien limité à la lecture (DEC-011).
+- [x] Chaque réserve donne un commentaire à traiter dans T-054 ou un ticket `bug`.
+- [x] Le temps passé est noté (journal, `temps_passe_h`).
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
@@ -50,3 +50,4 @@ Points à examiner : aucune donnée de membre exposée (DEC-011) ; validation de
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-25 23:55 · coordinateur · création (revue humaine requise sur T-054 par le relecteur-code, S3-R2) · 0 h
+- 2026-11-26 09:30 · salarie:karim (Ethan) · revue de T-054 faite, avis favorable, réserves = T-069 et T-070 · 0,5 h
