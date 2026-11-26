@@ -1,9 +1,9 @@
 ---
 titre: Système 1 — Gestion de projet
-statut: VALIDÉ
+statut: EN_REVUE
 responsable: B
-version: 1.1
-maj_le: 2026-11-24
+version: 1.2
+maj_le: 2026-11-26
 valide_par: Ethan
 decision: DEC-002
 ---
@@ -25,7 +25,7 @@ decision: DEC-002
 
 ## 3. Entrées et sorties
 - **Entrées** : `cdc.md` et `architecture.md` **VALIDÉS** ; `equipe/membres/*.md`, `equipe/agents.md`, `equipe/calendrier.md` ; tickets existants ; `retex.md`.
-- **Sorties** : `tickets/T-NNN-*.md`, `planning.md`, mises à jour de `projet.md`, `TABLEAU.md` et `PORTFOLIO.md` (générés), `retex.md`, tickets `formation` et `amelioration`.
+- **Sorties** : `tickets/T-NNN-*.md`, `planning.md`, mises à jour de `projet.md`, `TABLEAU.md` et `PORTFOLIO.md` (générés), `retex.md`, tickets `amelioration`, et le plan de formation de l'ESN dans `projets/esn-interne/` : tickets `formation` et `planning.md` (S1-R13, CLAUDE.md R19).
 
 ## 4. Étapes
 1. **Découpage.** À partir du CDC VALIDÉ, une fonctionnalité donne un ou plusieurs tickets, chacun avec des critères d'acceptation vérifiables.
@@ -34,7 +34,7 @@ decision: DEC-002
    - **AF1** contact client → salarié `relation-client` (au moins `confirme`) ;
    - **AF2** ticket `decision` → porteur salarié ; la validation formelle reste humaine (R5) ;
    - **AF3** revue humaine (S3-R2) → ticket « Revue humaine T-NNN » assigné à un salarié compétent qui n'est pas l'auteur ;
-   - **AF4** compétence hors périmètre des agents → salarié qui la possède, sinon ticket `formation` ;
+   - **AF4** compétence hors périmètre des agents → salarié qui la possède, sinon ticket `formation` dans `esn-interne` (S1-R6) ;
    - **AF5** ticket `critique` → binôme agent + salarié `expert` ou `confirme` ;
    - **AF6** par défaut → agent ;
    - **AF7** niveau au moins égal au niveau requis, sinon binôme et ticket `formation` ; jamais de `critique` pour un `debutant` ou un salarié `en_integration` ;
@@ -46,7 +46,8 @@ decision: DEC-002
 5. **Arrêt humain** : ticket `ATTENTE_HUMAIN` « Validation budget et délais ».
 6. **Suivi** à chaque étape du pipeline : `tableau.py` puis synthèse (skill [avancement](../../.claude/skills/avancement/SKILL.md)).
 7. **Triage** des tickets créés par S2 et S3 (bug, incident, support, amelioration) : priorité et assignation.
-8. **Retour d'expérience** en fin de jalon ou de projet : `retex.md`, puis tickets `amelioration` (agents) et `formation` (salariés).
+8. **Retour d'expérience** en fin de jalon ou de projet : `retex.md`, puis tickets `amelioration` (agents) et `formation` (salariés). Les tickets `formation` sont créés dans `projets/esn-interne/` (S1-R6, S1-R13).
+9. **Imputation** : au triage et lors d'une révision du budget, le chef de projet peut proposer qu'un ticket soit pris en charge par l'ESN (crise, garantie de livraison, outillage commun). Le champ `imputation: esn` n'est renseigné qu'après une décision humaine validée (CLAUDE.md R18).
 
 ## 5. Règles du ticketing
 
@@ -65,16 +66,23 @@ decision: DEC-002
 **S1-R5 · Les tickets bug, incident et support créés par S2 sont triés par le chef de projet** avant toute réalisation, sauf les incidents `critique`, que le `gestionnaire-crise` traite immédiatement.
 *Pourquoi :* priorité et assignation restent cohérentes avec le planning, sans retarder une crise.
 
-**S1-R6 · Si aucun salarié n'a la compétence requise, le chef de projet crée un ticket `formation`.**
-*Pourquoi :* la consigne demande d'identifier les besoins en formation ; on les rend visibles et chiffrés.
+**S1-R6 · Un besoin de formation (AF4, AF7, AF10) donne un ticket `formation` dans `projets/esn-interne/`, jamais dans un projet client.** C'est le cas si aucun salarié n'a la compétence requise, si un seul la porte, ou si une affectation se fait un niveau en dessous. Si un ticket client ne peut pas avancer sans cette formation, il passe `BLOQUE` avec `bloque_par: formation esn-interne/T-NNN`, et le cas est signalé dans la validation du budget et des délais.
+*Pourquoi :* la consigne demande d'identifier les besoins en formation ; on les rend visibles et chiffrés. La compétence acquise sert toute l'ESN, au-delà du projet. Le client ne paie pas la formation des salariés (DEC-009 E, DEC-021), et une formation peut durer plus longtemps qu'un projet client. `tableau.py` ne calcule pas les dépendances d'un projet à l'autre : `BLOQUE` rend l'attente visible (DEC-023).
 
 **S1-R7 · Les améliorations d'agents passent par des tickets `amelioration`**, issus du `retex.md` ou des incidents, avant toute modification d'un fichier d'agent (R11).
 *Pourquoi :* la consigne demande d'identifier les améliorations des agents ; un ticket les trace, les chiffre et les soumet à validation.
 
+**S1-R13 · Plan de formation de l'ESN.** Le plan de formation est fait de deux éléments, tous deux dans `projets/esn-interne/` (CLAUDE.md R19) :
+- les tickets `formation`, qui indiquent la compétence, le niveau visé, le salarié, la modalité, l'estimation et le ticket ou l'événement déclencheur ;
+- `planning.md`, qui tient le registre des compétences à risque : compétence absente, un seul titulaire au niveau `confirme` ou plus, ou titulaire sur le départ.
+
+Le chef de projet met le plan à jour à chaque retex, à chaque événement d'équipe (arrivée, départ) et à chaque détection AF10. Chaque mise à jour passe par un ticket `decision` `ATTENTE_HUMAIN` (candidats, modalité, coût, allocation à `esn-interne`). Le skill `avancement` en présente l'état, que `PORTFOLIO.md` résume.
+*Pourquoi :* la consigne demande d'identifier les besoins de formation. Les scénarios du 2026-11-26 ont laissé des besoins ouverts sans fin, faute de plan : la dépendance à Nadia (`sauvegarde-restauration`, `docker`) et à Karim (`securite-applicative`, revue humaine), et les compétences `documentation` et second relecteur sécurité, qui n'ont plus de titulaire (DEC-021). Une formation se paie en capacité : c'est donc une décision humaine, planifiée et chiffrée comme le reste du travail, sans être facturée au client (DEC-023).
+
 ## 6. Événements d'équipe et de budget
 
 Chaque événement suit la même séquence, telle que les skills l'appliquent :
-1. **le coordinateur crée le ticket `decision`** (`A_FAIRE`, assigné à `agent:chef-de-projet`) ;
+1. **le coordinateur crée le ticket `decision`** (`A_FAIRE`, assigné à `agent:chef-de-projet`), dans `projets/esn-interne/` pour une arrivée, un départ ou une absence, et dans le projet du client pour une révision de son budget (CLAUDE.md § 5) ;
 2. **le chef de projet y écrit l'analyse d'impact et sa proposition**, puis le passe `ATTENTE_HUMAIN` ;
 3. **un humain décide**, et la décision est tracée dans `docs/decisions/` (skill `tracer-decision`) ;
 4. **le coordinateur applique les changements d'`equipe/`** après la décision ; il est le seul à écrire dans `equipe/`.
@@ -100,9 +108,10 @@ Chaque événement suit la même séquence, telle que les skills l'appliquent :
 ## 7. Budget et délais
 - Unités et taux : [ARCHITECTURE § 8](../ARCHITECTURE.md#8-unités-et-coûts) (7 h/j ; agents à 15 €/h ; salariés de 350 à 550 €/j).
 - Formules et alertes : [ARCHITECTURE § 7](../ARCHITECTURE.md#7-ticketing-résumé).
+- **Coût imputé au budget du projet** : pour un projet client, le coût client, soit les tickets `imputation: client` (valeur par défaut, CLAUDE.md R18). La part prise en charge par l'ESN est affichée à part. Pour `esn-interne`, tous les tickets, comparés à son budget de fonctionnement (R19).
 
-**S1-R11 · Au-delà de 90 % du budget consommé, ou si la date de fin projetée dépasse la deadline,** le chef de projet crée un ticket `ATTENTE_HUMAIN` avec des scénarios.
-*Pourquoi :* le contrôle du budget et des délais est un objectif de la consigne ; l'alerte doit arriver tant qu'il reste des marges de manœuvre.
+**S1-R11 · Au-delà de 90 % du coût imputé au budget du projet** (le coût client pour un projet client, le coût total pour `esn-interne`), **ou si la date de fin projetée dépasse la deadline,** le chef de projet crée un ticket `ATTENTE_HUMAIN` avec des scénarios.
+*Pourquoi :* le contrôle du budget et des délais est un objectif de la consigne ; l'alerte doit arriver tant qu'il reste des marges de manœuvre. Elle mesure ce que le client paie réellement, et non ce que l'ESN a décidé de prendre à sa charge : DEC-020 (condition 1) faisait corriger ce calcul à la main (DEC-023).
 
 **S1-R12 · Un ticket `EN_COURS` sans mise à jour depuis plus de 2 jours ouvrés déclenche une alerte.**
 *Pourquoi :* sur un projet d'une semaine, 2 jours sans nouvelles représentent 40 % du temps disponible.
@@ -111,6 +120,8 @@ Chaque événement suit la même séquence, telle que les skills l'appliquent :
 - Chaque ticket est conforme au template (skill [creer-ticket](../../.claude/skills/creer-ticket/SKILL.md)) et porte `competence_requise`.
 - Pas de dépendance circulaire ; pas d'affectation pendant une absence.
 - Cohérence entre `projet.md` (budget, deadline) et `TABLEAU.md`.
+- Un ticket `imputation: esn` cite dans `imputation_decision` une décision `VALIDÉ` de `docs/decisions/`. Sinon, `tableau.py` le compte au client et signale une anomalie (R18).
+- Aucun ticket `formation` n'est créé dans un projet client (S1-R6).
 
 ## 9. Interfaces
 - **S4 →** fournit `cdc.md` et `architecture.md` VALIDÉS.
