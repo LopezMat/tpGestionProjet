@@ -64,6 +64,7 @@ python scripts/test_sonde_sante.py         # macOS : python3 …
 python scripts/test_prod_locale.py         # macOS : python3 …  (test réel si Docker répond, environ 1 min 30)
 python scripts/test_verifier_validations.py  # macOS : python3 …
 python scripts/test_console.py             # macOS : python3 …  (demande PyYAML)
+python scripts/test_qui_fait_quoi.py       # macOS : python3 …
 ```
 
 La CI (`.github/workflows/ci.yml`) lance les mêmes tests à chaque push ; `validations.yml`, `securite.yml` et `tableau.yml` complètent le contrôle (ARCHITECTURE § 3).
@@ -93,6 +94,20 @@ Ensuite, ouvrir **`console/index.html`** dans un navigateur, par double-clic : a
 - **Mêmes chiffres que les tableaux de bord.** Les calculs viennent des fonctions de `scripts/tableau.py`.
 - **Hors ligne.** Les diagrammes Mermaid utilisent la copie locale `scripts/vendor/mermaid.min.js` (Mermaid 12.3.0, licence MIT dans `scripts/vendor/mermaid-LICENSE`), copiée dans `console/assets/` à chaque génération. Aucun réseau n'est nécessaire en soutenance. Pour utiliser le CDN à la place : `--mermaid-src https://cdn.jsdelivr.net/npm/mermaid@12.3.0/dist/mermaid.min.js`.
 - **Options.** `--date AAAA-MM-JJ` fixe la date de calcul ; `--racine DIR` désigne un autre dépôt.
+
+## Page « qui fait quoi »
+
+Une page de pilotage d'un projet, complémentaire de la console : qui travaille en ce moment, qui est attendu (humains), ce qui vient de finir et l'étape de chaque ticket de l'incrément ([DEC-014](docs/decisions/2026-11-26-DEC-014-page-qui-fait-quoi.md)). C'est un outil interne, comme la console.
+
+```
+python scripts/qui_fait_quoi.py projets/<slug>     # macOS : python3 …   (bibliothèque standard seule)
+```
+
+Ensuite, ouvrir **`qui-fait-quoi.html`**, créé à la racine du dépôt, par double-clic. Un second argument choisit un autre fichier de sortie.
+
+- **Sources.** Les statuts viennent des tickets `projets/<slug>/tickets/T-*.md`, seule source de vérité (R9) ; les chiffres viennent de `TABLEAU.md`. L'instantané `projets/<slug>/qui-fait-quoi.json` (qui travaille, qui est attendu, étape de chaque ticket, personnages) est **tenu par le coordinateur** : le mettre à jour, puis relancer la commande.
+- **Lecture seule.** Le script n'écrit que la page de sortie. `qui-fait-quoi.html` est **ignoré par Git** ; seuls le modèle `scripts/qui_fait_quoi_modele.html` et l'instantané sont versionnés.
+- **Échappement.** Les textes des tickets et de l'instantané ne peuvent pas injecter de balise : en-tête échappé en HTML, JSON sans `<`, `>` ni `&` bruts, personnages échappés dans le modèle (vérifié par `test_qui_fait_quoi.py`).
 
 ## État d'avancement
 

@@ -5,5 +5,9 @@
 # Console de consultation (DEC-012) : site généré par scripts/console.py, jamais versionné.
 /console/
 
+# Page « qui fait quoi » (DEC-014) : générée par scripts/qui_fait_quoi.py, jamais versionnée.
+# Le modèle scripts/qui_fait_quoi_modele.html et l'instantané projets/<slug>/qui-fait-quoi.json le sont.
+/qui-fait-quoi.html
+
 __pycache__/
 *.pyc

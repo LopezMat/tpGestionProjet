@@ -2,8 +2,8 @@
 titre: Registre des décisions humaines
 statut: EN_REVUE          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
 responsable: B
-version: 0.10
-maj_le: 2026-11-25
+version: 0.11
+maj_le: 2026-11-26
 valide_par:
 decision:
 ---
@@ -45,3 +45,4 @@ Un document `VALIDÉ` est figé pour les agents (R6). Pour le faire évoluer, un
 | [DEC-011](2026-11-25-DEC-011-increment-consultation-coworking.md) | 2026-11-25 | reservation-coworking : incrément socle et consultation des disponibilités avant la soutenance, écart provisoire à F-04 (T-054, T-055) | VALIDÉ |
 | [DEC-012](2026-11-25-DEC-012-console-consultation.md) | 2026-11-25 | Console de consultation de l'ESN (outil interne, lecture seule) | VALIDÉ |
 | [DEC-013](2026-11-25-DEC-013-role-postgresql-coworking.md) | 2026-11-25 | reservation-coworking : rôle PostgreSQL applicatif non superutilisateur, propriétaire de la base, repli `absent` supprimé (T-057, option A) | VALIDÉ |
+| [DEC-014](2026-11-26-DEC-014-page-qui-fait-quoi.md) | 2026-11-26 | Page de pilotage « qui fait quoi » (outil interne, régularisation de la PR #14, page générée hors Git) | EN_REVUE |
