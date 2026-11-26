@@ -8,12 +8,13 @@
 
 | Projet | Client | Type | État | Avancement | Budget consommé / prévu | % | Fin projetée | Deadline | Écart (j ouvrés) | BLOQUE | ATTENTE_HUMAIN | Alertes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 19,7 % | 1 087,04 € / 6 000,00 € | 18,1 % | 2026-12-17 | 2026-12-18 | -1 | 0 | 1 | 1 |
+| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 19,1 % | 1 193,54 € / 6 000,00 € | 19,9 % | 2026-12-21 | 2026-12-18 | +1 | 0 | 1 | 2 |
 
 ## Alertes
 
 | Projet | Type | Détail |
 |---|---|---|
+| reservation-coworking | Délais | fin projetée le 2026-12-21 après la deadline du 2026-12-18 (+1 j ouvré) (S1-R11) |
 | reservation-coworking | Utilisation (info) | claire utilisé à 33,6 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
 
 ## Décisions humaines attendues
@@ -30,7 +31,7 @@
 | hugo | actif | debutant | 0 % | aucune | — |
 | karim | actif | expert | 15 % | reservation-coworking 15 % | reservation-coworking 51,8 % |
 | lea | actif | confirme | 0 % | aucune | — |
-| nadia | actif | confirme | 20 % | reservation-coworking 20 % | reservation-coworking 53,0 % |
+| nadia | actif | confirme | 20 % | reservation-coworking 20 % | reservation-coworking 61,4 % |
 
 ## Événements d'équipe à venir
 
@@ -42,4 +43,4 @@
 
 ## Anomalies de données
 
-Aucune.
+- reservation-coworking : 1 anomalie(s), voir son TABLEAU.md

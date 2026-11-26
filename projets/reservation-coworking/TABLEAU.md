@@ -9,32 +9,33 @@
 | Indicateur | Valeur |
 |---|---|
 | Type · état | metier · cadrage |
-| Avancement (h estimées terminées / h estimées hors ANNULE) | 19,7 % (35,5 h / 180,0 h) |
-| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 117,8 h |
-| Budget consommé / prévu | 1 087,04 € / 6 000,00 € (18,1 %) |
-| Coût projeté à terminaison (consommé + reste × taux) | 4 418,11 € |
-| Fin projetée | 2026-12-17 |
+| Avancement (h estimées terminées / h estimées hors ANNULE) | 19,1 % (35,5 h / 186,0 h) |
+| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 118,7 h |
+| Budget consommé / prévu | 1 193,54 € / 6 000,00 € (19,9 %) |
+| Coût projeté à terminaison (consommé + reste × taux) | 4 612,04 € |
+| Fin projetée | 2026-12-21 |
 | Deadline | 2026-12-18 |
-| Écart avec la deadline | -1 j ouvré |
+| Écart avec la deadline | +1 j ouvré |
 
 ## Alertes
 
 | Type | Détail |
 |---|---|
+| Délais | fin projetée le 2026-12-21 après la deadline du 2026-12-18 (+1 j ouvré) (S1-R11) |
 | Utilisation (info) | claire utilisé à 33,6 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
 
 ## Tickets par statut
 
 | Statut | Nombre |
 |---|---|
-| A_FAIRE | 46 |
-| EN_COURS | 5 |
-| EN_REVUE | 2 |
+| A_FAIRE | 48 |
+| EN_COURS | 6 |
+| EN_REVUE | 3 |
 | BLOQUE | 0 |
 | ATTENTE_HUMAIN | 1 |
 | TERMINE | 15 |
 | ANNULE | 5 |
-| **Total** | 74 |
+| **Total** | 78 |
 
 ## Tickets BLOQUE
 
@@ -72,6 +73,7 @@ Aucun ticket bloqué.
 | T-064 | Revue humaine T-063 (en-têtes de sécurité et Host) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-07 → 2026-12-08 |
 | T-072 | Rotation des journaux dans le modèle compose commun (constat 15) | salarie:nadia | A_FAIRE | 0,5 h | 2026-12-17 → 2026-12-17 |
 | T-074 | Revue humaine T-073 (en-têtes sur la 500 interne) | salarie:karim | A_FAIRE | 0,2 h | 2026-12-08 → 2026-12-08 |
+| T-078 | Image PostgreSQL 16.16 ou plus (43 CVE corrigées, veille P-1) | salarie:nadia | A_FAIRE | 1,5 h | 2026-12-17 → 2026-12-21 |
 
 ## Tickets formation ouverts
 
@@ -85,7 +87,7 @@ Période : du 2026-11-26 au 2026-12-18. Heures restantes assignées ÷ capacité
 |---|---|---|---|---|---|
 | claire | 20 % | 8,0 h | 23,8 h | 33,6 % | sous 50,0 % : ajuster l'allocation ? |
 | karim | 15 % | 9,2 h | 17,9 h | 51,8 % | — |
-| nadia | 20 % | 9,5 h | 17,9 h | 53,0 % | — |
+| nadia | 20 % | 11,0 h | 17,9 h | 61,4 % | — |
 
 ## Planning prévisionnel (Gantt)
 
@@ -126,18 +128,20 @@ gantt
     T-061 Contraintes sur l'e-mail et les champs vides de « utilisateu :t061, 2026-12-02, 2026-12-03
     T-062 Instant hors fuseau de Paris non converti dans « regles » (c :done, t062, 2026-11-25, 2026-11-26
     T-063 En-têtes de sécurité et contrôle de l'en-tête Host (constats :active, t063, 2026-11-26, 2026-11-27
-    T-065 Dette de tests et de documentation de l'incrément (remarques :t065, 2026-12-04, 2026-12-08
+    T-065 Dette de tests et de documentation de l'incrément (remarques :t065, 2026-12-07, 2026-12-08
     T-069 API de consultation sans réponse si une connexion poolée gèl :t069, 2026-12-04, 2026-12-05
     T-070 Test manquant T-054 (503 sur statement_timeout) :t070, 2026-12-04, 2026-12-05
     T-071 Journal d'accès sans chaîne de requête (constat 15) :done, t071, 2026-11-25, 2026-11-26
     T-073 En-têtes de sécurité sur la 500 interne (constat 16) :active, t073, 2026-11-26, 2026-11-27
+    T-079 Verrou des dépendances avec empreintes, image Python figée,  :t079, 2026-12-04, 2026-12-08
     section agent dev-frontend
     T-022 Front socle (connexion, mot de passe, navigation) (F-04) :t022, 2026-11-26, 2026-11-27
-    T-023 Front membres (disponibilités, réservation, annulation) (F-0 :t023, 2026-11-30, 2026-12-01
+    T-023 Front membres (disponibilités, réservation, annulation) (F-0 :t023, 2026-11-27, 2026-12-01
     T-024 Front accueil (vue du jour, gestion des comptes) (F-03, F-07 :t024, 2026-11-26, 2026-11-28
     T-025 Page de confidentialité (texte validé par le client) :t025, 2026-11-27, 2026-11-28
     T-027 Fiches des salles (F-06, Should) :t027, 2026-12-04, 2026-12-05
-    T-055 Page de consultation des disponibilités (F-01, lecture seule :t055, 2026-11-27, 2026-12-01
+    T-055 Page de consultation des disponibilités (F-01, lecture seule :active, t055, 2026-11-27, 2026-11-28
+    T-075 Contrôle statique du front par analyse HTML (constat 20) :t075, 2026-12-04, 2026-12-05
     section agent relecteur-code
     T-039 Revue de code (1/2) — socle, authentification, réservations :active, t039, 2026-11-26, 2026-11-27
     T-040 Revue de code (2/2) — front, bout en bout, Should, outillage :t040, 2026-11-26, 2026-11-27
@@ -148,6 +152,8 @@ gantt
     T-041 Tests (1/2) — vérification des tickets de réalisation :active, t041, 2026-11-26, 2026-11-27
     T-042 Tests (2/2) — rapport de tests de la livraison :t042, 2026-12-04, 2026-12-05
     T-067 Tests (3/3) — vérification des correctifs de l'audit d'incré :active, t067, 2026-12-04, 2026-12-08
+    section agent veilleur
+    T-077 Veille :active, t077, 2026-11-26, 2026-11-27
     section salarie claire
     T-007 Validation du budget et des délais :done, t007, 2026-11-24, 2026-11-26
     T-009 Points client (mention de confidentialité, F-08, recette) :t009, 2026-11-26, 2026-11-28
@@ -175,6 +181,7 @@ gantt
     T-049 Fin de démonstration (suppression des données sur le poste) :t049, 2026-12-16, 2026-12-18
     T-058 Rôle PostgreSQL applicatif non superutilisateur (constat 10) :t058, 2026-12-07, 2026-12-09
     T-072 Rotation des journaux dans le modèle compose commun (constat :t072, 2026-12-17, 2026-12-18
+    T-078 Image PostgreSQL 16.16 ou plus (43 CVE corrigées, veille P-1 :t078, 2026-12-17, 2026-12-22
     section Jalons
     Deadline :milestone, deadline, 2026-12-18, 0d
 ```
@@ -190,4 +197,4 @@ gantt
 
 ## Anomalies de données
 
-Aucune.
+- tickets/T-076-page-consultation-message-commande-tests.md : YAML invalide (mapping values are not allowed here) ; ticket ignoré
