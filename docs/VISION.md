@@ -100,6 +100,28 @@ Les agents doivent détecter leurs erreurs, demander de l'aide et se corriger qu
 - Runbooks (`runbooks/`) : procédures de crise.
 - Git et GitHub Actions : versions, tests, déploiements, régénération des tableaux de bord.
 
+### 3.5 Méthodologie
+**Notre méthode est un Kanban à portes de validation humaines, avec des livraisons incrémentales.** Ce n'est pas une méthode unique appliquée telle quelle. Nous avons combiné des méthodes reconnues, chacune là où elle répond à une exigence de la consigne. Le pipeline du § 3.2 en donne l'ordre, et les 4 systèmes en donnent le contenu.
+
+| Méthode | Ce que nous en reprenons | Où c'est appliqué |
+|---|---|---|
+| **Kanban** | Flux tiré de tickets à travers des statuts (`A_FAIRE` → `EN_COURS` → `EN_REVUE` → `TERMINE`) ; un ticket n'est pris que si ses dépendances sont terminées ; blocages rendus visibles (`BLOQUE`, `ATTENTE_HUMAIN`) | § 5, [S1](systemes/S1-gestion-projet.md) (S1-R2, S1-R3, S1-R12), tableau Kanban de la console |
+| **Agile, itératif et incrémental** | Livraison par incréments utilisables, avec un retour d'expérience en fin de jalon qui améliore les agents et les règles | DEC-011 (incrément de soutenance), `retex.md`, tickets `amelioration` (S1-R7) |
+| **Portes de validation, inspirées du cycle en V** | Chaque étape de conception a sa vérification en face : le CDC est vérifié par la recette, l'architecture et le code par les tests et l'audit. On ne passe à l'étape suivante que sur une validation humaine. | § 3.3, [S3 § 3](systemes/S3-deploiement.md) (portes 1 à 8), R4, R16 |
+| **MoSCoW** | Priorisation des exigences (Must, Should, Could, Won't) ; la recette est CONFORME si tous les Must sont OK | [S4](systemes/S4-cahier-des-charges.md) (S4-R2), S3-R9 |
+| **Planification par dépendances (chemin critique, Gantt)** | Estimations en heures équivalent humain, dépendances entre tickets, date de fin projetée et Gantt calculés | S1 § 4 et § 7, `scripts/tableau.py` |
+| **Suivi budgétaire à terminaison** | Coût consommé et coût projeté (consommé + reste à faire × taux), alerte à 90 % du budget ou en cas de dépassement de la deadline | S1-R11, R12, `TABLEAU.md` |
+| **DevOps : intégration et déploiement continus** | Tests, audit de sécurité et contrôle des validations à chaque PR ; déploiement scripté, vérification du SHA en ligne, rollback testé | `.github/workflows/`, S3-R5 à S3-R7 |
+| **Principe des quatre yeux** | L'auteur du code ne le valide jamais : relecteur, testeur, sécurité, puis un humain pour ce qui est critique ou touche la sécurité | S3-R1, S3-R2, R13 |
+| **ADR (Architecture Decision Records)** | Chaque décision humaine est écrite avec son contexte, les options étudiées, la décision et le pourquoi | `docs/decisions/`, skill `tracer-decision` |
+| **Gestion des incidents (ITIL, SRE)** | Qualification et triage des tickets bug, incident et support ; runbooks de crise ; post-mortem sans blâme | [S2](systemes/S2-maintenance.md) (S2-R1 à S2-R5), `runbooks/` |
+
+*Pourquoi :* une semaine et des agents IA ne permettent pas de reproduire les cérémonies d'une méthode unique (sprints, réunions quotidiennes). Nous avons pris de chaque méthode la pratique qui répond à un besoin précis :
+- Kanban pour suivre un flux de tickets réalisés en parallèle par des agents ;
+- les portes de validation pour la supervision humaine exigée par la consigne ;
+- l'incrémental pour livrer une démonstration avant la soutenance ;
+- DevOps pour l'exigence « un push ne suffit pas » (S3).
+
 ---
 
 ## 4. Contraintes et conventions d'architecture
