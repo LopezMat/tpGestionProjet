@@ -70,3 +70,4 @@ Consommé client : 1 371,29 € (32,6 %), loin du seuil d'alerte de 3 780 €. F
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 23:59 · agent:coordinateur · SIMULATION · création (condition 1 de DEC-020) après le tri de T-105 par le chef-de-projet : coût client prévisible de 4 211,43 € pour 4 200 € ; correctif non engagé · 0 h
+- 2026-11-27 00:10 · agent:coordinateur · SIMULATION · décision d'Ethan tracée dans DEC-020 v0.3 : reproduction seule d'abord (7,50 €, imputée à l'ESN), puis correctif à la charge de l'ESN au titre de la garantie si le défaut est confirmé ; coût client de 4 158,93 € selon Ethan (4 173,93 € selon le calcul du chef-de-projet si T-104 reste au budget client : écart de 15 € à confirmer). Relance de Claire faite dans T-105. Statut et champ `decision` inchangés : Ethan débloque lui-même · 0 h

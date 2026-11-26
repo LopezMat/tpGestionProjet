@@ -2,7 +2,7 @@
 titre: SIMULATION — Révision du budget de reservation-coworking, 6 000 € → 4 200 € HT (scénario B en gardant F-08)
 statut: EN_REVUE
 responsable: B
-version: 0.2
+version: 0.3
 maj_le: 2026-11-26
 valide_par:                 # rempli par l'humain qui valide
 decision: DEC-020           # pour un fichier de décision : son propre id
@@ -11,7 +11,7 @@ id: DEC-020
 date: 2026-11-26
 decide_par: Ethan
 projet: reservation-coworking
-ticket: T-093
+ticket: T-093, T-106
 modifie_une_regle: non      # oui → entrée obligatoire dans docs/CHANGELOG-REGLES.md
 ---
 > **SIMULATION** — Décision prise dans l'exercice de révision du budget (scénario 2, S1) du 2026-11-26. Le client n'a rien annoncé en réalité.
@@ -88,3 +88,18 @@ Les arguments de T-093 :
 - **(b) Une imputation dans le tableau** : un champ de ticket (par exemple `imputation: client | esn`) lu par `tableau.py`, qui sépare le coût client du coût ESN et applique l'alerte au seul coût client. Cela modifie `templates/ticket.md` (champ ajouté) et `scripts/tableau.py`.
 
 En attendant, la convention provisoire de DEC-020 s'applique : une ligne de journal « imputé à l'ESN (DEC-020) » dans chaque ticket concerné, et un calcul manuel du coût client dans le pilotage (T-008).
+
+## Application de la condition 1 (v0.3, 2026-11-26) : bug T-105, ticket T-106
+**Déclencheur.** La recette (note `support/entrant/recette-2026-11-26-01.md`, DEC-004) remonte le bug [T-105](../../projets/reservation-coworking/tickets/T-105-aucun-creneau-page-disponibilites.md) : « Aucun créneau » sur la page de consultation (F-01). Il n'est pas encore reproduit. Son tri par le `chef-de-projet` porte le coût client prévisible à 4 211,43 € HT, au-dessus des 4 200 €. Comme le prévoit la condition 1, le correctif **n'est pas engagé**, et le coordinateur a créé le ticket `decision` [T-106](../../projets/reservation-coworking/tickets/T-106-simulation-depassement-t-105.md) avec trois options : A, l'ESN prend le dépassement à sa charge ; B, retrait de périmètre ; C, avenant au client.
+
+**Décision d'Ethan** (recommandation du coordinateur, retenue) :
+1. **On engage d'abord la reproduction seule** (0,5 h, 7,50 €), **imputée à l'ESN**.
+2. **Si le défaut est confirmé**, son correctif (et sa revue de code et sa vérification par le testeur) est **pris en charge par l'ESN au titre de la garantie de livraison** (CDC § 9 : correction des défauts constatés à la recette). Si le défaut n'est pas reproduit, T-105 est clos sans correctif.
+3. **Le coût client reste à 4 158,93 € HT** (chiffre d'Ethan, celui de DEC-021).
+4. **Claire est relancée, par le ticket T-105**, pour fournir l'URL testée, le navigateur, le nom de salle affiché et une capture. « Canigou » n'existe pas dans le modèle (« Salle 1/2/3 », H-20).
+
+**Pourquoi** : le défaut, s'il est confirmé, vient de la livraison de l'ESN et relève de la garantie, comprise dans le budget. Le faire payer au client par un avenant serait difficile à défendre, et la reproduction seule tient dans la marge. C'est l'option A de T-106, avec la variante « reproduction d'abord ».
+
+**Écart à confirmer par Ethan.** Selon le calcul du `chef-de-projet` (T-105, T-008), si tout T-105 est imputé à l'ESN, le coût client est de **4 173,93 €**, pas de 4 158,93 €. La différence de 15 € vient du ticket de travail du support [T-104](../../projets/reservation-coworking/tickets/T-104-simulation-support-utilisateurs.md) (1 h), laissé au budget client. Le chiffre de 4 158,93 € suppose donc que T-104 est aussi imputé à l'ESN. Le coordinateur ne l'a pas fait sans décision explicite.
+
+**Effets** : T-105 porte la ligne « imputé à l'ESN (DEC-020 v0.3) » et la relance de Claire. T-106 garde son statut `ATTENTE_HUMAIN` et son champ `decision` vide : Ethan le débloque lui-même.
