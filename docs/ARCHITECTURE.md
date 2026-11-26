@@ -42,7 +42,9 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
 ├── README.md
 ├── PORTFOLIO.md                      [gén.] vue de tous les projets
 ├── .gitattributes                    fins de ligne LF
-├── .gitignore                        (C) deploiement/local/ (sauvegardes, secrets locaux)
+├── .gitignore                        (C) deploiement/local/ (sauvegardes, secrets locaux) ; console/ et
+│                                     qui-fait-quoi.html, générés (DEC-012, DEC-014)
+├── qui-fait-quoi.html                [gén.] ignoré par Git, produit par scripts/qui_fait_quoi.py
 ├── requirements.txt                  (D) dépendances Python des scripts (PyYAML)
 ├── deploiement/
 │   ├── docker-compose.yml            (C) modèle de production locale : app + Postgres (§ 9)
@@ -50,7 +52,8 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
 ├── .claude/
 │   ├── settings.json                 (C) permissions allow/ask/deny + déclaration des hooks
 │   ├── hooks/proteger_valide.py      (C) hook PreToolUse Write/Edit : R5, R6, R9, templates (§ 6)
-│   ├── hooks/restreindre_bash.py     (C) hook PreToolUse Bash : restrictions par agent (§ 6)
+│   ├── hooks/restreindre_bash.py     (C) hook PreToolUse Bash : restrictions par agent ; R17 pour tout
+│   │                                 appelant (§ 6, garde-fous 7 et 9)
 │   ├── agents/*.md                   catalogue (§ 4)
 │   └── skills/
 │       ├── creer-ticket/  avancement/  nouveau-projet/  tracer-decision/        (B)
@@ -79,6 +82,10 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
 │   ├── test_proteger_valide.py  test_restreindre_bash.py  test_verifier_prod.py   (C)
 │   ├── deployer_local.py  rollback_local.py  prod_locale.py  test_prod_locale.py  (C) § 9
 │   ├── verifier_validations.py  test_verifier_validations.py                      (C)
+│   ├── console.py  test_console.py   (D) console de consultation, lecture seule, sortie console/ (DEC-012)
+│   ├── vendor/                       (D) mermaid.min.js 12.3.0 et sa licence MIT, pour la console hors ligne
+│   ├── qui_fait_quoi.py  qui_fait_quoi_modele.html  test_qui_fait_quoi.py           (D) page
+│   │                                 « qui fait quoi », lecture seule, sortie hors Git (DEC-014)
 │   └── fixtures/                     (C) faux Docker et mini-app des tests
 └── projets/<slug>/
     ├── demande.md  projet.md  existant.md (modernisation)  cdc.md  architecture.md  planning.md  retex.md
@@ -86,6 +93,7 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
     ├── rapports/                     tests, sécurité, recette, déploiement, verifier-prod-<sha7>-<horodatage>.json,
     │                                 suivi, post-mortem, logs/métriques simulés
     ├── support/entrant/              remontées utilisateurs (simulées)
+    ├── qui-fait-quoi.json            instantané de la page « qui fait quoi », tenu par le coordinateur (DEC-014)
     ├── app/                          code de l'application cliente
     └── TABLEAU.md                    [gén.]
 ```
@@ -195,7 +203,7 @@ Le coordinateur lance chaque agent. Il est omis du schéma pour le garder lisibl
 **Statuts des documents** (en-tête standard, voir [templates/_ENTETE.md](../templates/_ENTETE.md)) : `BROUILLON` → `EN_REVUE` → `VALIDÉ`.
 Les tickets ont leur propre cycle de statuts (§ 7), qui ne comporte pas `VALIDÉ`.
 
-**Garde-fous de la validation** (DEC-001, sections 7, 8, 23 et 25 ; DEC-002 pour les garde-fous 7 et 8) :
+**Garde-fous de la validation** (DEC-001, sections 7, 8, 23 et 25 ; DEC-002 pour les garde-fous 7 et 8 ; DEC-015 pour le garde-fou 9) :
 
 | # | Garde-fou | Mécanisme | Lot |
 |---|---|---|---|
@@ -207,6 +215,7 @@ Les tickets ont leur propre cycle de statuts (§ 7), qui ne comporte pas `VALID�
 | 6 | **Templates protégés** : toute écriture sous `templates/` à la racine demande une confirmation humaine. **Deux barrières** : la règle `ask` `Edit(/templates/**)` de `settings.json`, qui couvre aussi Write et MultiEdit, et une décision `ask` renvoyée par le hook lui-même | `.claude/settings.json` + `proteger_valide.py` | settings/hooks (livré) |
 | 7 | **Bash par agent** : pour tout subagent, pas de `git push` (même `git -C . push` ou `bash -c '…'`), pas de `git reset --hard`, pas de `rm` récursif forcé, aucun argument désignant un `.env*` ; listes blanches strictes pour `chef-de-projet`, `relecteur-code`, `deployeur`, `analyste-prod` et `gestionnaire-crise` (§ 4). Pour tout appelant, session principale comprise, `deployer_local.py` et `rollback_local.py` demandent une confirmation humaine (décision `ask` du hook, doublée des règles `ask` de `settings.json` ; DEC-003) | hook PreToolUse `restreindre_bash.py`, qui lit le champ `agent_type` transmis par Claude Code | settings/hooks (livré) |
 | 8 | **Fichiers générés** : aucune écriture Write/Edit/MultiEdit sur `PORTFOLIO.md` (racine) ni sur `projets/<slug>/TABLEAU.md` ; seul `scripts/tableau.py` les écrit (R9) | `proteger_valide.py` | settings/hooks (livré) |
+| 9 | **Markdown par Edit/Write uniquement (R17)** : pour tout appelant, session principale comprise, refus des écritures par Bash dans un `.md` de `docs/` ou de `projets/` : `sed -i` (et `perl -i`), redirections `>` et `>>`, `tee`, scripts Python en ligne (`python -c`, `python -` avec heredoc ou tube), y compris dans `bash -c`, `eval`, `$( )`, `xargs` et `find -exec`. Le message renvoie vers Edit/Write ; les lectures restent permises | hook PreToolUse `restreindre_bash.py` | PR de règles (DEC-015) |
 
 Un « document » est ici tout fichier Markdown dont le frontmatter porte l'en-tête standard (champ `valide_par`). Les tickets et les fiches membres, qui ont leur propre format, ne sont pas concernés par les garde-fous 3 à 5.
 
@@ -216,11 +225,13 @@ Un « document » est ici tout fichier Markdown dont le frontmatter porte l'en-t
 
 *Pourquoi le garde-fou 6 :* les templates restent en `BROUILLON` par nature, donc R6 ne les protège pas ; or `tableau.py` et tous les agents dépendent de leur format. *Pourquoi deux barrières :* le `/` initial de `Edit(/templates/**)` ancre le chemin au dossier de lancement de la session (sans lui, la règle viserait aussi `projets/x/app/templates/`). Au test réel du 2026-11-23 (Windows, mode auto), cette règle seule n'a pas déclenché de confirmation ; le hook calcule le chemin à partir de `CLAUDE_PROJECT_DIR`, ce qui ne dépend ni du dossier de lancement ni de l'OS, et sa confirmation a bien été demandée.
 
-*Pourquoi le garde-fou 7 :* le champ `tools` d'un subagent autorise Bash entier, et les règles Bash de `settings.json` se contournent (option avant la sous-commande, `bash -c`, `cat .env` qu'une règle `Read` ne couvre pas). Le hook analyse la commande : c'est la deuxième barrière. Le test réel du 2026-11-23 a montré que `agent_type` est bien transmis aux hooks de `settings.json`. La session principale (sans `agent_type`) reste soumise aux seules permissions de `settings.json`.
+*Pourquoi le garde-fou 7 :* le champ `tools` d'un subagent autorise Bash entier, et les règles Bash de `settings.json` se contournent (option avant la sous-commande, `bash -c`, `cat .env` qu'une règle `Read` ne couvre pas). Le hook analyse la commande : c'est la deuxième barrière. Le test réel du 2026-11-23 a montré que `agent_type` est bien transmis aux hooks de `settings.json`. La session principale (sans `agent_type`) n'est pas soumise aux restrictions par agent : elle relève des permissions de `settings.json`, de la confirmation du déploiement local et du garde-fou 9.
+
+*Pourquoi le garde-fou 9 :* le 2026-11-24, le coordinateur a modifié DEC-007, `VALIDÉ`, par un script Python lancé par Bash ; `proteger_valide.py` ne voit que Write et Edit, et seul `verifier_validations.py` l'a détecté après coup (DEC-010). Le hook Bash refuse donc ces écritures **pour tout appelant**, puisque l'incident venait de la session principale. *Limite :* l'analyse porte sur le texte de la commande ; un script enregistré dans un fichier puis lancé, `cp`, `mv`, `patch` ou un chemin construit à l'exécution lui échappent. R17 s'applique quand même, et le filet CI couvre le statut.
 
 *Pourquoi le garde-fou 8 :* un tableau retouché à la main mentirait, et la règle « la validation est appliquée techniquement » (DEC-001 § 7) s'étend naturellement aux fichiers générés. `TABLEAU.md` et `PORTFOLIO.md` **n'ont pas d'en-tête standard** : ce ne sont pas des documents à valider, puisqu'ils changent à chaque génération. Ils commencent par `<!-- FICHIER GÉNÉRÉ par scripts/tableau.py — ne pas modifier à la main (R9) -->` et un encadré qui le rappelle.
 
-**Risque : un hook qui ne démarre pas ne bloque rien.** Un hook introuvable (`python` absent, script manquant) ou qui sort avec un code autre que 0 ou 2 est une erreur non bloquante pour Claude Code : R5, R6, R9 et la restriction Bash disparaîtraient en silence. Parades : la commande des hooks essaie `python` puis `python3` ; les hooks se ferment en cas de doute (JSON illisible ou erreur interne → refus) ; chaque membre applique la procédure « Installer son poste » du [README](../README.md#installer-son-poste). Le filet CI `validations.yml` est livré (DEC-003) : il voit aussi les écritures faites par Bash (`sed -i`, redirection), que les hooks Write/Edit ne voient pas. `"onFailure": "block"` reste en attente : il exige Claude Code 2.1.295 ou plus, et un poste de l'équipe a encore la 2.1.285. On l'ajoutera, par une PR, quand tous les postes l'auront.
+**Risque : un hook qui ne démarre pas ne bloque rien.** Un hook introuvable (`python` absent, script manquant) ou qui sort avec un code autre que 0 ou 2 est une erreur non bloquante pour Claude Code : R5, R6, R9 et la restriction Bash disparaîtraient en silence. Parades : la commande des hooks essaie `python` puis `python3` ; les hooks se ferment en cas de doute (JSON illisible ou erreur interne → refus) ; chaque membre applique la procédure « Installer son poste » du [README](../README.md#installer-son-poste). Le filet CI `validations.yml` est livré (DEC-003) : il voit aussi les écritures faites par Bash (`sed -i`, redirection), que les hooks Write/Edit ne voient pas ; depuis R17, le hook Bash refuse la plupart d'entre elles en amont (garde-fou 9). `"onFailure": "block"` reste en attente : il exige Claude Code 2.1.295 ou plus, et un poste de l'équipe a encore la 2.1.285. On l'ajoutera, par une PR, quand tous les postes l'auront.
 
 **Exception, les journaux.** `docs/CHANGELOG-REGLES.md` et `docs/decisions/README.md` ne passent jamais `VALIDÉ` : ils restent en `EN_REVUE`, évoluent uniquement par PR et sont exclus de R6 (garde-fou 2). *Pourquoi :* un journal figé empêcherait de tracer les décisions suivantes.
 
