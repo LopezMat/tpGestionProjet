@@ -9,10 +9,10 @@
 | Indicateur | Valeur |
 |---|---|
 | Type · état | metier · cadrage |
-| Avancement (h estimées terminées / h estimées hors ANNULE) | 17,4 % (36,5 h / 209,8 h) |
-| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 130,7 h |
-| Budget consommé / prévu | 1 378,79 € / 4 200,00 € (32,8 %) |
-| Coût projeté à terminaison (consommé + reste × taux) | 5 888,93 € |
+| Avancement (h estimées terminées / h estimées hors ANNULE) | 17,2 % (36,5 h / 212,6 h) |
+| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 132,4 h |
+| Budget consommé / prévu | 1 393,79 € / 4 200,00 € (33,2 %) |
+| Coût projeté à terminaison (consommé + reste × taux) | 5 946,07 € |
 | Fin projetée | 2026-12-16 |
 | Deadline | 2026-12-18 |
 | Écart avec la deadline | -2 j ouvrés |
@@ -25,20 +25,20 @@
 | Critique | T-080 « SIMULATION — Perte de la base de production (volume Docker supprimé) » est ouvert (EN_REVUE) |
 | Critique | T-081 « SIMULATION — Décision restauration de la base de production (T-080) » est ouvert (ATTENTE_HUMAIN) |
 | Critique | T-083 « SIMULATION — Décision communication au client sur la perte de données (T-080) » est ouvert (ATTENTE_HUMAIN) |
-| Utilisation (info) | claire utilisé à 38,9 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
+| Utilisation (info) | claire utilisé à 39,9 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
 
 ## Tickets par statut
 
 | Statut | Nombre |
 |---|---|
-| A_FAIRE | 60 |
-| EN_COURS | 5 |
+| A_FAIRE | 61 |
+| EN_COURS | 6 |
 | EN_REVUE | 6 |
 | BLOQUE | 0 |
-| ATTENTE_HUMAIN | 6 |
+| ATTENTE_HUMAIN | 7 |
 | TERMINE | 16 |
 | ANNULE | 10 |
-| **Total** | 103 |
+| **Total** | 106 |
 
 ## Tickets BLOQUE
 
@@ -53,6 +53,7 @@ Aucun ticket bloqué.
 | haute | T-057 | Rôle PostgreSQL de l'application (constat 10, moindre privilège) | salarie:karim | décision humaine sur le rôle PostgreSQL de l'application (constat 10 du rapport securite-2026-11-25-3), avec l'accord de C sur le modèle commun | 1 j ouvré |
 | haute | T-093 | SIMULATION — Révision du budget : 6 000 € → 4 200 € HT | agent:chef-de-projet | arbitrage humain du scénario de budget (S1-R11) | 0 j ouvré |
 | haute | T-103 | SIMULATION — Départ de Hugo : plan de passation | agent:chef-de-projet | décision humaine sur le plan de passation du départ de Hugo (EV-004) | 0 j ouvré |
+| haute | T-106 | SIMULATION — Condition 1 de DEC-020 : dépassement prévisible dû au bug T-105 | salarie:claire | arbitrage humain avant d'engager le correctif de T-105 (condition 1 de DEC-020) | 0 j ouvré |
 | normale | T-102 | SIMULATION — Absence de Léa du 2026-11-26 au 2026-11-27 | agent:chef-de-projet | décision humaine sur l'absence de Léa (EV-001) | 0 j ouvré |
 
 ## Tickets salariés à faire par un humain (AF11)
@@ -97,6 +98,7 @@ Aucun ticket bloqué.
 | T-098 | SIMULATION — Revue humaine T-092 (vérification quotidienne des sauvegardes) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-08 → 2026-12-09 |
 | T-099 | SIMULATION — Revue humaine T-078 (image PostgreSQL 16.16) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-09 → 2026-12-09 |
 | T-100 | SIMULATION — Revue humaine T-079 (verrou des dépendances, image figée) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-09 → 2026-12-10 |
+| T-106 | SIMULATION — Condition 1 de DEC-020 : dépassement prévisible dû au bug T-105 | salarie:claire | ATTENTE_HUMAIN | 0,2 h | 2026-11-30 → 2026-11-30 |
 
 ## Tickets formation ouverts
 
@@ -108,7 +110,7 @@ Période : du 2026-11-26 au 2026-12-18. Heures restantes assignées ÷ capacité
 
 | Salarié | Allocation | h restantes assignées | Capacité allouée | Utilisation | Observation |
 |---|---|---|---|---|---|
-| claire | 20 % | 9,2 h | 23,8 h | 38,9 % | sous 50,0 % : ajuster l'allocation ? |
+| claire | 20 % | 9,5 h | 23,8 h | 39,9 % | sous 50,0 % : ajuster l'allocation ? |
 | karim | 20 % | 12,2 h | 23,8 h | 51,5 % | — |
 | nadia | 50 % | 24,0 h | 44,8 h | 53,6 % | — |
 
@@ -168,6 +170,7 @@ gantt
     T-025 Page de confidentialité (texte validé par le client) :t025, 2026-11-30, 2026-12-01
     T-055 Page de consultation des disponibilités (F-01, lecture seule :active, t055, 2026-11-30, 2026-12-01
     T-075 Contrôle statique du front par analyse HTML (constat 20) :t075, 2026-12-01, 2026-12-02
+    T-105 SIMULATION — Bug « Aucun créneau » sur la page de consultati :t105, 2026-12-01, 2026-12-02
     section agent gestionnaire-crise
     T-080 SIMULATION — Perte de la base de production (volume Docker s :crit, active, t080, 2026-11-26, 2026-11-27
     section agent relecteur-code
@@ -176,6 +179,8 @@ gantt
     T-066 Revue de code (3/3) — correctifs de l'audit d'incrément :active, t066, 2026-11-26, 2026-11-28
     section agent securite
     T-043 Audit sécurité :t043, 2026-12-04, 2026-12-05
+    section agent support
+    T-104 SIMULATION — Support utilisateurs :active, t104, 2026-11-26, 2026-11-27
     section agent testeur
     T-041 Tests (1/2) — vérification des tickets de réalisation :active, t041, 2026-11-26, 2026-11-27
     T-042 Tests (2/2) — rapport de tests de la livraison :t042, 2026-12-04, 2026-12-05
@@ -191,6 +196,7 @@ gantt
     T-084 SIMULATION — Décision notification CNIL de la violation de d :done, t084, 2026-11-26, 2026-11-27
     T-091 SIMULATION — Registre des demandes de suppression chez le cl :t091, 2026-12-15, 2026-12-16
     T-094 SIMULATION — Informer le client de la révision du budget :t094, 2026-11-30, 2026-12-01
+    T-106 SIMULATION — Condition 1 de DEC-020 dépassement prévisible d :crit, t106, 2026-11-30, 2026-12-01
     section salarie karim
     T-030 Revue humaine T-013 (authentification, sessions, rôles) :t030, 2026-11-26, 2026-11-28
     T-031 Revue humaine T-014 (limitation des tentatives) :t031, 2026-11-27, 2026-11-28
