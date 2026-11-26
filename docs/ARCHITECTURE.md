@@ -1,11 +1,11 @@
 ---
 titre: Architecture du système multi-agents
-statut: VALIDÉ
+statut: EN_REVUE
 responsable: B
-version: 1.5
+version: 1.6
 maj_le: 2026-11-26
-valide_par: Ethan
-decision: DEC-017
+valide_par: 
+decision: 
 ---
 
 # ARCHITECTURE — le « comment » de l'ESN virtuelle
@@ -43,17 +43,24 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
 ├── PORTFOLIO.md                      [gén.] vue de tous les projets
 ├── .gitattributes                    fins de ligne LF
 ├── .gitignore                        (C) deploiement/local/ (sauvegardes, secrets locaux) ; console/ et
-│                                     qui-fait-quoi.html, générés (DEC-012, DEC-014)
+│                                     qui-fait-quoi.html, générés (DEC-012, DEC-014) ; direct/ et
+│                                     .claude/settings.local.json (+ sauvegardes), propres au poste (DEC-018)
 ├── qui-fait-quoi.html                [gén.] ignoré par Git, produit par scripts/qui_fait_quoi.py
+├── direct/                           ignoré par Git, optionnel : journal du mode Direct (evenements.jsonl,
+│                                     archive, sel local), écrit par hooks/journal_direct.py (DEC-018)
 ├── requirements.txt                  (D) dépendances Python des scripts (PyYAML)
 ├── deploiement/
 │   ├── docker-compose.yml            (C) modèle de production locale : app + Postgres (§ 9)
 │   └── local/<slug>/                 ignoré par Git : sauvegardes/*.dump, historique.json, db_password
 ├── .claude/
 │   ├── settings.json                 (C) permissions allow/ask/deny + déclaration des hooks
+│   ├── settings.local.json           ignoré par Git, propre au poste ; peut déclarer le hook d'observation
+│   │                                 du mode Direct (bureau_direct.py --installer, DEC-018)
 │   ├── hooks/proteger_valide.py      (C) hook PreToolUse Write/Edit : R5, R6, R9, templates (§ 6)
 │   ├── hooks/restreindre_bash.py     (C) hook PreToolUse Bash : restrictions par agent ; R17 pour tout
 │   │                                 appelant (§ 6, garde-fous 7 et 9)
+│   ├── hooks/journal_direct.py       (D) hook d'observation du mode Direct, optionnel, non bloquant,
+│   │                                 déclaré seulement dans settings.local.json (§ 6, DEC-018)
 │   ├── agents/*.md                   catalogue (§ 4)
 │   └── skills/
 │       ├── creer-ticket/  avancement/  nouveau-projet/  tracer-decision/        (B)
@@ -84,7 +91,11 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
 │   ├── verifier_validations.py  test_verifier_validations.py                      (C)
 │   ├── console.py  test_console.py   (D) console de consultation, lecture seule, sortie console/ (DEC-012)
 │   ├── bureau.py  bureau.js  test_bureau.py   (D) page « Le bureau » de la console (vue de dessus,
-│   │                                 replay des journaux), lecture seule, sortie console/ (DEC-016)
+│   │                                 replay des journaux), lecture seule, sortie console/ (DEC-016) ;
+│   │                                 mode Direct optionnel (DEC-018)
+│   ├── bureau_direct.py  test_bureau_direct.py  test_journal_direct.py   (D) mode Direct : serveur
+│   │                                 127.0.0.1 en lecture seule (console/ + flux SSE de direct/),
+│   │                                 --installer / --desinstaller du hook dans settings.local.json
 │   ├── vendor/                       (D) mermaid.min.js 12.3.0 et sa licence MIT, pour la console hors ligne
 │   ├── qui_fait_quoi.py  qui_fait_quoi_modele.html  test_qui_fait_quoi.py           (D) page
 │   │                                 « qui fait quoi », lecture seule, sortie hors Git (DEC-014)
@@ -232,6 +243,15 @@ Un « document » est ici tout fichier Markdown dont le frontmatter porte l'en-t
 *Pourquoi le garde-fou 9 :* le 2026-11-24, le coordinateur a modifié DEC-007, `VALIDÉ`, par un script Python lancé par Bash ; `proteger_valide.py` ne voit que Write et Edit, et seul `verifier_validations.py` l'a détecté après coup (DEC-010). Le hook Bash refuse donc ces écritures **pour tout appelant**, puisque l'incident venait de la session principale. *Limite :* l'analyse porte sur le texte de la commande ; un script enregistré dans un fichier puis lancé, `cp`, `mv`, `patch` ou un chemin construit à l'exécution lui échappent. R17 s'applique quand même, et le filet CI couvre le statut.
 
 *Pourquoi le garde-fou 8 :* un tableau retouché à la main mentirait, et la règle « la validation est appliquée techniquement » (DEC-001 § 7) s'étend naturellement aux fichiers générés. `TABLEAU.md` et `PORTFOLIO.md` **n'ont pas d'en-tête standard** : ce ne sont pas des documents à valider, puisqu'ils changent à chaque génération. Ils commencent par `<!-- FICHIER GÉNÉRÉ par scripts/tableau.py — ne pas modifier à la main (R9) -->` et un encadré qui le rappelle.
+
+**Hook d'observation du mode Direct (optionnel, non bloquant, hors garde-fous)** (DEC-018). Ce n'est pas un garde-fou et il ne porte pas de numéro : il ne protège rien, il observe.
+- `.claude/hooks/journal_direct.py` n'est **jamais** déclaré dans `settings.json`. Chaque poste peut le déclarer dans son `settings.local.json` (hors Git) par `python scripts/bureau_direct.py --installer` ; la commande n'ajoute ou ne retire que ses propres groupes, de façon idempotente et avec une sauvegarde.
+- Sur un poste qui ne l'installe pas, rien ne change. Les hooks de `settings.local.json` s'ajoutent à ceux de `settings.json` sans les remplacer : `proteger_valide.py` et `restreindre_bash.py` s'appliquent à l'identique.
+- Il écrit, en liste blanche, une ligne de métadonnées par événement dans `direct/` : heure, session hachée, acteur, type d'événement, outil et catégorie. Il n'écrit jamais de texte, de chemin, de commande ni de sortie d'outil. Le serveur local `scripts/bureau_direct.py` (127.0.0.1, GET seul, Host contrôlé, sans CORS) le diffuse à la page « Le bureau ».
+
+*Pourquoi une politique inverse des garde-fous :* les hooks de sécurité ferment par défaut, car un doute doit bloquer une écriture. Un hook d'observation ne doit au contraire jamais gêner le travail. Il rend toujours le code 0, n'émet aucune décision et abandonne l'événement en cas d'erreur ou si le verrou n'est pas obtenu en 200 ms.
+
+*Pourquoi local et pas dans `settings.json` :* une clé inconnue d'une version plus ancienne de Claude Code (comme `async`) pourrait faire ignorer **tous** les hooks du fichier partagé, R5 et R6 compris. C'est pour cela que l'installateur n'ajoute `async` qu'à partir de la version 2.1.332, celle qui a été vérifiée.
 
 **Risque : un hook qui ne démarre pas ne bloque rien.** Un hook introuvable (`python` absent, script manquant) ou qui sort avec un code autre que 0 ou 2 est une erreur non bloquante pour Claude Code : R5, R6, R9 et la restriction Bash disparaîtraient en silence. Parades : la commande des hooks essaie `python` puis `python3` ; les hooks se ferment en cas de doute (JSON illisible ou erreur interne → refus) ; chaque membre applique la procédure « Installer son poste » du [README](../README.md#installer-son-poste). Le filet CI `validations.yml` est livré (DEC-003) : il voit aussi les écritures faites par Bash (`sed -i`, redirection), que les hooks Write/Edit ne voient pas ; depuis R17, le hook Bash refuse la plupart d'entre elles en amont (garde-fou 9). `"onFailure": "block"` reste en attente : il exige Claude Code 2.1.295 ou plus, et un poste de l'équipe a encore la 2.1.285. On l'ajoutera, par une PR, quand tous les postes l'auront.
 

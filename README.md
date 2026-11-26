@@ -66,6 +66,8 @@ python scripts/test_verifier_validations.py  # macOS : python3 …
 python scripts/test_console.py             # macOS : python3 …  (demande PyYAML)
 python scripts/test_bureau.py              # macOS : python3 …  (demande PyYAML ; syntaxe JS vérifiée si node est installé)
 python scripts/test_qui_fait_quoi.py       # macOS : python3 …
+python scripts/test_journal_direct.py      # macOS : python3 …  (hook d'observation du mode Direct)
+python scripts/test_bureau_direct.py       # macOS : python3 …  (serveur local et installation du mode Direct)
 ```
 
 La CI (`.github/workflows/ci.yml`) lance les mêmes tests à chaque push ; `validations.yml`, `securite.yml` et `tableau.yml` complètent le contrôle (ARCHITECTURE § 3).
@@ -86,7 +88,7 @@ Ensuite, ouvrir **`console/index.html`** dans un navigateur, par double-clic : a
 |---|---|
 | Notre système | vision, chiffres clés, les 4 systèmes, circuit des agents (Mermaid d'ARCHITECTURE § 5, avec un lien vers `circuit.html` en plein écran pour la projection), points d'arrêt humains, garde-fous |
 | Portefeuille | projets, avancement, budget, fin projetée, alertes, tickets BLOQUE et ATTENTE_HUMAIN |
-| Le bureau | l'ESN vue de dessus en pixel art : une pièce par système, open space, bureaux des salariés, accueil, coin café ; mode instantané (état tiré des tickets) et mode replay (journaux des tickets et décisions) ; voir ci-dessous |
+| Le bureau | l'ESN vue de dessus en pixel art : une pièce par système, open space, bureaux des salariés, accueil, coin café ; mode instantané (état tiré des tickets), mode replay (journaux des tickets et décisions) et mode Direct, optionnel (activité en temps réel de Claude Code, serveur local) ; voir ci-dessous |
 | Fiche projet | synthèse, Kanban des tickets par statut, Gantt coloré par statut (avec légende), utilisation AF9 ; tickets, CDC, architecture et planning rendus en HTML |
 | Équipe | salariés, compétences, allocations, utilisation, calendrier (absences, arrivées, départs) |
 | Agents et skills | agents regroupés par système : rôle, quand l'appeler, outils, modèle, points d'arrêt, phrase à taper au coordinateur |
@@ -116,6 +118,55 @@ La page `console/bureau.html` ([DEC-016](docs/decisions/2026-11-26-DEC-016-page-
 - **Accessibilité.** `prefers-reduced-motion` est respecté : aucun déplacement animé ni clignotement. Les listes « Personnages et état » et « Événements du replay » sont l'alternative texte au dessin ; la seconde suit la lecture.
 - **Lien direct.** `bureau.html#projet=<slug>&mode=replay&ev=<n>&perso=<id>` ouvre un projet, un mode, un événement ou une fiche (utile pour les captures et la projection).
 - **Échappement.** Les données sont injectées en JSON sans `<`, `>`, `&`, U+2028 ni U+2029 bruts ; le JS n'affiche les textes que par `textContent` et `fillText` (vérifié par `test_bureau.py`).
+
+#### Mode Direct (optionnel, local à chaque poste)
+
+Le mode **Direct** ([DEC-018](docs/decisions/2026-11-26-DEC-018-mode-direct-bureau.md)) montre en temps réel ce que font le coordinateur et les sous-agents dans Claude Code. Il est **optionnel** : rien ne change sur un poste qui ne l'active pas, et `.claude/settings.json` (partagé) n'est pas modifié.
+
+**Activer, une fois par poste :**
+
+```
+python scripts/bureau_direct.py --installer      # macOS : python3 …
+```
+
+Puis **relancer Claude Code**. La commande déclare le hook d'observation `.claude/hooks/journal_direct.py` dans `.claude/settings.local.json`, qui est personnel et ignoré par Git :
+- elle n'ajoute que ses propres groupes et ne touche pas au reste du fichier ;
+- relancée, elle ne change rien ;
+- elle fait une sauvegarde `settings.local.json.sauvegarde-…` avant toute écriture ;
+- elle refuse un JSON invalide sans y toucher ;
+- elle ajoute `async` seulement à partir de Claude Code 2.1.332 ; `--sans-async` force des hooks synchrones.
+
+Dans `/hooks`, les deux hooks PreToolUse partagés restent présents, et les hooks `journal_direct.py` s'y ajoutent.
+
+**Ouvrir le mode Direct :**
+
+```
+python scripts/bureau_direct.py --generer        # régénère la console puis sert http://127.0.0.1:8765
+```
+
+Puis ouvrir **http://127.0.0.1:8765/bureau.html#mode=direct**. Les options : `--port N` choisit un autre port, et sans `--generer`, il faut avoir lancé `scripts/console.py` avant. Ctrl+C arrête le serveur. Ouverte par double-clic (`file://`), la page garde le bouton Direct désactivé, avec cette explication.
+
+**Désactiver :** `python scripts/bureau_direct.py --desinstaller`, puis relancer Claude Code. `ESN_DIRECT=off` suspend le journal sans désinstaller. Le dossier `direct/` peut être supprimé à tout moment.
+
+- **Ce qui est enregistré** (`direct/evenements.jsonl`, hors Git, 2 Mio au plus avec la rotation) : l'heure, la session hachée, l'acteur (`coordinateur` ou nom de l'agent), le type d'événement, le nom de l'outil (Read, Edit, Bash… ; un outil MCP devient `mcp`) et sa catégorie.
+- **Ce qui ne l'est jamais** : le texte des messages, le contenu ou le chemin des fichiers, les commandes, les sorties d'outils, le dossier de travail.
+- **Le hook ne bloque jamais Claude.** Il rend toujours la main avec le code 0, abandonne l'événement en cas de doute et ne touche pas aux hooks R5, R6 et R17.
+- **Animations** :
+
+  | Ce qui se passe dans Claude Code | Ce que montre le bureau |
+  |---|---|
+  | message reçu | bulle « nouvelle demande » sur le coordinateur |
+  | Read, Grep, Glob | icône « lit » |
+  | Edit, Write | icône « écrit » |
+  | Bash | icône « terminal » |
+  | lancement d'un sous-agent | l'agent va à son poste |
+  | fin du sous-agent | retour au café |
+  | autorisation ou réponse attendue | « ! » |
+  | fin du tour | le coordinateur revient à l'accueil |
+
+- **Une seule personne au coordinateur.** Si deux sessions de coordinateur sont actives en même temps (activité dans les 15 dernières minutes), un avertissement s'affiche.
+- **Sécurité du serveur.** Il écoute uniquement sur 127.0.0.1 et n'accepte que GET. L'en-tête Host est contrôlé (protection contre le DNS rebinding), aucun en-tête CORS n'est envoyé, et il est impossible de sortir de `console/`. Il n'écrit rien et n'exécute aucune commande (vérifié par `test_bureau_direct.py`).
+- **Accessibilité.** `prefers-reduced-motion` est respecté. La liste « Derniers événements (direct) » est l'alternative texte au dessin.
 
 ## Page « qui fait quoi »
 
