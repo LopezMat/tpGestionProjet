@@ -1,10 +1,10 @@
 ---
 titre: Mode « Direct » de la page « Le bureau » (activité en temps réel, optionnel et local à chaque poste)
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: D
-version: 0.1
+version: 1.0
 maj_le: 2026-11-26
-valide_par:                 # rempli par l'humain qui valide
+valide_par:     Ethan            # rempli par l'humain qui valide
 decision:                   # pour un fichier de décision : son propre id, rempli à la validation
 # Champs propres à la décision
 id: DEC-018
