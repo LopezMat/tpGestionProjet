@@ -20,6 +20,8 @@ maj_le: 2026-11-26
 statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
+imputation: esn             # client | esn (R18, DEC-023)
+imputation_decision: DEC-020   # décision VALIDÉ qui met ce ticket à la charge de l'ESN
 ---
 > **SIMULATION** — Revue humaine annoncée dans T-078 (veille 2026-S48), créée au triage demandé par Ethan le 2026-11-26 ; imputée à l'ESN (DEC-020, outillage commun).
 
@@ -58,3 +60,4 @@ Revue humaine (S3-R2, AF3) de [T-078](T-078-image-postgresql-16-16.md), écrit p
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 22:40 · agent:chef-de-projet · SIMULATION · création (triage demandé par Ethan, revue annoncée dans T-078) ; Karim : 20 %, actif, revue attendue avant le GO, hors EV-003 ; pas de depend_de vers T-078 (AF3) · 0 h
 - 2026-11-26 22:40 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client · 0 h
+- 2026-11-26 · agent:coordinateur · migration DEC-023 : imputation reportée dans le frontmatter (`imputation: esn`, `imputation_decision: DEC-020`), d'après la ligne « imputé à l'ESN (DEC-020) » ; coût client et part ESN désormais calculés par `tableau.py` (R18) · 0 h

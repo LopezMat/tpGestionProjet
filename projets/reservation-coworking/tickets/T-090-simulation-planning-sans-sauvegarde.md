@@ -20,6 +20,8 @@ maj_le: 2026-11-26
 statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
+imputation: esn             # client | esn (R18, DEC-023)
+imputation_decision: DEC-020   # décision VALIDÉ qui met ce ticket à la charge de l'ESN
 ---
 > **SIMULATION** — Action corrective issue de l'exercice de crise T-080 (scénario 5, S2), proposition P-6 du post-mortem du 2026-11-26.
 
@@ -117,3 +119,4 @@ Le budget consommé et la fin projetée sont à recalculer par `scripts/tableau.
 - 2026-11-26 19:00 · agent:coordinateur · SIMULATION · allocation de Nadia tranchée par Ethan (DEC-019 v0.2) : **option (A)**, 30 % jusqu'à la mise en service ; `equipe/membres/nadia.md` mis à jour. T-088 est déjà annulé (couvert par T-092), son imputation n'est plus à trancher. Reste au triage : `planning.md` v1.1 (après repassage `EN_REVUE` par un humain) et les autres points de ce ticket · 0 h
 - 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h
 - 2026-11-26 22:55 · agent:chef-de-projet · SIMULATION · triage demandé par Ethan, **fait, à ne pas refaire** : (point 3) revues humaines créées, Karim 0,5 h chacune, sans depend_de vers le ticket relu (AF3) : T-095 (T-085), T-096 (T-086), T-097 (T-087), T-098 (T-092, à la place de T-088), T-099 (T-078), toutes imputées à l'ESN (DEC-020), et T-100 (T-079, au budget client) ; aucune autre revue manquante (T-080 est un incident critique clos par le coordinateur, T-088 est ANNULE) ; (point 1) T-087, T-092 et T-078 ajoutés à depend_de du GO T-046 (DEC-020 point 3), T-029 y était déjà, sans cycle ; T-086 est prérequis de fait par T-087 ; T-089 et T-079 non ajoutés (à arbitrer) ; (point 4) ligne « triage » dans T-046, T-078, T-079, T-085 à T-087 et T-092 ; (point 5) planning.md v1.1 rédigé en EN_REVUE ; tableau.py lancé. **Reste à faire** : point 2 (ordre des actions de T-048 et ajout de T-091 à son depend_de, première sauvegarde et première vérification T-092 réussies avant la remise des comptes), non demandé dans ce triage. Temps compté dans T-008 · 0 h
+- 2026-11-26 · agent:coordinateur · migration DEC-023 : imputation reportée dans le frontmatter (`imputation: esn`, `imputation_decision: DEC-020`), d'après la ligne « imputé à l'ESN (DEC-020) » ; coût client et part ESN désormais calculés par `tableau.py` (R18) · 0 h

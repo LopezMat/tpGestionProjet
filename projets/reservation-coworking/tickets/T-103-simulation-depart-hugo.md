@@ -20,6 +20,8 @@ maj_le: 2026-11-26
 statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le: 2026-11-26        # facultatif : date du premier passage EN_COURS
 termine_le:     2026-11-26            # facultatif : date du passage TERMINE
+imputation: esn             # client | esn (R18, DEC-023)
+imputation_decision: DEC-021   # décision VALIDÉ qui met ce ticket à la charge de l'ESN
 ---
 > **SIMULATION** — Événement d'équipe (scénario 3, S1), skill `depart-membre`, demandé par l'humain le 2026-11-26. Hugo ne part pas en réalité.
 
@@ -146,3 +148,4 @@ DEC-009 E interdit tout ticket `formation` dans ce projet. Un ticket `formation`
 - 2026-11-26 23:35 · agent:chef-de-projet · SIMULATION · A_FAIRE → EN_COURS ; lecture des fiches de `equipe/membres/`, de `equipe/agents.md`, des tickets du projet (`salarie:hugo`, « Hugo »), de `docs/` (DEC-009, DEC-010, DEC-015, DEC-017, DEC-020, lot2-D point 9) ; `tableau.py` lancé · 0 h
 - 2026-11-26 23:55 · agent:chef-de-projet · SIMULATION · plan de passation écrit : aucun ticket ouvert (T-006, T-051 à T-053 ANNULE ; lot R17 livré par DEC-015 sans Hugo), aucun ticket terminé dont il est l'auteur, `documentation` orpheline (aucun salarié ni agent), second relecteur `securite-applicative` (ex-T-053) sans candidat ; fin projetée le 2026-12-16, coût client de 4 181,43 € (4 158,93 € si T-102 et T-103 sont imputés à l'ESN) ; options A (recommandée), B et C ; aucune réaffectation ni création de ticket ; EN_COURS → ATTENTE_HUMAIN · 1 h
 - 2026-11-26 23:59 · agent:coordinateur · SIMULATION · décision d'Ethan tracée dans DEC-021 (EN_REVUE) : option A, aucune réaffectation, `documentation` et second relecteur `securite-applicative` renvoyés au plan de formation de l'ESN ; imputé à l'ESN (DEC-021, règle provisoire de DEC-020) : coût hors budget client. Le 2026-12-04 : fiche en `parti`, EV-004 `confirme`. Ticket laissé ATTENTE_HUMAIN : `decision` à renseigner par Ethan · 0 h
+- 2026-11-26 · agent:coordinateur · migration DEC-023 : imputation reportée dans le frontmatter (`imputation: esn`, `imputation_decision: DEC-021`), d'après la ligne « imputé à l'ESN (DEC-021) » ; coût client et part ESN désormais calculés par `tableau.py` (R18) · 0 h

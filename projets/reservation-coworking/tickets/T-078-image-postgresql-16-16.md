@@ -20,6 +20,8 @@ maj_le: 2026-11-26
 statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
+imputation: esn             # client | esn (R18, DEC-023)
+imputation_decision: DEC-020   # décision VALIDÉ qui met ce ticket à la charge de l'ESN
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
 
@@ -83,3 +85,4 @@ Règle 7 du `chef-de-projet` : à défaut d'agent, un salarié compétent. Nadia
 - 2026-11-26 16:30 · agent:chef-de-projet · création (veille 2026-S48, proposition P-1, constat 1 ; assigné à Nadia faute d'agent compétent sur le modèle commun ; estimation 1 h portée à 1,5 h ; non planifié, développement en pause) · 0 h
 - 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h
 - 2026-11-26 22:45 · agent:chef-de-projet · SIMULATION · triage : ticket compagnon de revue humaine T-099 créé (Karim, 0,5 h, imputé à l'ESN, DEC-020) ; ce ticket ajouté à depend_de du GO T-046 (DEC-020, point 3), comme le recommandait sa Description · 0 h
+- 2026-11-26 · agent:coordinateur · migration DEC-023 : imputation reportée dans le frontmatter (`imputation: esn`, `imputation_decision: DEC-020`), d'après la ligne « imputé à l'ESN (DEC-020) » ; coût client et part ESN désormais calculés par `tableau.py` (R18) · 0 h

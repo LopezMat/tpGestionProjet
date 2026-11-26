@@ -20,6 +20,8 @@ maj_le: 2026-11-26
 statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
+imputation: esn             # client | esn (R18, DEC-023)
+imputation_decision: DEC-020   # décision VALIDÉ qui met ce ticket à la charge de l'ESN
 ---
 > **SIMULATION** — Retour d'expérience de l'exercice de crise T-080 (scénario 5, S2), DEC-019.
 
@@ -104,3 +106,4 @@ Décision [DEC-019](../../../docs/decisions/2026-11-26-DEC-019-simulation-recons
 - 2026-11-26 18:45 · agent:chef-de-projet · SIMULATION · création à la demande d'Ethan (DEC-019, point 3.2, retour d'expérience de l'exercice T-080) ; couvre T-088 (passé ANNULE), complète T-089 ; assignée à Nadia (seule salariée sauvegarde-restauration et docker) ; dépend de T-021 et T-029 ; charge de Nadia recalculée à 128 %, allocation à trancher au triage (T-090) ; non planifié (développement en pause) · 0 h
 - 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h
 - 2026-11-26 22:45 · agent:chef-de-projet · SIMULATION · triage (T-080, T-090) : ticket compagnon de revue humaine T-098 créé (Karim, 0,5 h, imputé à l'ESN, DEC-020) ; ce ticket ajouté à depend_de du GO T-046 (DEC-020, point 3) · 0 h
+- 2026-11-26 · agent:coordinateur · migration DEC-023 : imputation reportée dans le frontmatter (`imputation: esn`, `imputation_decision: DEC-020`), d'après la ligne « imputé à l'ESN (DEC-020) » ; coût client et part ESN désormais calculés par `tableau.py` (R18) · 0 h

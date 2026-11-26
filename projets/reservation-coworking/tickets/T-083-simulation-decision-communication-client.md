@@ -20,6 +20,8 @@ maj_le: 2026-11-26
 statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:       2026-11-26           # facultatif : date du passage TERMINE
+imputation: esn             # client | esn (R18, DEC-023)
+imputation_decision: DEC-020   # décision VALIDÉ qui met ce ticket à la charge de l'ESN
 ---
 > **SIMULATION** — Exercice de crise (scénario 5, S2) demandé par l'humain le 2026-11-26, ticket incident [T-080](T-080-simulation-perte-base-production.md). Aucun message n'est réellement envoyé au client. Heures simulées.
 
@@ -100,3 +102,4 @@ Aucun nom de membre, aucune adresse ni aucun détail technique interne (nom du v
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 10:14 · agent:gestionnaire-crise · SIMULATION · création (ATTENTE_HUMAIN), messages 1 et 2 proposés, envoi par Claire après décision (AF1) · 0 h
+- 2026-11-26 · agent:coordinateur · migration DEC-023 : imputation reportée dans le frontmatter (`imputation: esn`, `imputation_decision: DEC-020`), d'après DEC-020 § 3, qui cite ce ticket (pas de ligne « imputé à l'ESN » jusqu'ici) ; coût client et part ESN désormais calculés par `tableau.py` (R18) · 0 h

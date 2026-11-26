@@ -11,7 +11,7 @@ slug: reservation-coworking
 client: Coworking Les Arcades (Perpignan)
 type_projet: metier         # vitrine | ecommerce | api | metier | modernisation
 etat_projet: cadrage        # cadrage | en_cours | en_pause | livre | maintenance | clos
-budget_eur: 4200           # SIMULATION, DEC-020 (6 000 € selon DEC-009) ; le tableau inclut la part imputée à l'ESN (DEC-020, Impacts)
+budget_eur: 4200           # SIMULATION, DEC-020 (6 000 € selon DEC-009) ; comparé au seul coût client, la part ESN est séparée par le tableau (R18, DEC-023)
 deadline: 2026-12-18
 hebergement: local          # production locale Docker (DEC-003) ; autre hébergeur = décision humaine
 url_prod: http://localhost:8080   # port fixe, propre à chaque projet

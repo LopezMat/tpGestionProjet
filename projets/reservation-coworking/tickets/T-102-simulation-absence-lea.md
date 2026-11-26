@@ -20,6 +20,8 @@ maj_le: 2026-11-26
 statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le: 2026-11-26        # facultatif : date du premier passage EN_COURS
 termine_le:       2026-11-26          # facultatif : date du passage TERMINE
+imputation: esn             # client | esn (R18, DEC-023)
+imputation_decision: DEC-021   # décision VALIDÉ qui met ce ticket à la charge de l'ESN
 ---
 > **SIMULATION** — Événement d'équipe (scénario 3, S1), skill `absence`, demandé par l'humain le 2026-11-26.
 
@@ -94,3 +96,4 @@ Recommandation : **imputer T-102 et T-103 à l'ESN**, avec la ligne de journal �
 - 2026-11-26 23:20 · agent:chef-de-projet · SIMULATION · A_FAIRE → EN_COURS ; lecture de `equipe/`, des tickets du projet (`salarie:lea`, « Léa »), de `planning.md` v1.1, de DEC-009 E et de DEC-020 ; `tableau.py` lancé · 0 h
 - 2026-11-26 23:35 · agent:chef-de-projet · SIMULATION · analyse d'impact écrite : aucun ticket ne chevauche l'absence, aucun usage implicite planifié (revue d'accessibilité non retenue par DEC-009 E, aucun ticket frontend critique), fin projetée le 2026-12-16 (marge de 2 jours ouvrés), aucune alerte ; options A (recommandée) et B ; question d'imputation à l'ESN de T-102 et T-103 ; EN_COURS → ATTENTE_HUMAIN · 0,5 h
 - 2026-11-26 23:59 · agent:coordinateur · SIMULATION · décision d'Ethan tracée dans DEC-021 (EN_REVUE) : option A, prise d'acte sans changement ; imputé à l'ESN (DEC-021, règle provisoire de DEC-020) : coût hors budget client. Ticket laissé ATTENTE_HUMAIN : `decision` à renseigner par Ethan · 0 h
+- 2026-11-26 · agent:coordinateur · migration DEC-023 : imputation reportée dans le frontmatter (`imputation: esn`, `imputation_decision: DEC-021`), d'après la ligne « imputé à l'ESN (DEC-021) » ; coût client et part ESN désormais calculés par `tableau.py` (R18) · 0 h

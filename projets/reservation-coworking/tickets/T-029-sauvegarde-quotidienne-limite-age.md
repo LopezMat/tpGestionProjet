@@ -20,6 +20,8 @@ maj_le: 2026-11-26
 statut_depuis: 2026-11-24   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
+imputation: esn             # client | esn (R18, DEC-023)
+imputation_decision: DEC-020   # décision VALIDÉ qui met ce ticket à la charge de l'ESN
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
 
@@ -58,3 +60,4 @@ Ticket de sauvegarde prévu par [DEC-007](../../../docs/decisions/2026-11-24-DEC
 - 2026-11-24 23:55 · agent:chef-de-projet · création ; affectation conditionnelle à l'allocation de Nadia proposée dans T-007 · 0 h
 - 2026-11-26 18:45 · agent:chef-de-projet · SIMULATION · priorité haute → critique, à la demande d'Ethan (DEC-019, retour d'expérience de l'exercice T-080) ; ticket ajouté à depend_de du GO T-046 ; section Revue déjà à « Revue humaine requise : oui », ticket compagnon T-038 (Karim) existant ; AF7 respecté (Nadia confirmée, actif) ; statut, assigné et estimation inchangés · 0 h (temps compté dans T-008)
 - 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h
+- 2026-11-26 · agent:coordinateur · migration DEC-023 : imputation reportée dans le frontmatter (`imputation: esn`, `imputation_decision: DEC-020`), d'après la ligne « imputé à l'ESN (DEC-020) » ; coût client et part ESN désormais calculés par `tableau.py` (R18) · 0 h
