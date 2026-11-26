@@ -4,7 +4,7 @@ id: T-077
 titre: Veille
 projet: reservation-coworking
 type: tache                 # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: EN_COURS            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: EN_REVUE            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: normale           # critique | haute | normale | basse
 assigne: agent:veilleur     # agent:<nom> | salarie:<prenom>
 competence_requise: veille-technologique (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -46,3 +46,4 @@ Il reste ouvert pendant la vie du projet ; chaque passage du `veilleur` ajoute u
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 15:00 · agent:coordinateur · création (ticket de travail du veilleur, première veille demandée par l'humain) · 0 h
 - 2026-11-26 16:00 · agent:veilleur · veille 2026-S48 : `veille/2026-S48.md` (14 constats, 2 propositions P-1 PostgreSQL 16.16 et P-2 verrou des dépendances, aucun ticket créé sur consigne de l'humain, transmis au chef-de-projet) · 2.5 h
+- 2026-11-26 17:00 · agent:coordinateur · tickets T-078 (P-1) et T-079 (P-2) créés par le chef-de-projet et reportés dans `veille/2026-S48.md` v0.2 ; rapport lu par l'humain, en `EN_REVUE` : ticket passé `EN_REVUE` (livrable en attente de validation humaine). Pas de `TERMINE` : le ticket porte aussi les passages suivants et ses critères ne sont pas tous cochés (R13) · 0 h

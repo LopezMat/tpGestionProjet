@@ -5,7 +5,7 @@ titre: Sauvegarde quotidienne et limite d'âge de 30 jours (outillage)
 projet: reservation-coworking
 type: tache                 # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
 statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
-priorite: haute             # critique | haute | normale | basse
+priorite: critique          # critique | haute | normale | basse
 assigne: salarie:nadia      # agent:<nom> | salarie:<prenom>
 competence_requise: sauvegarde-restauration (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 4.5           # heures équivalent humain, quel que soit l'assigné
@@ -16,7 +16,7 @@ validation_humaine_requise: oui   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-24
-maj_le: 2026-11-24
+maj_le: 2026-11-26
 statut_depuis: 2026-11-24   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
@@ -56,3 +56,4 @@ Ticket de sauvegarde prévu par [DEC-007](../../../docs/decisions/2026-11-24-DEC
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-24 23:55 · agent:chef-de-projet · création ; affectation conditionnelle à l'allocation de Nadia proposée dans T-007 · 0 h
+- 2026-11-26 18:45 · agent:chef-de-projet · SIMULATION · priorité haute → critique, à la demande d'Ethan (DEC-019, retour d'expérience de l'exercice T-080) ; ticket ajouté à depend_de du GO T-046 ; section Revue déjà à « Revue humaine requise : oui », ticket compagnon T-038 (Karim) existant ; AF7 respecté (Nadia confirmée, actif) ; statut, assigné et estimation inchangés · 0 h (temps compté dans T-008)

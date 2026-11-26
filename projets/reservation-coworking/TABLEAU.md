@@ -9,33 +9,40 @@
 | Indicateur | Valeur |
 |---|---|
 | Type · état | metier · cadrage |
-| Avancement (h estimées terminées / h estimées hors ANNULE) | 19,1 % (35,5 h / 186,0 h) |
-| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 118,7 h |
-| Budget consommé / prévu | 1 193,54 € / 6 000,00 € (19,9 %) |
-| Coût projeté à terminaison (consommé + reste × taux) | 4 612,04 € |
-| Fin projetée | 2026-12-21 |
+| Avancement (h estimées terminées / h estimées hors ANNULE) | 17,3 % (35,5 h / 205,5 h) |
+| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 133,9 h |
+| Budget consommé / prévu | 1 300,04 € / 6 000,00 € (21,7 %) |
+| Coût projeté à terminaison (consommé + reste × taux) | 5 771,57 € |
+| Fin projetée | 2026-12-30 |
 | Deadline | 2026-12-18 |
-| Écart avec la deadline | +1 j ouvré |
+| Écart avec la deadline | +7 j ouvrés |
 
 ## Alertes
 
 | Type | Détail |
 |---|---|
-| Délais | fin projetée le 2026-12-21 après la deadline du 2026-12-18 (+1 j ouvré) (S1-R11) |
-| Utilisation (info) | claire utilisé à 33,6 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
+| Délais | fin projetée le 2026-12-30 après la deadline du 2026-12-18 (+7 j ouvrés) (S1-R11) |
+| Critique | T-029 « Sauvegarde quotidienne et limite d'âge de 30 jours (outillage) » est ouvert (A_FAIRE) |
+| Critique | T-080 « SIMULATION — Perte de la base de production (volume Docker supprimé) » est ouvert (EN_REVUE) |
+| Critique | T-081 « SIMULATION — Décision restauration de la base de production (T-080) » est ouvert (ATTENTE_HUMAIN) |
+| Critique | T-082 « SIMULATION — Décision mise en maintenance pendant l'opération (T-080) » est ouvert (ATTENTE_HUMAIN) |
+| Critique | T-083 « SIMULATION — Décision communication au client sur la perte de données (T-080) » est ouvert (ATTENTE_HUMAIN) |
+| Absence (S1-R9) | T-081 (salarie:nadia) : fenêtre prévue du 2026-12-02 au 2026-12-04 chevauche EV-002 (2026-12-03 → 2026-12-03) |
+| Utilisation (info) | claire utilisé à 44,1 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
+| Surcharge | nadia : 24,5 h assignées pour 17,9 h de capacité allouée (136,7 %) |
 
 ## Tickets par statut
 
 | Statut | Nombre |
 |---|---|
-| A_FAIRE | 48 |
-| EN_COURS | 6 |
-| EN_REVUE | 3 |
+| A_FAIRE | 55 |
+| EN_COURS | 5 |
+| EN_REVUE | 5 |
 | BLOQUE | 0 |
-| ATTENTE_HUMAIN | 1 |
+| ATTENTE_HUMAIN | 5 |
 | TERMINE | 15 |
-| ANNULE | 5 |
-| **Total** | 78 |
+| ANNULE | 6 |
+| **Total** | 91 |
 
 ## Tickets BLOQUE
 
@@ -45,13 +52,17 @@ Aucun ticket bloqué.
 
 | Priorité | Ticket | Titre | Porteur | Question (bloque_par) | Ancienneté |
 |---|---|---|---|---|---|
+| critique | T-081 | SIMULATION — Décision restauration de la base de production (T-080) | salarie:nadia | décision humaine requise (S2-R4, restauration de données) ; préalable, vérification physique des dossiers de sauvegardes par Nadia | 0 j ouvré |
+| critique | T-082 | SIMULATION — Décision mise en maintenance pendant l'opération (T-080) | salarie:nadia | décision humaine requise (S2-R4, coupure volontaire ou mise en maintenance) | 0 j ouvré |
+| critique | T-083 | SIMULATION — Décision communication au client sur la perte de données (T-080) | salarie:claire | décision humaine requise (S2-R4 et AF1, communication au client) ; le message 2 attend aussi la décision T-081 | 0 j ouvré |
 | haute | T-057 | Rôle PostgreSQL de l'application (constat 10, moindre privilège) | salarie:karim | décision humaine sur le rôle PostgreSQL de l'application (constat 10 du rapport securite-2026-11-25-3), avec l'accord de C sur le modèle commun | 1 j ouvré |
+| haute | T-084 | SIMULATION — Décision notification CNIL de la violation de données (T-080) | salarie:claire | décision humaine requise (S2-R4, notification CNIL, compétence juridique) ; recommandation à transmettre au client avant le 2026-11-27 17:00 | 0 j ouvré |
 
 ## Tickets salariés à faire par un humain (AF11)
 
 | Ticket | Titre | Assigné | Statut | Reste | Fenêtre prévue |
 |---|---|---|---|---|---|
-| T-009 | Points client (mention de confidentialité, F-08, recette) | salarie:claire | A_FAIRE | 2,5 h | 2026-11-26 → 2026-11-27 |
+| T-009 | Points client (mention de confidentialité, F-08, recette) | salarie:claire | A_FAIRE | 2,5 h | 2026-11-26 → 2026-11-30 |
 | T-029 | Sauvegarde quotidienne et limite d'âge de 30 jours (outillage) | salarie:nadia | A_FAIRE | 4,5 h | 2026-11-26 → 2026-12-02 |
 | T-030 | Revue humaine T-013 (authentification, sessions, rôles) | salarie:karim | A_FAIRE | 1,5 h | 2026-11-26 → 2026-11-27 |
 | T-031 | Revue humaine T-014 (limitation des tentatives) | salarie:karim | A_FAIRE | 1,0 h | 2026-11-27 → 2026-11-30 |
@@ -65,15 +76,25 @@ Aucun ticket bloqué.
 | T-044 | Environnement de recette (app au SHA candidat, compte accueil de recette) | salarie:nadia | A_FAIRE | 1,0 h | 2026-12-08 → 2026-12-09 |
 | T-045 | Recette de la livraison | salarie:claire | A_FAIRE | 5,0 h | 2026-12-09 → 2026-12-15 |
 | T-046 | GO mise en production | salarie:claire | A_FAIRE | 0,5 h | 2026-12-15 → 2026-12-15 |
-| T-048 | Mise en service (compte accueil initial, tâche planifiée de sauvegarde) | salarie:nadia | A_FAIRE | 1,0 h | 2026-12-15 → 2026-12-16 |
-| T-049 | Fin de démonstration (suppression des données sur le poste) | salarie:nadia | A_FAIRE | 0,5 h | 2026-12-16 → 2026-12-17 |
+| T-048 | Mise en service (compte accueil initial, tâche planifiée de sauvegarde) | salarie:nadia | A_FAIRE | 1,0 h | 2026-12-24 → 2026-12-24 |
+| T-049 | Fin de démonstration (suppression des données sur le poste) | salarie:nadia | A_FAIRE | 0,5 h | 2026-12-24 → 2026-12-28 |
 | T-057 | Rôle PostgreSQL de l'application (constat 10, moindre privilège) | salarie:karim | ATTENTE_HUMAIN | 0,5 h | 2026-12-04 → 2026-12-07 |
 | T-058 | Rôle PostgreSQL applicatif non superutilisateur (constat 10) | salarie:nadia | A_FAIRE | 2,0 h | 2026-12-07 → 2026-12-08 |
 | T-059 | Revue humaine T-058 (rôle PostgreSQL applicatif) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-07 → 2026-12-07 |
 | T-064 | Revue humaine T-063 (en-têtes de sécurité et Host) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-07 → 2026-12-08 |
-| T-072 | Rotation des journaux dans le modèle compose commun (constat 15) | salarie:nadia | A_FAIRE | 0,5 h | 2026-12-17 → 2026-12-17 |
+| T-072 | Rotation des journaux dans le modèle compose commun (constat 15) | salarie:nadia | A_FAIRE | 0,5 h | 2026-12-28 → 2026-12-28 |
 | T-074 | Revue humaine T-073 (en-têtes sur la 500 interne) | salarie:karim | A_FAIRE | 0,2 h | 2026-12-08 → 2026-12-08 |
-| T-078 | Image PostgreSQL 16.16 ou plus (43 CVE corrigées, veille P-1) | salarie:nadia | A_FAIRE | 1,5 h | 2026-12-17 → 2026-12-21 |
+| T-078 | Image PostgreSQL 16.16 ou plus (43 CVE corrigées, veille P-1) | salarie:nadia | A_FAIRE | 1,5 h | 2026-12-28 → 2026-12-30 |
+| T-081 | SIMULATION — Décision restauration de la base de production (T-080) | salarie:nadia | ATTENTE_HUMAIN | 1,5 h | 2026-12-02 → 2026-12-04 |
+| T-082 | SIMULATION — Décision mise en maintenance pendant l'opération (T-080) | salarie:nadia | ATTENTE_HUMAIN | 0,5 h | 2026-12-04 → 2026-12-04 |
+| T-083 | SIMULATION — Décision communication au client sur la perte de données (T-080) | salarie:claire | ATTENTE_HUMAIN | 1,0 h | 2026-11-26 → 2026-11-26 |
+| T-084 | SIMULATION — Décision notification CNIL de la violation de données (T-080) | salarie:claire | ATTENTE_HUMAIN | 1,0 h | 2026-11-30 → 2026-12-01 |
+| T-085 | SIMULATION — Runbook perte-donnees, cas « volume supprimé » et « sauvegarde absente des traces » | salarie:nadia | A_FAIRE | 1,5 h | 2026-12-09 → 2026-12-11 |
+| T-086 | SIMULATION — Protéger le volume de base de production contre une suppression accidentelle | salarie:nadia | A_FAIRE | 2,0 h | 2026-12-11 → 2026-12-14 |
+| T-087 | SIMULATION — deployer_local.py et rollback_local.py refusent de recréer une base vide après un déploiement vérifié | salarie:nadia | A_FAIRE | 1,5 h | 2026-12-14 → 2026-12-16 |
+| T-089 | SIMULATION — Exercice de restauration réel, cas « volume supprimé », chronométré | salarie:nadia | A_FAIRE | 2,5 h | 2026-12-16 → 2026-12-18 |
+| T-091 | SIMULATION — Registre des demandes de suppression chez le client avant la mise en service | salarie:claire | A_FAIRE | 0,5 h | 2026-12-15 → 2026-12-16 |
+| T-092 | SIMULATION — Vérification quotidienne des sauvegardes (existence, restauration dans une base jetable, alerte) | salarie:nadia | A_FAIRE | 4,0 h | 2026-12-18 → 2026-12-24 |
 
 ## Tickets formation ouverts
 
@@ -85,9 +106,9 @@ Période : du 2026-11-26 au 2026-12-18. Heures restantes assignées ÷ capacité
 
 | Salarié | Allocation | h restantes assignées | Capacité allouée | Utilisation | Observation |
 |---|---|---|---|---|---|
-| claire | 20 % | 8,0 h | 23,8 h | 33,6 % | sous 50,0 % : ajuster l'allocation ? |
+| claire | 20 % | 10,5 h | 23,8 h | 44,1 % | sous 50,0 % : ajuster l'allocation ? |
 | karim | 15 % | 9,2 h | 17,9 h | 51,8 % | — |
-| nadia | 20 % | 11,0 h | 17,9 h | 61,4 % | — |
+| nadia | 20 % | 24,5 h | 17,9 h | 136,7 % | surcharge |
 
 ## Planning prévisionnel (Gantt)
 
@@ -105,6 +126,7 @@ gantt
     section agent chef-de-projet
     T-002 Interlocuteur client et allocation initiale :done, t002, 2026-11-24, 2026-11-25
     T-008 Pilotage :active, t008, 2026-11-26, 2026-11-27
+    T-090 SIMULATION — Fermer la fenêtre « production sans sauvegarde  :t090, 2026-11-26, 2026-11-27
     section agent deployeur
     T-047 Déploiement en production locale :t047, 2026-12-15, 2026-12-16
     section agent dev-backend
@@ -136,12 +158,14 @@ gantt
     T-079 Verrou des dépendances avec empreintes, image Python figée,  :t079, 2026-12-04, 2026-12-08
     section agent dev-frontend
     T-022 Front socle (connexion, mot de passe, navigation) (F-04) :t022, 2026-11-26, 2026-11-27
-    T-023 Front membres (disponibilités, réservation, annulation) (F-0 :t023, 2026-11-27, 2026-12-01
+    T-023 Front membres (disponibilités, réservation, annulation) (F-0 :t023, 2026-11-30, 2026-12-02
     T-024 Front accueil (vue du jour, gestion des comptes) (F-03, F-07 :t024, 2026-11-26, 2026-11-28
-    T-025 Page de confidentialité (texte validé par le client) :t025, 2026-11-27, 2026-11-28
+    T-025 Page de confidentialité (texte validé par le client) :t025, 2026-11-30, 2026-12-01
     T-027 Fiches des salles (F-06, Should) :t027, 2026-12-04, 2026-12-05
-    T-055 Page de consultation des disponibilités (F-01, lecture seule :active, t055, 2026-11-27, 2026-11-28
+    T-055 Page de consultation des disponibilités (F-01, lecture seule :active, t055, 2026-11-30, 2026-12-01
     T-075 Contrôle statique du front par analyse HTML (constat 20) :t075, 2026-12-04, 2026-12-05
+    section agent gestionnaire-crise
+    T-080 SIMULATION — Perte de la base de production (volume Docker s :crit, active, t080, 2026-11-26, 2026-11-27
     section agent relecteur-code
     T-039 Revue de code (1/2) — socle, authentification, réservations :active, t039, 2026-11-26, 2026-11-27
     T-040 Revue de code (2/2) — front, bout en bout, Should, outillage :t040, 2026-11-26, 2026-11-27
@@ -156,9 +180,12 @@ gantt
     T-077 Veille :active, t077, 2026-11-26, 2026-11-27
     section salarie claire
     T-007 Validation du budget et des délais :done, t007, 2026-11-24, 2026-11-26
-    T-009 Points client (mention de confidentialité, F-08, recette) :t009, 2026-11-26, 2026-11-28
+    T-009 Points client (mention de confidentialité, F-08, recette) :t009, 2026-11-26, 2026-12-01
     T-045 Recette de la livraison :t045, 2026-12-09, 2026-12-16
     T-046 GO mise en production :t046, 2026-12-15, 2026-12-16
+    T-083 SIMULATION — Décision communication au client sur la perte d :crit, t083, 2026-11-26, 2026-11-27
+    T-084 SIMULATION — Décision notification CNIL de la violation de d :crit, t084, 2026-11-30, 2026-12-02
+    T-091 SIMULATION — Registre des demandes de suppression chez le cl :t091, 2026-12-15, 2026-12-17
     section salarie karim
     T-030 Revue humaine T-013 (authentification, sessions, rôles) :t030, 2026-11-26, 2026-11-28
     T-031 Revue humaine T-014 (limitation des tentatives) :t031, 2026-11-27, 2026-12-01
@@ -175,13 +202,20 @@ gantt
     T-068 Revue humaine T-054 (API de consultation sans connexion) :done, t068, 2026-11-26, 2026-11-27
     T-074 Revue humaine T-073 (en-têtes sur la 500 interne) :t074, 2026-12-08, 2026-12-09
     section salarie nadia
-    T-029 Sauvegarde quotidienne et limite d'âge de 30 jours (outillag :t029, 2026-11-26, 2026-12-03
+    T-029 Sauvegarde quotidienne et limite d'âge de 30 jours (outillag :crit, t029, 2026-11-26, 2026-12-03
     T-044 Environnement de recette (app au SHA candidat, compte accuei :t044, 2026-12-08, 2026-12-10
-    T-048 Mise en service (compte accueil initial, tâche planifiée de  :t048, 2026-12-15, 2026-12-17
-    T-049 Fin de démonstration (suppression des données sur le poste) :t049, 2026-12-16, 2026-12-18
+    T-048 Mise en service (compte accueil initial, tâche planifiée de  :t048, 2026-12-24, 2026-12-25
+    T-049 Fin de démonstration (suppression des données sur le poste) :t049, 2026-12-24, 2026-12-29
     T-058 Rôle PostgreSQL applicatif non superutilisateur (constat 10) :t058, 2026-12-07, 2026-12-09
-    T-072 Rotation des journaux dans le modèle compose commun (constat :t072, 2026-12-17, 2026-12-18
-    T-078 Image PostgreSQL 16.16 ou plus (43 CVE corrigées, veille P-1 :t078, 2026-12-17, 2026-12-22
+    T-072 Rotation des journaux dans le modèle compose commun (constat :t072, 2026-12-28, 2026-12-29
+    T-078 Image PostgreSQL 16.16 ou plus (43 CVE corrigées, veille P-1 :t078, 2026-12-28, 2026-12-31
+    T-081 SIMULATION — Décision restauration de la base de production  :crit, t081, 2026-12-02, 2026-12-05
+    T-082 SIMULATION — Décision mise en maintenance pendant l'opératio :crit, t082, 2026-12-04, 2026-12-05
+    T-085 SIMULATION — Runbook perte-donnees, cas « volume supprimé »  :t085, 2026-12-09, 2026-12-12
+    T-086 SIMULATION — Protéger le volume de base de production contre :t086, 2026-12-11, 2026-12-15
+    T-087 SIMULATION — deployer_local.py et rollback_local.py refusent :t087, 2026-12-14, 2026-12-17
+    T-089 SIMULATION — Exercice de restauration réel, cas « volume sup :t089, 2026-12-16, 2026-12-19
+    T-092 SIMULATION — Vérification quotidienne des sauvegardes (exist :t092, 2026-12-18, 2026-12-25
     section Jalons
     Deadline :milestone, deadline, 2026-12-18, 0d
 ```

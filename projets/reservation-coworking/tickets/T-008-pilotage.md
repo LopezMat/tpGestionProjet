@@ -9,7 +9,7 @@ priorite: normale           # critique | haute | normale | basse
 assigne: agent:chef-de-projet   # agent:<nom> | salarie:<prenom>
 competence_requise: gestion-projet (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 9             # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 7.75         # heures équivalent humain
+temps_passe_h: 10.25        # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
@@ -51,3 +51,5 @@ Estimation : planification initiale 4 h (découpage, estimation, affectation, pl
 - 2026-11-25 14:45 · agent:chef-de-projet · triage (S1-R5) des suites de T-054 : T-069 trié (constat 14 du rapport securite-2026-11-25-4 fusionné) et ajouté à `depend_de` de T-046 ; T-070 trié ; création de T-071 (journal d'accès, constat 15 a) et T-072 (rotation des journaux, constat 15 b, Nadia) ; critère ajouté à T-013 (constat 15 c) et à T-055 (créneaux passés du jour J, 1,5 → 2 h) ; remarques 1 à 5 du relecteur sur T-054 et remarques fonctionnelles de l'audit regroupées dans T-065 (1 → 2,5 h) ; journal de T-018 ; T-066 (3 → 5 h) et T-067 (2,5 → 4 h) étendus ; proposition de ré-estimation de T-043 au journal. `tableau.py` non lancé (hook et répertoire courant) : calcul à la main dans le message au coordinateur · 1 h
 - 2026-11-25 16:40 · agent:chef-de-projet · triage (S1-R5) du rapport securite-2026-11-25-5 : création de T-073 (constat 16, en-têtes sur la 500 interne, `dev-backend`, 0,5 h) et de son compagnon T-074 (revue humaine, Karim, 0,25 h) ; T-013 dépend de T-073 ; remarque `api.py:127` regroupée en critère de T-018 (4,5 → 4,75 h) ; T-066 5 → 5,5 h ; T-067 non modifié (consigne du coordinateur). `tableau.py` lancé · 0,25 h
 - 2026-11-26 16:30 · agent:chef-de-projet · création des tickets issus de la veille 2026-S48 (`veille/2026-S48.md`) : T-078 (P-1, image PostgreSQL 16.16, Nadia) et T-079 (P-2, verrou des dépendances, `dev-backend`), en `A_FAIRE`, non planifiés (développement en pause) ; aucun ticket existant modifié ; ligne reportée par le coordinateur · 0,5 h
+- 2026-11-26 18:00 · agent:chef-de-projet · SIMULATION · exercice de crise T-080 : création des actions correctives T-085 à T-091 (P-1 à P-6, P-9 ; P-7 et P-8 non créés, DEC-009 point E), analyse de charge de Nadia dans T-090 ; ligne reportée par le coordinateur · 1,5 h
+- 2026-11-26 18:30 · agent:chef-de-projet · SIMULATION · retour d'expérience DEC-019 : T-029 haute → critique, T-029 ajouté à `depend_de` de T-046, création de T-092 (vérification quotidienne des sauvegardes), T-088 annulé (couvert par T-092), T-090 annoté ; ligne reportée par le coordinateur · 1 h
