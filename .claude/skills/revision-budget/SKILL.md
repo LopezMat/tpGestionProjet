@@ -26,12 +26,14 @@ Quand un humain annonce un nouveau budget ou une nouvelle deadline pour un proje
      - **B · réaffecter** des tickets d'un salarié vers un agent, uniquement là où AF1 à AF5 le permettent (gain, risque) ;
      - **C · décaler la deadline** (nouvelle date, effet sur la capacité) ;
      - **D · maintenir** le périmètre et dépasser le budget (montant du dépassement) ;
+     - **E · prise en charge par l'ESN** de tickets qui relèvent d'elle (crise, garantie de livraison, outillage commun ; CLAUDE.md R18) : liste des tickets, montant, justification ;
    - sa recommandation ;
    - puis il passe le ticket `ATTENTE_HUMAIN`.
 5. **Arrêt humain.** Après la décision : `tracer-decision`, puis :
    - `budget_eur` (et `deadline`) mis à jour dans `projet.md` par le coordinateur ; si `projet.md` est `VALIDÉ`, c'est l'humain qui le repasse `EN_REVUE` ou le modifie lui-même ;
    - les tickets retirés passent `ANNULE` (jamais supprimés), avec une ligne de journal citant le `DEC-NNN` ;
    - les réaffectations sont appliquées par le `chef-de-projet` ;
+   - si la décision met des tickets à la charge de l'ESN : une fois la décision `VALIDÉ`, le coordinateur renseigne `imputation: esn` et `imputation_decision: DEC-NNN` dans chacun, avec une ligne de journal ; `TABLEAU.md` sépare alors le coût client de la part ESN (R18) ;
    - si le périmètre du CDC change : l'humain repasse `cdc.md` en `EN_REVUE`, et l'`analyste-besoin` le révise.
 
 ## Règles
@@ -43,6 +45,8 @@ Quand un humain annonce un nouveau budget ou une nouvelle deadline pour un proje
   *Pourquoi :* l'historique du périmètre reste lisible, et le tableau de bord exclut les tickets `ANNULE` de l'avancement.
 - **Le CDC validé n'est modifié qu'après sa réouverture par un humain** (R6).
   *Pourquoi :* ce qui est appliqué doit rester ce qui a été validé.
+- **Le ticket `decision` reste dans le projet du client** (exception de CLAUDE.md § 5), et une prise en charge par l'ESN n'est appliquée qu'après une décision `VALIDÉ` (R18).
+  *Pourquoi :* la révision du budget est une demande du client ; imputer à l'ESN sans décision masquerait un dépassement.
 
 ## Produit
 - un ticket `decision` avec la projection et les scénarios ;

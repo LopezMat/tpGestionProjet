@@ -8,7 +8,7 @@ description: Ouvre l'espace d'un nouveau projet client (projets/<slug>/) à part
 # nouveau-projet
 
 ## Quand l'utiliser
-À la réception d'une nouvelle demande client (étape 1 du pipeline, CLAUDE.md § 1).
+À la réception d'une nouvelle demande client (étape 1 du pipeline, CLAUDE.md § 1). Jamais pour le projet interne `projets/esn-interne/`, qui existe déjà et n'a ni demande ni CDC (R19).
 
 ## Entrées
 - le texte de la demande du client (tel que donné par l'humain) ;

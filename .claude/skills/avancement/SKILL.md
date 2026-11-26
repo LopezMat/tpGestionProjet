@@ -22,15 +22,18 @@ description: Régénère les tableaux de bord avec scripts/tableau.py et présen
 2. **Lire** `PORTFOLIO.md` et le `TABLEAU.md` du ou des projets concernés.
 3. **Rédiger la synthèse** pour l'humain, par projet :
    - avancement (% des heures estimées terminées) et tickets par statut ;
-   - budget consommé / prévu (€ et %) ; temps restant ; fin projetée / deadline ;
+   - budget consommé / prévu (€ et %) ; temps restant ; fin projetée / deadline. Pour un projet avec une part ESN (R18) : **coût client** consommé et projeté (seul comparé au budget, S1-R11), **part prise en charge par l'ESN** avec ses décisions, et coût total, tels que les affiche `TABLEAU.md`, sans aucun recalcul manuel ;
+   - anomalies d'imputation (`R18` dans « Anomalies de données ») : chacune est un ticket compté au client faute de décision validée, à présenter à l'humain ;
    - tickets `ATTENTE_HUMAIN`, triés par priorité, avec la question posée ;
    - tickets `BLOQUE`, avec `bloque_par` et l'ancienneté ;
    - alertes : budget > 90 %, deadline dépassée en projection, ticket critique ouvert, ticket `EN_COURS` sans mise à jour depuis plus de 2 jours ouvrés, préavis de départ < 5 jours ouvrés ;
    - **utilisation des salariés** : h assignées / capacité allouée sur la période, en signalant les taux < 50 % (indicateur AF9) ;
    - **tickets `salarie:` en attente d'un humain** (AF11) ;
-   - tickets `formation` et `amelioration` ouverts ;
+   - tickets `amelioration` ouverts ;
+   - **plan de formation de l'ESN** (S1-R13) : tickets `formation` ouverts d'`esn-interne` (section « Plan de formation de l'ESN » de `PORTFOLIO.md`), compétences à risque du `planning.md` d'`esn-interne`, budget de fonctionnement consommé ;
+   - **coûts pris en charge par l'ESN** : section de `PORTFOLIO.md`, par projet et au total ;
    - événements d'équipe à venir (calendrier).
-4. **Si une alerte S1-R11 est levée** (budget > 90 % ou fin projetée après la deadline) : lancer `chef-de-projet` pour les scénarios ; il crée le ticket `decision` en `ATTENTE_HUMAIN`.
+4. **Si une alerte S1-R11 est levée** (coût imputé au budget du projet > 90 %, c'est-à-dire le coût client pour un projet client, ou fin projetée après la deadline) : lancer `chef-de-projet` pour les scénarios ; il crée le ticket `decision` en `ATTENTE_HUMAIN`.
 5. **Annoncer** : ce qui a été produit, ce qui bloque, ce qui attend une décision, la prochaine étape (CLAUDE.md § 2).
 
 ## Règles
