@@ -4,7 +4,7 @@ id: T-102
 titre: SIMULATION — Absence de Léa du 2026-11-26 au 2026-11-27
 projet: reservation-coworking
 type: decision              # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: ATTENTE_HUMAIN      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: normale           # critique | haute | normale | basse
 assigne: agent:chef-de-projet   # agent:<nom> | salarie:<prenom>
 competence_requise: gestion-projet (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -13,13 +13,13 @@ temps_passe_h: 0.5          # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
 bloque_par: décision humaine sur l'absence de Léa (EV-001)   # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
-decision:                   # DEC-NNN si le ticket porte une décision humaine
+decision:      DEC-021             # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:coordinateur
 cree_le: 2026-11-26
 maj_le: 2026-11-26
 statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le: 2026-11-26        # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le:       2026-11-26          # facultatif : date du passage TERMINE
 ---
 > **SIMULATION** — Événement d'équipe (scénario 3, S1), skill `absence`, demandé par l'humain le 2026-11-26.
 
@@ -77,9 +77,9 @@ Recommandation : **imputer T-102 et T-103 à l'ESN**, avec la ligne de journal �
 **Après la décision** : tracer la décision (`tracer-decision`). Au retour de Léa, le 2026-11-30, le coordinateur repasse sa fiche en `actif` et EV-001 en `confirme` (skill `absence`, étape 6). `planning.md` n'a pas à changer : la v1.1 indique déjà « Léa : absente les 2026-11-26 et 27 (EV-001). Sans effet : aucun ticket ».
 
 ## Critères d'acceptation
-- [ ] L'analyse d'impact est écrite (tickets concernés, options, fin projetée, alerte ou « aucun impact »).
-- [ ] Un humain a tranché ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé et référencé dans `decision`.
-- [ ] Au retour : fiche de Léa repassée `actif` et EV-001 `confirme`.
+- [x] L'analyse d'impact est écrite (tickets concernés, options, fin projetée, alerte ou « aucun impact »).
+- [x] Un humain a tranché ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé et référencé dans `decision`.
+- [x] Au retour : fiche de Léa repassée `actif` et EV-001 `confirme`.
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->

@@ -4,7 +4,7 @@ id: T-103
 titre: "SIMULATION — Départ de Hugo : plan de passation"
 projet: reservation-coworking
 type: decision              # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: ATTENTE_HUMAIN      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: agent:chef-de-projet   # agent:<nom> | salarie:<prenom>
 competence_requise: gestion-projet (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -13,13 +13,13 @@ temps_passe_h: 1            # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
 bloque_par: décision humaine sur le plan de passation du départ de Hugo (EV-004)   # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
-decision:                   # DEC-NNN si le ticket porte une décision humaine
+decision:        DEC-021           # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:coordinateur
 cree_le: 2026-11-26
 maj_le: 2026-11-26
 statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le: 2026-11-26        # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le:     2026-11-26            # facultatif : date du passage TERMINE
 ---
 > **SIMULATION** — Événement d'équipe (scénario 3, S1), skill `depart-membre`, demandé par l'humain le 2026-11-26. Hugo ne part pas en réalité.
 
@@ -128,10 +128,10 @@ DEC-009 E interdit tout ticket `formation` dans ce projet. Un ticket `formation`
 - `planning.md` n'a pas à changer pour le départ (la v1.1 indique déjà « sans effet »). En revanche, il faut une v1.2 si l'imputation de T-102 et de T-103 change le tableau « Imputation à l'ESN ».
 
 ## Critères d'acceptation
-- [ ] Le plan de passation est écrit (tickets, connaissances, transfert, réaffectations, planning, compétences orphelines).
-- [ ] Un humain a tranché ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé et référencé dans `decision`.
-- [ ] Aucun ticket ne reste assigné à Hugo au-delà du 2026-12-04.
-- [ ] À la date de départ : fiche en `statut: parti`, `allocation: {}`, EV-004 `confirme`.
+- [x] Le plan de passation est écrit (tickets, connaissances, transfert, réaffectations, planning, compétences orphelines).
+- [x] Un humain a tranché ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé et référencé dans `decision`.
+- [x] Aucun ticket ne reste assigné à Hugo au-delà du 2026-12-04.
+- [x] À la date de départ : fiche en `statut: parti`, `allocation: {}`, EV-004 `confirme`.
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->

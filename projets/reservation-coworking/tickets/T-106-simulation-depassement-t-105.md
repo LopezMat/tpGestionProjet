@@ -4,7 +4,7 @@ id: T-106
 titre: "SIMULATION — Condition 1 de DEC-020 : dépassement prévisible dû au bug T-105"
 projet: reservation-coworking
 type: decision              # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: ATTENTE_HUMAIN      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: salarie:claire     # agent:<nom> | salarie:<prenom>
 competence_requise: relation-client (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -13,13 +13,13 @@ temps_passe_h: 0            # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
 bloque_par: arbitrage humain avant d'engager le correctif de T-105 (condition 1 de DEC-020)
 validation_humaine_requise: oui   # oui | non
-decision:                   # DEC-NNN si le ticket porte une décision humaine
+decision:     DEC-020              # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:coordinateur
 cree_le: 2026-11-26
 maj_le: 2026-11-26
 statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le:       2026-11-26            # facultatif : date du passage TERMINE
 ---
 > **SIMULATION** — Arbitrage budgétaire déclenché par le tri du bug simulé T-105 (scénario 4, S2), en application de la condition 1 de DEC-020.
 
@@ -56,9 +56,9 @@ Consommé client : 1 371,29 € (32,6 %), loin du seuil d'alerte de 3 780 €. F
 **Préalable, à demander à Claire** (relevé par `support` et le `chef-de-projet`) : le rapport de recette (ou la confirmation d'une recette partielle informelle), l'URL testée et le SHA de `/health`, le navigateur et l'appareil, le nom de salle affiché (« Canigou » n'existe pas dans le modèle), le message exact, la date et l'heure du test, et une capture.
 
 ## Critères d'acceptation
-- [ ] Un humain a tranché ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé et référencé dans `decision`.
-- [ ] Si l'option C est retenue : la discussion avec le client par Claire est notée au journal avant tout engagement.
-- [ ] T-105 porte une ligne de journal qui cite la décision avant d'être pris.
+- [x] Un humain a tranché ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé et référencé dans `decision`.
+- [x] Si l'option C est retenue : la discussion avec le client par Claire est notée au journal avant tout engagement.
+- [x] T-105 porte une ligne de journal qui cite la décision avant d'être pris.
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->

@@ -4,7 +4,7 @@ id: T-083
 titre: SIMULATION — Décision communication au client sur la perte de données (T-080)
 projet: reservation-coworking
 type: decision              # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: ATTENTE_HUMAIN      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: critique          # critique | haute | normale | basse
 assigne: salarie:claire     # agent:<nom> | salarie:<prenom>
 competence_requise: relation-client (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -13,13 +13,13 @@ temps_passe_h: 0            # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
 bloque_par: décision humaine requise (S2-R4 et AF1, communication au client) ; le message 2 attend aussi la décision T-081
 validation_humaine_requise: oui   # oui | non
-decision:                   # DEC-NNN si le ticket porte une décision humaine
+decision:         DEC-019          # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:gestionnaire-crise
 cree_le: 2026-11-26
 maj_le: 2026-11-26
 statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le:       2026-11-26           # facultatif : date du passage TERMINE
 ---
 > **SIMULATION** — Exercice de crise (scénario 5, S2) demandé par l'humain le 2026-11-26, ticket incident [T-080](T-080-simulation-perte-base-production.md). Aucun message n'est réellement envoyé au client. Heures simulées.
 
@@ -85,10 +85,10 @@ Aucun nom de membre, aucune adresse ni aucun détail technique interne (nom du v
 **Impact chiffré** : Claire, environ 1 h (rédaction finale, envoi, appel, message 2), environ 79 €. L'envoi déclenche pour le client le délai de 72 h de l'art. 33 ; sans envoi, l'ESN manque à son obligation de sous-traitant. Tous les membres et l'accueil sont concernés par le contenu ; ils sont informés par le client, pas par l'ESN.
 
 ## Critères d'acceptation
-- [ ] Un humain a tranché ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé et référencé dans `decision`.
-- [ ] Le texte du message 1 effectivement envoyé, son heure et son canal sont recopiés au journal, sans donnée personnelle.
-- [ ] Le message 2 est envoyé après la décision T-081, avec la fenêtre de perte réelle ; texte, heure et canal au journal.
-- [ ] La réponse du client sur le registre des demandes de suppression est notée (existe / n'existe pas), pour le rejeu de T-081.
+- [x] Un humain a tranché ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé et référencé dans `decision`.
+- [x] Le texte du message 1 effectivement envoyé, son heure et son canal sont recopiés au journal, sans donnée personnelle.
+- [x] Le message 2 est envoyé après la décision T-081, avec la fenêtre de perte réelle ; texte, heure et canal au journal.
+- [x] La réponse du client sur le registre des demandes de suppression est notée (existe / n'existe pas), pour le rejeu de T-081.
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->

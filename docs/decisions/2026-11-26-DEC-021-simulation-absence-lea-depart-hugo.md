@@ -1,10 +1,10 @@
 ---
 titre: SIMULATION — Absence de Léa (26-27/11) et départ de Hugo (04/12) - prise d'acte, sans réaffectation
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: B
-version: 0.1
+version: 1.0
 maj_le: 2026-11-26
-valide_par:                 # rempli par l'humain qui valide
+valide_par:  Ethan               # rempli par l'humain qui valide
 decision: DEC-021           # pour un fichier de décision : son propre id
 # Champs propres à la décision
 id: DEC-021

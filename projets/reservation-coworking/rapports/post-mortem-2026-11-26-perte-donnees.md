@@ -1,11 +1,11 @@
 ---
 titre: SIMULATION — Post-mortem — Perte de la base de production — 2026-11-26
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: agent:gestionnaire-crise
-version: 0.3
+version: 1.0
 maj_le: 2026-11-26
-valide_par:
-decision:
+valide_par: Ethan
+decision: DEC-019
 ---
 > **SIMULATION** — Exercice de crise (scénario 5, S2) demandé par l'humain le 2026-11-26, ticket incident [T-080](../tickets/T-080-simulation-perte-base-production.md), décision [DEC-019](../../../docs/decisions/2026-11-26-DEC-019-simulation-reconstruction-base.md). **Rapport complet** (version 0.3), en attente de relecture humaine. La v0.3 (coordinateur) intègre les décisions d'Ethan de DEC-019 v0.2 : message au client corrigé, T-084 tranché, T-082 annulé. Aucun événement réel : aucune commande Docker, aucune reconstruction ni aucun déploiement n'a été exécuté, la sonde n'a pas été lancée, aucun message n'a été envoyé au client, et `deploiement/local/` n'a été ni lu ni modifié par l'agent. Les heures sont simulées à partir de 10:00, et **le retour à la normale ainsi que la sonde `DISPONIBLE ET À JOUR` sont simulés, non exécutés**.
 

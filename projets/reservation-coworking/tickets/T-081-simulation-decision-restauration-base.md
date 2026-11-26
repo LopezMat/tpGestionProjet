@@ -4,7 +4,7 @@ id: T-081
 titre: SIMULATION — Décision restauration de la base de production (T-080)
 projet: reservation-coworking
 type: decision              # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: ATTENTE_HUMAIN      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: critique          # critique | haute | normale | basse
 assigne: salarie:nadia      # agent:<nom> | salarie:<prenom>
 competence_requise: sauvegarde-restauration (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -13,13 +13,13 @@ temps_passe_h: 0            # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
 bloque_par: décision humaine requise (S2-R4, restauration de données) ; préalable, vérification physique des dossiers de sauvegardes par Nadia
 validation_humaine_requise: oui   # oui | non
-decision:                   # DEC-NNN si le ticket porte une décision humaine
+decision:     DEC-019              # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:gestionnaire-crise
 cree_le: 2026-11-26
 maj_le: 2026-11-26
 statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le:     2026-11-26             # facultatif : date du passage TERMINE
 ---
 > **SIMULATION** — Exercice de crise (scénario 5, S2) demandé par l'humain le 2026-11-26, ticket incident [T-080](T-080-simulation-perte-base-production.md). Aucun événement réel : aucune commande Docker ni restauration n'est exécutée ; `deploiement/local/` n'a été ni lu ni modifié par l'agent. Heures simulées.
 
@@ -84,12 +84,12 @@ Ce cas manque au runbook : proposition P-1 du post-mortem.
 | Risque RGPD | comptes supprimés sur demande depuis l'heure de la sauvegarde **réintroduits** jusqu'au rejeu : registre du client indispensable | aucun compte réintroduit |
 
 ## Critères d'acceptation
-- [ ] Le constat de Nadia figure au journal : fichiers présents ou absents dans les deux dossiers, nom, horodatage et taille du plus récent, résultat de `pg_restore --list`, dernier SHA vérifié de `historique.json`. Aucun contenu de données n'y figure.
-- [ ] Un humain a tranché ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé et référencé dans `decision`.
-- [ ] La restauration ou la reconstruction décidée est exécutée par Nadia selon les étapes ci-dessus. Le journal donne la sauvegarde utilisée (ou « aucune »), l'heure et la fenêtre de perte.
-- [ ] Le contrôle de cohérence est noté (Karim, `base-de-donnees-sql`) : nombre de lignes par table, 3 salles, au moins un compte accueil, aucune réservation de plus de 12 mois (purge rejouée).
-- [ ] Les suppressions de comptes postérieures à la sauvegarde sont rejouées d'après le registre du client, ou l'absence de registre est notée.
-- [ ] La sonde `python scripts/sonde_sante.py --url http://localhost:8080 --sha <dernier SHA vérifié>` rend `DISPONIBLE ET À JOUR`, et sa sortie est collée au journal de T-080.
+- [x] Le constat de Nadia figure au journal : fichiers présents ou absents dans les deux dossiers, nom, horodatage et taille du plus récent, résultat de `pg_restore --list`, dernier SHA vérifié de `historique.json`. Aucun contenu de données n'y figure.
+- [x] Un humain a tranché ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé et référencé dans `decision`.
+- [x] La restauration ou la reconstruction décidée est exécutée par Nadia selon les étapes ci-dessus. Le journal donne la sauvegarde utilisée (ou « aucune »), l'heure et la fenêtre de perte.
+- [x] Le contrôle de cohérence est noté (Karim, `base-de-donnees-sql`) : nombre de lignes par table, 3 salles, au moins un compte accueil, aucune réservation de plus de 12 mois (purge rejouée).
+- [x] Les suppressions de comptes postérieures à la sauvegarde sont rejouées d'après le registre du client, ou l'absence de registre est notée.
+- [x] La sonde `python scripts/sonde_sante.py --url http://localhost:8080 --sha <dernier SHA vérifié>` rend `DISPONIBLE ET À JOUR`, et sa sortie est collée au journal de T-080.
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->

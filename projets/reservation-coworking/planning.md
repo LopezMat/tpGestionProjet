@@ -1,11 +1,11 @@
 ---
 titre: Planning — Réservation de salles, Coworking Les Arcades (Perpignan)
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: agent:chef-de-projet
 version: 1.1
 maj_le: 2026-11-26
-valide_par:
-decision:
+valide_par: Ethan
+decision: DEC-020
 ---
 > **SIMULATION** — La v1.1 intègre les décisions simulées DEC-019 (crise) et DEC-020 (révision du budget) ; la v1.0 validée (DEC-009) reste dans l'historique Git.
 

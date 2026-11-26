@@ -4,7 +4,7 @@ id: T-093
 titre: "SIMULATION — Révision du budget : 6 000 € → 4 200 € HT"
 projet: reservation-coworking
 type: decision              # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: ATTENTE_HUMAIN      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: agent:chef-de-projet   # agent:<nom> | salarie:<prenom>
 competence_requise: gestion-projet (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -13,13 +13,13 @@ temps_passe_h: 1.5          # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
 bloque_par: arbitrage humain du scénario de budget (S1-R11)   # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
-decision:                   # DEC-NNN si le ticket porte une décision humaine
+decision:      DEC-020             # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:coordinateur
 cree_le: 2026-11-26
 maj_le: 2026-11-26
 statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le: 2026-11-26        # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le:     2026-11-26              # facultatif : date du passage TERMINE
 ---
 > **SIMULATION** — Exercice de révision du budget (scénario 2, S1) demandé par l'humain le 2026-11-26. Le client n'a rien annoncé en réalité : le budget de `projet.md` (6 000 €) n'est pas modifié tant qu'aucune décision n'est prise.
 
@@ -290,10 +290,10 @@ La capacité de Nadia sur ce projet est de 1,68 h par jour ouvré (30 % de 28 h 
 - relance de `python scripts/tableau.py`.
 
 ## Critères d'acceptation
-- [ ] L'analyse d'impact est écrite : consommé, reste à faire (h et €, au taux de chaque assigné), projection face à 4 200 € et à la deadline.
-- [ ] Au moins deux scénarios chiffrés (coût, délai, périmètre, risque, qualité), dont un qui respecte 4 200 € ; T-029 et les tickets de sécurité critiques gardés dans tous les scénarios.
-- [ ] Un humain a tranché ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé et référencé dans `decision`.
-- [ ] Après la décision : `projet.md` (budget), tickets `ANNULE` ou réaffectés et CDC cohérents entre eux.
+- [x] L'analyse d'impact est écrite : consommé, reste à faire (h et €, au taux de chaque assigné), projection face à 4 200 € et à la deadline.
+- [x] Au moins deux scénarios chiffrés (coût, délai, périmètre, risque, qualité), dont un qui respecte 4 200 € ; T-029 et les tickets de sécurité critiques gardés dans tous les scénarios.
+- [x] Un humain a tranché ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé et référencé dans `decision`.
+- [x] Après la décision : `projet.md` (budget), tickets `ANNULE` ou réaffectés et CDC cohérents entre eux.
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->

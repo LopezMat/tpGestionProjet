@@ -1,11 +1,11 @@
 ---
 titre: Cahier des charges — Réservation de salles, Coworking Les Arcades (Perpignan)
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: agent:analyste-besoin
 version: 1.1
 maj_le: 2026-11-26
-valide_par:
-decision:
+valide_par: Ethan
+decision: DEC-020
 ---
 > **SIMULATION** — La v1.1 intègre la révision du budget simulée (scénario 2, DEC-020) ; la v1.0 validée (DEC-006) reste dans l'historique Git.
 
