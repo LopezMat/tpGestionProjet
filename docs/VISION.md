@@ -218,7 +218,7 @@ Le script `scripts/tableau.py` (Python, sans dépendance lourde) génère `TABLE
 - **Capacité de l'équipe** et événements à venir (congés, départs, arrivées).
 - **Gantt Mermaid** des tickets, d'après les dépendances et les estimations.
 
-Skills associés : `creer-ticket` (garantit le format) et `avancement` (lance le script et résume la situation). Une GitHub Action régénère les tableaux à chaque push.
+Skills associés : `creer-ticket` (garantit le format) et `avancement` (lance le script et résume la situation). Une GitHub Action (`tableau.yml`) régénère les tableaux chaque jour à 6 h UTC, et à la demande.
 
 ---
 
