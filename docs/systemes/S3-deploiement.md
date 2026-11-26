@@ -1,11 +1,11 @@
 ---
 titre: Système 3 — Déploiement automatisé
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: C
 version: 1.3
 maj_le: 2026-11-26
-valide_par:
-decision:
+valide_par: Ethan
+decision: DEC-015
 ---
 
 # Système 3 — Déploiement automatisé

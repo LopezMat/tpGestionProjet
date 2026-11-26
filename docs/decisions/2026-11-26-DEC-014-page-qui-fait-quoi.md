@@ -1,10 +1,10 @@
 ---
 titre: Page de pilotage « qui fait quoi » (outil interne, régularisation)
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: D
-version: 0.1
+version: 1.0
 maj_le: 2026-11-26
-valide_par:                 # rempli par l'humain qui valide
+valide_par:    Ethan             # rempli par l'humain qui valide
 decision: DEC-014           # pour un fichier de décision : son propre id
 # Champs propres à la décision
 id: DEC-014
@@ -44,6 +44,7 @@ La PR #14 (`demo/increment-consultation`, commit `1350ccb`) a ajouté, sans déc
 *(Ethan, 2026-11-26)*
 - L'outil a été ajouté dans la PR #14 sans décision : on le garde et on le régularise.
 - C'est une page de pilotage complémentaire de la console ; l'instantané est tenu par le coordinateur et les statuts viennent des tickets (R9).
+- page utile pour savoir qui doit agir, faite par Johan ; on la garde et on la sécurise
 
 ## Impacts
 - **Fichiers** :
