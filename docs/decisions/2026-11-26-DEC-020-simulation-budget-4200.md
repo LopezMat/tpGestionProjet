@@ -2,7 +2,7 @@
 titre: SIMULATION — Révision du budget de reservation-coworking, 6 000 € → 4 200 € HT (scénario B en gardant F-08)
 statut: EN_REVUE
 responsable: B
-version: 0.1
+version: 0.2
 maj_le: 2026-11-26
 valide_par:                 # rempli par l'humain qui valide
 decision: DEC-020           # pour un fichier de décision : son propre id
@@ -51,6 +51,8 @@ La crise simulée de DEC-019 (perte de la base, T-080) pèse 1 125,36 € sur le
    - Nadia : 10 % pour la part client et 40 % pour la part imputée à l'ESN, jusqu'au 2026-12-18 ;
    - Karim : +5 % pour les revues imputées à l'ESN.
 
+7. **(v0.2) F-08 n'est plus abandonnable.** La purge à 12 mois (CDC § 8, RGPD) devient obligatoire, **par exception à la règle de DEC-009** qui permettait d'abandonner les Should quand la marge passe sous 2 jours ouvrés. Seul F-06 reste abandonné. Le CDC v1.1 et le planning v1.1 l'écrivent.
+
 ## Pourquoi
 Les mots d'Ethan :
 - « F-08 (purge à 12 mois) est une exigence RGPD du CDC § 8, on ne la sacrifie pas pour le budget. F-06 est abandonné (Should) ; l'ESN prend à sa charge le coût de la crise et des outils communs, comme proposé. »
@@ -78,3 +80,11 @@ Les arguments de T-093 :
   - un ticket est créé pour le message au client de Claire (condition 2) ;
   - la condition 1 devient un critère du pilotage T-008.
 - **T-093** reste `ATTENTE_HUMAIN` jusqu'à ce qu'Ethan renseigne lui-même `decision: DEC-020`.
+- **(v0.2)** Ethan a repassé `cdc.md` et `planning.md` en `EN_REVUE` pour leur v1.1. Le `chef-de-projet` crée les revues humaines manquantes de Karim (imputées à l'ESN quand le ticket relu l'est), et ajoute T-087, T-092 et T-078 à `depend_de` de T-046.
+
+## Question ouverte (pour une future PR de règles, R11)
+**Comment suivre les coûts pris en charge par l'ESN ?** Aujourd'hui, `tableau.py` impute au budget du projet client tout ticket rangé dans le projet. La part de l'ESN se retranche donc à la main (DEC-020, Impacts), et l'alerte à 90 % se déclenche trop tôt. Deux pistes, à trancher par une PR accompagnée d'une décision et d'une entrée dans `docs/CHANGELOG-REGLES.md` :
+- **(a) Un projet interne de l'ESN** (par exemple `projets/esn-interne/`), avec son budget de fonctionnement ; les tickets imputés y sont déplacés. Cela suppose de régler la question restée ouverte en `docs/a-integrer/lot2-D.md` point 9 (DEC-002) et le suivi des dépendances d'un projet à l'autre (le GO dépend de T-029, T-087 et T-092).
+- **(b) Une imputation dans le tableau** : un champ de ticket (par exemple `imputation: client | esn`) lu par `tableau.py`, qui sépare le coût client du coût ESN et applique l'alerte au seul coût client. Cela modifie `templates/ticket.md` (champ ajouté) et `scripts/tableau.py`.
+
+En attendant, la convention provisoire de DEC-020 s'applique : une ligne de journal « imputé à l'ESN (DEC-020) » dans chaque ticket concerné, et un calcul manuel du coût client dans le pilotage (T-008).
