@@ -128,9 +128,13 @@
     var c = P.cafe[p.cafe];
     return { x: c.x, y: c.y, dir: "bas" };
   }
+  function aLAccueil(d) {
+    return d.nature === "coordinateur" || d.nature === "humain" || d.nature === "visiteur";
+  }
   function domicile(p) {
-    // Le coordinateur et les visiteurs restent à l'accueil ; les autres vont au café.
-    if (p.d.nature === "coordinateur" || p.d.nature === "visiteur") {
+    // Le coordinateur, les membres humains de l'équipe projet et les visiteurs restent à l'accueil ;
+    // les autres vont au café.
+    if (aLAccueil(p.d)) {
       p.cafe = null; return { x: p.poste.x, y: p.poste.y, dir: p.d.nature === "coordinateur" ? "haut" : "bas" };
     }
     return placeCafe(p);
@@ -609,9 +613,10 @@
     pastille.style.background = d.couleur;
     h.appendChild(pastille); h.appendChild(document.createTextNode(d.nom));
     fiche.appendChild(h);
-    var nature = { agent: "Agent IA", salarie: "Salarié", coordinateur: "Coordinateur", visiteur: "Humain de l'équipe" }[d.nature] || d.nature;
+    var nature = { agent: "Agent IA", salarie: "Salarié", coordinateur: "Coordinateur",
+      humain: "Membre de l'équipe projet", visiteur: "Visiteur" }[d.nature] || d.nature;
     fiche.appendChild(el("p", "meta", nature + (d.systeme && d.systeme !== "salarie" && d.systeme !== "visiteur" &&
-      d.systeme !== "coordinateur" ? " · " + (d.systeme === "realisation" ? "pôle réalisation" : d.systeme === "autres" ? "hors catalogue" : d.systeme) : "")));
+      d.systeme !== "humain" && d.systeme !== "coordinateur" ? " · " + (d.systeme === "realisation" ? "pôle réalisation" : d.systeme === "autres" ? "hors catalogue" : d.systeme) : "")));
     fiche.appendChild(el("p", null, d.role));
     var dl = el("dl");
     ligneFiche(dl, "Modèle", d.modele);
@@ -620,7 +625,7 @@
     (projetCourant().instantane || []).forEach(function (x) { if (x.perso === id) { i = x; } });
     if (etat.mode === "instantane") {
       ligneFiche(dl, "État (" + projetCourant().libelle + ")", libelleEtat(i ? i.etat :
-        (d.nature === "coordinateur" || d.nature === "visiteur" ? "accueil" : "cafe")));
+        (aLAccueil(d) ? "accueil" : "cafe")));
     } else if (p.bulle && p.bulle.texte) {
       ligneFiche(dl, "Dernière action du replay", p.bulle.long || p.bulle.texte);
     }

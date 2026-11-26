@@ -45,7 +45,14 @@ FERMES = tableau.FERMES
 # ============================================================================ personnages
 
 COULEURS = {"S1": "#2563eb", "S2": "#16a34a", "S3": "#dc2626", "S4": "#7c3aed", "realisation": "#0d9488",
-            "coordinateur": "#1e293b", "salarie": "#d97706", "visiteur": "#64748b", "autres": "#78716c"}
+            "coordinateur": "#1e293b", "salarie": "#d97706", "humain": "#be185d", "visiteur": "#64748b",
+            "autres": "#78716c"}
+
+# Membres humains de l'équipe projet (DEC-017) : ils décident et valident (R5, R7). Ce ne sont ni les salariés
+# fictifs d'equipe/membres/, ni des visiteurs ; ils sont toujours à l'accueil.
+FICHIER_HUMAINS = "equipe/humains.md"
+ROLE_HUMAIN = ("Membre de l'équipe projet : décide et valide (R5, R7), et joue les salariés aux arrêts "
+               "humains.")
 
 ACCESSOIRES = {
     "analyste-besoin": "bloc-notes", "architecte": "plans", "chef-de-projet": "presse-papiers",
@@ -104,6 +111,39 @@ def cle_visiteur(nom):
     t = re.split(r"[;,]|\bet\b", t)[0]
     t = re.sub(r"\s+", " ", t).strip(" .:-")
     return t
+
+
+def cle_personne(nom):
+    """Clé d'un humain : sans accents, en minuscules, mots séparés par « - » (« Stéphane » -> « stephane »)."""
+    return re.sub(r"[^a-z0-9]+", "-", normal(nom)).strip("-")
+
+
+def lire_humains(racine):
+    """([(clé, prénom)], anomalies) des membres humains de l'équipe projet, lus dans equipe/humains.md
+    (champ `humains` : liste de `{prenom: …}` ou de prénoms). Fichier absent : aucun humain, aucune anomalie.
+    Entrée vide, mal formée ou en double (casse et accents ignorés) : ignorée et signalée. Jamais d'exception."""
+    chemin = os.path.join(racine, *FICHIER_HUMAINS.split("/"))
+    if not os.path.isfile(chemin):
+        return [], []
+    fm, _, err = tableau.lire_frontmatter(chemin)
+    if err:
+        return [], ["{} : {}".format(FICHIER_HUMAINS, err)]
+    liste = fm.get("humains")
+    if not isinstance(liste, list):
+        return [], ["{} : champ « humains » absent ou mal formé (liste attendue)".format(FICHIER_HUMAINS)]
+    humains, vus, anomalies = [], set(), []
+    for n, entree in enumerate(liste, 1):
+        prenom = entree.get("prenom") if isinstance(entree, dict) else entree
+        prenom = tronquer(prenom, 40) if isinstance(prenom, str) else ""
+        cle = cle_personne(prenom)
+        if not cle:
+            anomalies.append("{} : entrée {} sans prénom, ignorée".format(FICHIER_HUMAINS, n))
+        elif cle in vus:
+            anomalies.append("{} : « {} » en double, ignoré".format(FICHIER_HUMAINS, prenom))
+        else:
+            vus.add(cle)
+            humains.append((cle, prenom))
+    return humains, anomalies
 
 
 # ============================================================================ journaux
@@ -232,9 +272,10 @@ def etat_statut(statut):
 
 
 def humain_attendu(assigne_id, bloque_par, salaries):
-    """Humain attendu par un ticket ATTENTE_HUMAIN : l'assigné s'il est salarié ; sinon le premier salarié
-    cité dans bloque_par ; sinon le personnage « Équipe ESN ». `salaries` : {clé : prénom}."""
-    if assigne_id and (assigne_id.startswith("salarie:") or assigne_id.startswith("visiteur:")):
+    """Humain attendu par un ticket ATTENTE_HUMAIN : l'assigné s'il est humain (salarié, membre de l'équipe
+    projet ou visiteur) ; sinon le premier salarié cité dans bloque_par ; sinon le personnage « Équipe ESN ».
+    `salaries` : {clé : prénom}."""
+    if assigne_id and assigne_id.startswith(("salarie:", "humain:", "visiteur:")):
         return assigne_id
     texte = " " + normal(bloque_par) + " "
     trouves = []
@@ -324,7 +365,7 @@ def construire_plan(personnages):
     for p in personnages:
         if p["nature"] == "coordinateur":
             pid, x, y = "couloir", POSTE_COORDINATEUR[0], POSTE_COORDINATEUR[1]
-        elif p["nature"] == "visiteur":
+        elif p["nature"] in ("humain", "visiteur"):          # à l'accueil ; les humains passent en premier
             pid, y = "couloir", 14
             x = visiteurs_x[n_visiteurs] if n_visiteurs < len(visiteurs_x) else 2 + (n_visiteurs % 15) * 3
             if n_visiteurs >= len(visiteurs_x):
@@ -336,7 +377,7 @@ def construire_plan(personnages):
             pref = {"S1": "s1", "S2": "s2", "S3": "s3", "S4": "s4", "realisation": "realisation"}.get(p["systeme"])
             pid, x, y = attribuer(p, pref or "realisation")
         poste = {"id": "p-" + re.sub(r"[^a-z0-9-]+", "-", p["id"]), "piece": pid, "x": x, "y": y,
-                 "bureau": p["nature"] not in ("visiteur",)}
+                 "bureau": p["nature"] not in ("humain", "visiteur")}
         postes.append(poste)
         p["poste"] = poste["id"]
     # Coin café : 6 colonnes × 3 rangées, puis le couloir : au moins une place par personnage.
@@ -370,6 +411,7 @@ class Donnees:
         self.persos = {}           # id -> dict
         self.ordre = []
         self.salaries = {}         # clé -> prénom
+        self.humains = {}          # clé -> id du personnage (equipe/humains.md)
         self._personnages()
 
     # -- liens ---------------------------------------------------------------------
@@ -397,6 +439,17 @@ class Donnees:
                                "validation humaine (CLAUDE.md).", "description": "", "modele": "session principale",
                        "outils": [], "page": self.lien("docs/CLAUDE.html" if "CLAUDE.md" in s.pages else "agents.html"),
                        "hors_catalogue": False})
+        # Membres humains de l'équipe projet : toujours présents, même s'ils ne sont cités nulle part.
+        humains, anomalies = lire_humains(s.racine)
+        self.anomalies.extend(anomalies)
+        for cle, prenom in humains:
+            self.humains[cle] = "humain:" + cle
+            self._ajouter({"id": "humain:" + cle, "nom": prenom, "nature": "humain", "systeme": "humain",
+                           "couleur": COULEURS["humain"], "accessoire": "tampon", "role": ROLE_HUMAIN,
+                           "description": "Lu dans {} : ni salarié fictif d'equipe/membres/, ni lettre A à D."
+                                          .format(FICHIER_HUMAINS),
+                           "modele": "humain", "outils": [], "page": self.lien("decisions.html"),
+                           "hors_catalogue": False})
         rang = {code: i for i, code in enumerate(SYSTEMES_CONNUS)}
         agents = []
         for a in s.agents:
@@ -435,7 +488,11 @@ class Donnees:
             fiche = s.fiches.get(cle) or {}
             role = str(fiche.get("role") or "")
             self.salaries[cle] = m["prenom"]
-            comp = [str(c.get("nom")) for c in fiche.get("competences") or [] if isinstance(c, dict) and c.get("nom")]
+            if cle_personne(cle) in self.humains:
+                self.anomalies.append("{} : « {} » porte le prénom d'un salarié fictif ; « salarie:{} » désigne "
+                                      "le salarié, le prénom seul désigne le membre de l'équipe projet".format(
+                                          FICHIER_HUMAINS, m["prenom"], cle))
+            comp =[str(c.get("nom")) for c in fiche.get("competences") or [] if isinstance(c, dict) and c.get("nom")]
             self._ajouter({"id": "salarie:" + cle, "nom": m["prenom"].capitalize(), "nature": "salarie",
                            "systeme": "salarie", "couleur": COULEURS["salarie"], "accessoire": accessoire("", role),
                            "role": role or "Salarié", "description": "niveau {} · statut {}".format(
@@ -443,10 +500,22 @@ class Donnees:
                            "modele": "humain", "outils": comp,
                            "page": self.lien("equipe.html#membre-" + cle), "hors_catalogue": False})
 
+    def humain(self, nom):
+        """Id du membre humain de l'équipe projet désigné par `nom` (casse, accents, parenthèses et
+        « et … » ignorés ; « Stéphane Martin » désigne Stéphane), sinon None."""
+        cle = cle_personne(cle_visiteur(nom))
+        if not cle:
+            return None
+        return self.humains.get(cle) or self.humains.get(cle.split("-")[0])
+
     def visiteur(self, nom):
-        """Personnage d'un humain absent d'equipe/ (decide_par, salarie:ethan…), créé à la demande."""
+        """Personnage d'un humain absent d'equipe/membres/ (decide_par, salarie:ethan…) : le membre de
+        l'équipe projet qui lui correspond (equipe/humains.md), sinon un visiteur créé à la demande."""
+        humain = self.humain(nom)
+        if humain:
+            return humain
         libelle = cle_visiteur(nom) or "inconnu"
-        cle = re.sub(r"[^a-z0-9]+", "-", normal(libelle)).strip("-") or "inconnu"
+        cle = cle_personne(libelle) or "inconnu"
         if cle in ("equipe", "l-equipe", "equipe-esn"):
             cle, libelle = "equipe", "Équipe ESN"
         pid = "visiteur:" + cle
@@ -484,6 +553,9 @@ class Donnees:
         if nature == "salarie":
             pid = "salarie:" + nom
             return (pid if pid in self.persos else self.visiteur(nom)), note
+        humain = self.humain(q)            # prénom seul : le membre de l'équipe projet d'abord
+        if humain:
+            return humain, note
         cle = normal(q)
         if "salarie:" + cle in self.persos:
             return "salarie:" + cle, note
@@ -671,7 +743,7 @@ def page_html(site, donnees):
             per = persos[pid]
             tickets = ", ".join('<a href="{}">{}</a>'.format(e(t["page"]), e(t["id"])) for t in (i or {}).get(
                 "tickets", [])) or "—"
-            repos = "accueil" if per["nature"] in ("coordinateur", "visiteur") else "cafe"
+            repos = "accueil" if per["nature"] in ("coordinateur", "humain", "visiteur") else "cafe"
             etat_lib = LIBELLES_ETATS[i["etat"]] if i else LIBELLES_ETATS[repos]
             if i and i["cible"] and i["cible"] in persos:
                 etat_lib += " (chez {})".format(persos[i["cible"]]["nom"])
