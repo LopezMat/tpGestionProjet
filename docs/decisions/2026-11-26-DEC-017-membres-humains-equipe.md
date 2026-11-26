@@ -5,7 +5,7 @@ responsable: D
 version: 1.0
 maj_le: 2026-11-26
 valide_par:    Ethan             # rempli par l'humain qui valide
-decision: DEC-017           # pour un fichier de décision : son propre id
+decision: DEC-018           # pour un fichier de décision : son propre id
 # Champs propres à la décision
 id: DEC-017
 date: 2026-11-26
