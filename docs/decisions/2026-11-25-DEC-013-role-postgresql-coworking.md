@@ -1,10 +1,10 @@
 ---
 titre: Rôle PostgreSQL de l'application reservation-coworking (non superutilisateur)
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: B
-version: 0.1
+version: 1.0
 maj_le: 2026-11-25
-valide_par:                 # rempli par l'humain qui valide
+valide_par:    Ethan             # rempli par l'humain qui valide
 decision: DEC-013           # pour un fichier de décision : son propre id
 # Champs propres à la décision
 id: DEC-013
