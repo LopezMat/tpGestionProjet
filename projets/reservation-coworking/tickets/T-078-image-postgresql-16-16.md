@@ -75,10 +75,11 @@ Règle 7 du `chef-de-projet` : à défaut d'agent, un salarié compétent. Nadia
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
 - **Avis relecteur-code** :
 - **Commentaires** :
-- **Revue humaine requise** : oui (vulnérabilité de la base, modification du modèle commun DEC-003 ; ticket compagnon à créer au triage)
+- **Revue humaine requise** : oui (vulnérabilité de la base, modification du modèle commun DEC-003 ; ticket compagnon [T-099](T-099-revue-humaine-t-078.md), Karim, créé au triage le 2026-11-26)
 - **Revue humaine** :
 
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 16:30 · agent:chef-de-projet · création (veille 2026-S48, proposition P-1, constat 1 ; assigné à Nadia faute d'agent compétent sur le modèle commun ; estimation 1 h portée à 1,5 h ; non planifié, développement en pause) · 0 h
 - 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h
+- 2026-11-26 22:45 · agent:chef-de-projet · SIMULATION · triage : ticket compagnon de revue humaine T-099 créé (Karim, 0,5 h, imputé à l'ESN, DEC-020) ; ce ticket ajouté à depend_de du GO T-046 (DEC-020, point 3), comme le recommandait sa Description · 0 h

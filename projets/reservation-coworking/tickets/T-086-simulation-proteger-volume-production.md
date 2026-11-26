@@ -67,10 +67,11 @@ Proposition **P-2** du [post-mortem](../rapports/post-mortem-2026-11-26-perte-do
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
 - **Avis relecteur-code** :
 - **Commentaires** :
-- **Revue humaine requise** : oui (outillage de production commun DEC-003, protection des données). **Le ticket compagnon « Revue humaine T-086 » sera créé au triage, à la reprise du développement.** Relecteur pressenti : Karim (`backend-python` et `base-de-donnees-sql` expert), pour le code Python et les tests. Personne d'autre que Nadia n'a `docker` ; c'est le même choix que pour T-038 et T-059.
+- **Revue humaine requise** : oui (outillage de production commun DEC-003, protection des données). **Ticket compagnon : [T-096](T-096-revue-humaine-t-086.md)** (Karim, créé au triage le 2026-11-26). Relecteur pressenti : Karim (`backend-python` et `base-de-donnees-sql` expert), pour le code Python et les tests. Personne d'autre que Nadia n'a `docker` ; c'est le même choix que pour T-038 et T-059.
 - **Revue humaine** :
 
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 17:30 · agent:chef-de-projet · SIMULATION · création à partir de l'incident T-080 et du post-mortem rapports/post-mortem-2026-11-26-perte-donnees.md, proposition P-2 ; assignée à Nadia (seule salariée docker, modèle commun hors du périmètre des agents) ; dépend de T-029 (mêmes scripts) ; non planifié (développement en pause) · 0 h
 - 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h
+- 2026-11-26 22:45 · agent:chef-de-projet · SIMULATION · triage (T-080, T-090) : ticket compagnon de revue humaine T-096 créé (Karim, 0,5 h, imputé à l'ESN, DEC-020) · 0 h

@@ -65,10 +65,11 @@ Fichier modifié : `runbooks/perte-donnees.md`, hors du périmètre d'écriture 
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
 - **Avis relecteur-code** : sans objet (procédure d'exploitation, pas de code)
 - **Commentaires** :
-- **Revue humaine requise** : oui (procédure sur les données de production). **Le ticket compagnon « Revue humaine T-085 » sera créé au triage, à la reprise du développement.** Relecteur pressenti : Karim (`base-de-donnees-sql` expert) pour les commandes PostgreSQL (`pg_restore`, rôles). Personne d'autre que Nadia n'a `sauvegarde-restauration` ; c'est le même choix que pour T-038 (DEC-009, point E).
+- **Revue humaine requise** : oui (procédure sur les données de production). **Ticket compagnon : [T-095](T-095-revue-humaine-t-085.md)** (Karim, créé au triage le 2026-11-26). Relecteur pressenti : Karim (`base-de-donnees-sql` expert) pour les commandes PostgreSQL (`pg_restore`, rôles). Personne d'autre que Nadia n'a `sauvegarde-restauration` ; c'est le même choix que pour T-038 (DEC-009, point E).
 - **Revue humaine** :
 
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 17:30 · agent:chef-de-projet · SIMULATION · création à partir de l'incident T-080 et du post-mortem rapports/post-mortem-2026-11-26-perte-donnees.md, proposition P-1 ; assignée à Nadia (seule salariée sauvegarde-restauration, aucun agent n'écrit dans runbooks/) ; sans dépendance ; non planifié (développement en pause) · 0 h
 - 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h
+- 2026-11-26 22:45 · agent:chef-de-projet · SIMULATION · triage (T-080, T-090) : ticket compagnon de revue humaine T-095 créé (Karim, 0,5 h, imputé à l'ESN, DEC-020) · 0 h

@@ -64,10 +64,11 @@ Une option explicite permet de passer outre. Elle est réservée à la reconstru
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
 - **Avis relecteur-code** :
 - **Commentaires** :
-- **Revue humaine requise** : oui (outillage de déploiement de production, protection des données). **Le ticket compagnon « Revue humaine T-087 » sera créé au triage, à la reprise du développement.** Relecteur pressenti : Karim (`backend-python` expert), pour le code et les tests.
+- **Revue humaine requise** : oui (outillage de déploiement de production, protection des données). **Ticket compagnon : [T-097](T-097-revue-humaine-t-087.md)** (Karim, créé au triage le 2026-11-26). Relecteur pressenti : Karim (`backend-python` expert), pour le code et les tests.
 - **Revue humaine** :
 
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 17:30 · agent:chef-de-projet · SIMULATION · création à partir de l'incident T-080 et du post-mortem rapports/post-mortem-2026-11-26-perte-donnees.md, proposition P-3 ; assignée à Nadia (seule salariée ci-cd ; Karim écarté par AF7 et AF3) ; dépend de T-029 et T-086 (mêmes scripts) ; non planifié (développement en pause) · 0 h
 - 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h
+- 2026-11-26 22:45 · agent:chef-de-projet · SIMULATION · triage (T-080, T-090) : ticket compagnon de revue humaine T-097 créé (Karim, 0,5 h, imputé à l'ESN, DEC-020) ; ce ticket ajouté à depend_de du GO T-046 (DEC-020, point 3) · 0 h

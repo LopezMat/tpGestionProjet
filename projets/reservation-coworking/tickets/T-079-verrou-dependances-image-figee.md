@@ -61,9 +61,10 @@ Proposition **P-2** et constats 5 et 6 de la veille [2026-S48](../../../veille/2
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
 - **Avis relecteur-code** :
 - **Commentaires** :
-- **Revue humaine requise** : oui (chaîne d'approvisionnement, sécurité ; ticket compagnon à créer au triage)
+- **Revue humaine requise** : oui (chaîne d'approvisionnement, sécurité ; ticket compagnon [T-100](T-100-revue-humaine-t-079.md), Karim, créé au triage le 2026-11-26)
 - **Revue humaine** :
 
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 16:35 · agent:chef-de-projet · création (veille 2026-S48, proposition P-2, constats 5 et 6 ; reprend les constats 1 et 5 des rapports securite ; compétence portée de docker à backend-python ; non planifié, développement en pause) · 0 h
+- 2026-11-26 22:45 · agent:chef-de-projet · SIMULATION · triage : ticket compagnon de revue humaine T-100 créé (Karim, 0,5 h, au budget client) ; l'ajout de ce ticket à depend_de du GO T-046 n'est pas fait (non retenu par DEC-020), proposé à l'arbitrage humain · 0 h

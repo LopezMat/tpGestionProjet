@@ -96,10 +96,11 @@ Décision [DEC-019](../../../docs/decisions/2026-11-26-DEC-019-simulation-recons
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
 - **Avis relecteur-code** :
 - **Commentaires** :
-- **Revue humaine requise** : oui (outillage de production : commandes Docker sur le moteur de la production, lecture des sauvegardes qui contiennent des données personnelles). **Le ticket compagnon « Revue humaine T-092 » sera créé au triage, à la reprise du développement**, comme pour T-085 à T-087. Relecteur pressenti : Karim (`backend-python` et `base-de-donnees-sql` expert), pour le code Python, les tests et la restauration PostgreSQL ; c'est le même choix que pour T-038.
+- **Revue humaine requise** : oui (outillage de production : commandes Docker sur le moteur de la production, lecture des sauvegardes qui contiennent des données personnelles). **Ticket compagnon : [T-098](T-098-revue-humaine-t-092.md)** (Karim, créé au triage le 2026-11-26), comme pour T-085 à T-087. Relecteur pressenti : Karim (`backend-python` et `base-de-donnees-sql` expert), pour le code Python, les tests et la restauration PostgreSQL ; c'est le même choix que pour T-038.
 - **Revue humaine** :
 
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-26 18:45 · agent:chef-de-projet · SIMULATION · création à la demande d'Ethan (DEC-019, point 3.2, retour d'expérience de l'exercice T-080) ; couvre T-088 (passé ANNULE), complète T-089 ; assignée à Nadia (seule salariée sauvegarde-restauration et docker) ; dépend de T-021 et T-029 ; charge de Nadia recalculée à 128 %, allocation à trancher au triage (T-090) ; non planifié (développement en pause) · 0 h
 - 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h
+- 2026-11-26 22:45 · agent:chef-de-projet · SIMULATION · triage (T-080, T-090) : ticket compagnon de revue humaine T-098 créé (Karim, 0,5 h, imputé à l'ESN, DEC-020) ; ce ticket ajouté à depend_de du GO T-046 (DEC-020, point 3) · 0 h
