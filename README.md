@@ -64,6 +64,7 @@ python scripts/test_sonde_sante.py         # macOS : python3 …
 python scripts/test_prod_locale.py         # macOS : python3 …  (test réel si Docker répond, environ 1 min 30)
 python scripts/test_verifier_validations.py  # macOS : python3 …
 python scripts/test_console.py             # macOS : python3 …  (demande PyYAML)
+python scripts/test_bureau.py              # macOS : python3 …  (demande PyYAML ; syntaxe JS vérifiée si node est installé)
 python scripts/test_qui_fait_quoi.py       # macOS : python3 …
 ```
 
@@ -85,6 +86,7 @@ Ensuite, ouvrir **`console/index.html`** dans un navigateur, par double-clic : a
 |---|---|
 | Notre système | vision, chiffres clés, les 4 systèmes, circuit des agents (Mermaid d'ARCHITECTURE § 5, avec un lien vers `circuit.html` en plein écran pour la projection), points d'arrêt humains, garde-fous |
 | Portefeuille | projets, avancement, budget, fin projetée, alertes, tickets BLOQUE et ATTENTE_HUMAIN |
+| Le bureau | l'ESN vue de dessus en pixel art : une pièce par système, open space, bureaux des salariés, accueil, coin café ; mode instantané (état tiré des tickets) et mode replay (journaux des tickets et décisions) ; voir ci-dessous |
 | Fiche projet | synthèse, Kanban des tickets par statut, Gantt coloré par statut (avec légende), utilisation AF9 ; tickets, CDC, architecture et planning rendus en HTML |
 | Équipe | salariés, compétences, allocations, utilisation, calendrier (absences, arrivées, départs) |
 | Agents et skills | agents regroupés par système : rôle, quand l'appeler, outils, modèle, points d'arrêt, phrase à taper au coordinateur |
@@ -94,6 +96,25 @@ Ensuite, ouvrir **`console/index.html`** dans un navigateur, par double-clic : a
 - **Mêmes chiffres que les tableaux de bord.** Les calculs viennent des fonctions de `scripts/tableau.py`.
 - **Hors ligne.** Les diagrammes Mermaid utilisent la copie locale `scripts/vendor/mermaid.min.js` (Mermaid 12.3.0, licence MIT dans `scripts/vendor/mermaid-LICENSE`), copiée dans `console/assets/` à chaque génération. Aucun réseau n'est nécessaire en soutenance. Pour utiliser le CDN à la place : `--mermaid-src https://cdn.jsdelivr.net/npm/mermaid@12.3.0/dist/mermaid.min.js`.
 - **Options.** `--date AAAA-MM-JJ` fixe la date de calcul ; `--racine DIR` désigne un autre dépôt.
+
+### Le bureau
+
+La page `console/bureau.html` ([DEC-016](docs/decisions/2026-11-26-DEC-016-page-le-bureau.md)) montre l'ESN vue de dessus. Elle est dessinée en Canvas 2D par `scripts/bureau.js`, à partir des données calculées par `scripts/bureau.py`. Tout est dessiné par le code : aucun sprite, aucune police ni ressource externe, et la page fonctionne en `file://`, hors ligne.
+
+- **Personnages.** Un par agent (`.claude/agents/`), un par salarié (`equipe/membres/`), le coordinateur à l'accueil et, comme visiteurs, les humains qui décident hors `equipe/`. La couleur dépend du système et l'accessoire du rôle. Un agent ajouté plus tard apparaît sans changer le code. Au survol ou au clic, une fiche s'ouvre : rôle, modèle, outils, tickets en cours et lien vers sa page.
+- **Instantané** (projet choisi, ou « Toute l'ESN ») : l'état vient des tickets (R9).
+  - `EN_COURS` : il tape à son bureau.
+  - `EN_REVUE` : il va chez le relecteur, ou chez le testeur si la revue est `APPROUVÉ`.
+  - `ATTENTE_HUMAIN` : « ! » au-dessus de l'humain attendu.
+  - `BLOQUE` : bulle rouge.
+  - Sinon : coin café.
+- **Replay** : la chronologie des lignes « Journal » des tickets et des décisions DEC. Commandes : lecture, pause, pas à pas, vitesse, curseur.
+  - Le filtre **« jalons seulement »** (création, changements de statut, décisions) est actif par défaut, pour un film d'environ 1 min 30 à ×1 ; décocher pour tout voir.
+  - Une décision s'affiche par une bannière « ✔ DEC-NNN · décidé par … ».
+  - Les lignes de journal mal formées sont ignorées et listées dans « Anomalies de données ».
+- **Accessibilité.** `prefers-reduced-motion` est respecté : aucun déplacement animé ni clignotement. Les listes « Personnages et état » et « Événements du replay » sont l'alternative texte au dessin ; la seconde suit la lecture.
+- **Lien direct.** `bureau.html#projet=<slug>&mode=replay&ev=<n>&perso=<id>` ouvre un projet, un mode, un événement ou une fiche (utile pour les captures et la projection).
+- **Échappement.** Les données sont injectées en JSON sans `<`, `>`, `&`, U+2028 ni U+2029 bruts ; le JS n'affiche les textes que par `textContent` et `fillText` (vérifié par `test_bureau.py`).
 
 ## Page « qui fait quoi »
 

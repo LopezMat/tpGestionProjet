@@ -2,10 +2,10 @@
 titre: Architecture du système multi-agents
 statut: VALIDÉ
 responsable: B
-version: 1.3
+version: 1.4
 maj_le: 2026-11-26
 valide_par: Ethan
-decision: DEC-015
+decision:  DEC-016
 ---
 
 # ARCHITECTURE — le « comment » de l'ESN virtuelle
@@ -83,6 +83,8 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
 │   ├── deployer_local.py  rollback_local.py  prod_locale.py  test_prod_locale.py  (C) § 9
 │   ├── verifier_validations.py  test_verifier_validations.py                      (C)
 │   ├── console.py  test_console.py   (D) console de consultation, lecture seule, sortie console/ (DEC-012)
+│   ├── bureau.py  bureau.js  test_bureau.py   (D) page « Le bureau » de la console (vue de dessus,
+│   │                                 replay des journaux), lecture seule, sortie console/ (DEC-016)
 │   ├── vendor/                       (D) mermaid.min.js 12.3.0 et sa licence MIT, pour la console hors ligne
 │   ├── qui_fait_quoi.py  qui_fait_quoi_modele.html  test_qui_fait_quoi.py           (D) page
 │   │                                 « qui fait quoi », lecture seule, sortie hors Git (DEC-014)
