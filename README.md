@@ -101,11 +101,12 @@ Ensuite, ouvrir **`console/index.html`** dans un navigateur, par double-clic : a
 
 La page `console/bureau.html` ([DEC-016](docs/decisions/2026-11-26-DEC-016-page-le-bureau.md)) montre l'ESN vue de dessus. Elle est dessinée en Canvas 2D par `scripts/bureau.js`, à partir des données calculées par `scripts/bureau.py`. Tout est dessiné par le code : aucun sprite, aucune police ni ressource externe, et la page fonctionne en `file://`, hors ligne.
 
-- **Personnages.** Un par agent (`.claude/agents/`), un par salarié (`equipe/membres/`), le coordinateur à l'accueil et, comme visiteurs, les humains qui décident hors `equipe/`. La couleur dépend du système et l'accessoire du rôle. Un agent ajouté plus tard apparaît sans changer le code. Au survol ou au clic, une fiche s'ouvre : rôle, modèle, outils, tickets en cours et lien vers sa page.
+- **Personnages.** Un par agent (`.claude/agents/`), un par salarié fictif (`equipe/membres/`), le coordinateur à l'accueil et, à côté de lui, les membres humains de l'équipe projet listés dans `equipe/humains.md` (Ethan, Johan, Stéphane, Matthieu ; [DEC-017](docs/decisions/2026-11-26-DEC-017-membres-humains-equipe.md)). La couleur dépend du système et l'accessoire du rôle. Un agent ou un membre ajouté plus tard apparaît sans changer le code. Au survol ou au clic, une fiche s'ouvre : rôle, modèle, outils, tickets en cours et lien vers sa page.
+- **Membres humains de l'équipe projet.** Ils sont toujours à l'accueil, même si aucun journal ne les cite. Un acteur de journal, un assigné ou un `decide_par` qui leur correspond est rattaché à leur personnage, sans doublon : la casse et les accents sont ignorés, et le préfixe `salarie:` est accepté (« Ethan », « salarie:ethan », « Stéphane », « stephane »). Les autres humains inconnus (« Le professeur », « Équipe ESN ») restent des visiteurs de l'accueil. Sans `equipe/humains.md`, la page se génère quand même ; une entrée mal formée ou en double est signalée dans « Anomalies de données ».
 - **Instantané** (projet choisi, ou « Toute l'ESN ») : l'état vient des tickets (R9).
   - `EN_COURS` : il tape à son bureau.
   - `EN_REVUE` : il va chez le relecteur, ou chez le testeur si la revue est `APPROUVÉ`.
-  - `ATTENTE_HUMAIN` : « ! » au-dessus de l'humain attendu.
+  - `ATTENTE_HUMAIN` : « ! » au-dessus de l'humain attendu (le salarié ou le membre de l'équipe projet assigné).
   - `BLOQUE` : bulle rouge.
   - Sinon : coin café.
 - **Replay** : la chronologie des lignes « Journal » des tickets et des décisions DEC. Commandes : lecture, pause, pas à pas, vitesse, curseur.
