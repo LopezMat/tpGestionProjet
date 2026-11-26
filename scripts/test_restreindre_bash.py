@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Tests du hook .claude/hooks/restreindre_bash.py (Bash par agent). Responsable : C · Lot 2 (C), lot 5.
+"""Tests du hook .claude/hooks/restreindre_bash.py (Bash par agent, R17). Responsable : C · Lot 2 (C), lot 5.
 
 Lancement : python scripts/test_restreindre_bash.py
 Le hook est lancé comme par Claude Code : JSON sur stdin, avec ou sans `agent_type`.
+Le hook ne fait que décider : aucune commande testée n'est exécutée.
 Bibliothèque standard uniquement.
 """
+import hashlib
 import json
 import os
 import subprocess
@@ -13,6 +15,7 @@ import unittest
 
 RACINE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOOK = os.path.join(RACINE, ".claude", "hooks", "restreindre_bash.py")
+DEC_007 = "docs/decisions/2026-11-24-DEC-007-choix-techniques-coworking.md"
 
 
 def lancer(commande, agent=None, args=(), brut=None):
@@ -219,6 +222,150 @@ class TestRestreindreBash(unittest.TestCase):
         code, err = lancer("", brut=b"{pas du json")
         self.assertEqual(code, 2)
         self.assertIn("par prudence", err)
+
+
+class TestR17(unittest.TestCase):
+    """R17 (DEC-010, DEC-015) : aucun document Markdown de docs/ ou projets/ modifié par Bash.
+
+    Chaque forme est testée pour la session principale (auteur de l'incident DEC-007) et pour un agent."""
+
+    APPELANTS = (None, "dev-backend")
+
+    def refuse(self, commande, forme=""):
+        for agent in self.APPELANTS:
+            code, err = lancer(commande, agent)
+            self.assertEqual(code, 2, "{!r} ({}) aurait dû être refusé (R17)".format(commande, agent or "session principale"))
+            self.assertIn("Refusé (R17)", err)
+            self.assertIn("Edit ou Write", err)        # le message renvoie vers les outils contrôlés
+            self.assertIn(forme, err)
+
+    def permet(self, commande):
+        for agent in self.APPELANTS:
+            code, err = lancer(commande, agent)
+            self.assertEqual(code, 0, "{!r} ({}) aurait dû passer ; stderr={}".format(
+                commande, agent or "session principale", err))
+
+    # -- une forme refusée par test ----------------------------------------------
+    def test_sed_i(self):
+        self.refuse("sed -i 's/EN_REVUE/VALIDÉ/' docs/decisions/2026-11-26-DEC-015-regle-r17.md", "sed -i")
+        self.refuse("sed -i.bak 's/a/b/' projets/demo/cdc.md", "sed -i")
+        self.refuse("sed -Ei 's/a/b/' ./docs/ARCHITECTURE.md", "sed -i")
+        self.refuse("sed --in-place 's/a/b/' projets/demo/tickets/T-001-x.md", "sed -i")
+        self.refuse("sed -e 's/a/b/' -i 'docs\\systemes\\S1-gestion-projet.md'", "sed -i")   # séparateurs Windows
+        self.refuse("perl -pi -e 's/a/b/' docs/VISION.md", "perl -i")
+
+    def test_redirection_ecrase(self):
+        self.refuse("echo 'statut: VALIDÉ' > docs/decisions/x.md", "redirection >")
+        self.refuse("cat /tmp/nouveau.txt >./projets/demo/cdc.md", "redirection >")
+        self.refuse("printf x 1>projets/demo/tickets/T-002-y.md", "redirection >")
+        self.refuse('echo x > "projets/demo/rapports/a b.md"', "redirection >")
+        self.refuse("echo x >| docs/VISION.md", "redirection >|")
+        self.refuse("ls &> projets/demo/rapports/suivi.md", "redirection &>")
+        self.refuse("cat > docs/decisions/x.md <<'EOF'\nstatut: VALIDÉ\nEOF", "redirection >")
+
+    def test_redirection_ajoute(self):
+        self.refuse("echo '- [x] critère' >> projets/demo/tickets/T-001-x.md", "redirection >>")
+        self.refuse("echo ligne >>docs/CHANGELOG-REGLES.md", "redirection >>")
+
+    def test_tee(self):
+        self.refuse("echo x | tee docs/decisions/README.md", "tee")
+        self.refuse("echo x | tee -a projets/demo/retex.md > /dev/null", "tee")
+        self.refuse("tee projets/demo/cdc.md < /tmp/cdc.txt", "tee")
+
+    def test_python_c(self):
+        self.refuse("python -c \"open('docs/decisions/x.md', 'w').write('x')\"", "python -c")
+        self.refuse("python3 -c \"from pathlib import Path; p = Path('projets/demo/cdc.md'); "
+                    "p.write_text(p.read_text().replace('a', 'b'))\"", "python -c")
+        self.refuse("py -3 -c \"open('docs/VISION.md', mode='a').write('x')\"", "python -c")
+        self.refuse("python -X utf8 -c \"import os; os.replace('/tmp/x', os.path.join('docs', 'VISION.md'))\"",
+                    "python -c")
+        self.refuse("python -c \"import pathlib; [f.write_text('x') for f in pathlib.Path('docs').glob('*.md')]\"",
+                    "python -c")
+
+    def test_python_heredoc(self):
+        script = ("from pathlib import Path\n"
+                  "p = Path('projets/demo/tickets/T-001-x.md')\n"
+                  "p.write_text(p.read_text(encoding='utf-8').replace('A_FAIRE', 'TERMINE'), encoding='utf-8')\n")
+        self.refuse("python - <<'EOF'\n" + script + "EOF", "heredoc")
+        self.refuse("python3 <<EOF\n" + script + "EOF\necho fini", "heredoc")
+        self.refuse("cd /c/depot && python -u - << \"FIN\"\n" + script + "FIN", "heredoc")
+        self.refuse("cat <<'EOF' | python -\n" + script + "EOF", "heredoc")
+
+    def test_python_tube(self):
+        self.refuse("echo \"open('docs/VISION.md', 'w').write('x')\" | python -", "entrée standard")
+        self.refuse("python <<< \"open('docs/VISION.md', 'w').write('x')\"", "entrée standard")
+
+    # -- contournements par imbrication ------------------------------------------
+    def test_imbrications(self):
+        self.refuse("bash -c \"sed -i 's/a/b/' docs/VISION.md\"", "sed -i")
+        self.refuse("sh -c 'echo x >> projets/demo/cdc.md'", "redirection >>")
+        self.refuse("eval \"echo x > docs/VISION.md\"", "redirection >")
+        self.refuse("bash <<'EOF'\nsed -i 's/a/b/' docs/VISION.md\nEOF", "sed -i")
+        self.refuse("echo ok\nsed -i 's/a/b/' docs/VISION.md", "sed -i")
+        self.refuse("echo $(sed -i 's/a/b/' docs/VISION.md)", "sed -i")
+        self.refuse("find docs -name '*.md' -exec sed -i 's/a/b/' {} +", "find ou xargs")
+        self.refuse("find projets -name '*.md' | xargs sed -i 's/a/b/'", "find ou xargs")
+        self.refuse("timeout 5 sed -i 's/a/b/' docs/VISION.md", "sed -i")
+
+    # -- ce qui reste permis ------------------------------------------------------
+    def test_lectures_permises(self):
+        for commande in (
+                "grep -n 'statut' docs/decisions/*.md",
+                "grep -rn R17 docs/ projets/ > /tmp/occurrences.txt",
+                "cat docs/decisions/README.md",
+                "cat projets/demo/cdc.md | head -20",
+                "head -12 docs/systemes/S1-gestion-projet.md docs/CHANGELOG-REGLES.md",
+                "tail -5 projets/demo/tickets/T-001-x.md",
+                "sed -n '1,10p' docs/ARCHITECTURE.md",
+                "wc -l docs/*.md 2>/dev/null",
+                "python -c \"print(open('docs/VISION.md', encoding='utf-8').read()[:200])\"",
+                "git diff -- docs/ARCHITECTURE.md",
+                "git log --oneline -- projets/demo/cdc.md"):
+            self.permet(commande)
+
+    def test_autres_ecritures_permises(self):
+        for commande in (
+                "sed -i 's/a/b/' projets/demo/app/src/main.py",      # code : pas un document Markdown
+                "echo x > /tmp/brouillon.md",                          # hors docs/ et projets/
+                "python scripts/tableau.py",                           # générateur versionné (R9)
+                "python scripts/console.py",
+                "python scripts/test_restreindre_bash.py > /tmp/resultat.txt 2>&1",
+                "python -m pytest projets/demo/app",
+                "git commit -m \"R17 : sed -i et > docs/x.md refusés\"",
+                "git commit -F - <<'EOF'\nR17 : echo x > docs/VISION.md est refusé\nEOF",
+                "git commit -m \"$(cat <<'EOF'\nR17 : sed -i docs/x.md\nEOF\n)\""):
+            self.permet(commande)
+
+    def test_deploiement_toujours_confirme(self):
+        code, dec = decision("python scripts/deployer_local.py --projet demo --sha abc1234")
+        self.assertEqual((code, dec["permissionDecision"]), (0, "ask"))
+
+    # -- rejeu de l'incident DEC-007 (2026-11-24) ----------------------------------
+    def test_rejeu_incident_dec007(self):
+        """Le coordinateur avait modifié DEC-007, VALIDÉ, par un script Python lancé par Bash ;
+        proteger_valide.py (Write/Edit) ne l'avait pas vu. Le hook Bash le refuse désormais."""
+        chemin = os.path.join(RACINE, *DEC_007.split("/"))
+        with open(chemin, "rb") as f:
+            avant = f.read()
+        entete = avant.decode("utf-8").split("---")[1]
+        self.assertRegex(entete, r"(?m)^statut:\s*VALIDÉ", "précondition : DEC-007 est VALIDÉ")
+        rejeu = ("python - <<'EOF'\n"
+                 "from pathlib import Path\n"
+                 "p = Path('" + DEC_007 + "')\n"
+                 "texte = p.read_text(encoding='utf-8')\n"
+                 "texte = texte.replace('sauvegarde quotidienne', 'sauvegarde quotidienne et purge au déploiement')\n"
+                 "p.write_text(texte, encoding='utf-8')\n"
+                 "EOF")
+        for commande in (rejeu,
+                         "python -c \"import pathlib; p = pathlib.Path('" + DEC_007 + "'); "
+                         "p.write_text(p.read_text(encoding='utf-8') + 'ajout')\"",
+                         "sed -i 's/sauvegarde quotidienne/purge/' " + DEC_007):
+            code, err = lancer(commande)                       # session principale, comme le 2026-11-24
+            self.assertEqual(code, 2, commande)
+            self.assertIn("Refusé (R17)", err)
+            self.assertIn("proteger_valide.py", err)
+        with open(chemin, "rb") as f:
+            self.assertEqual(hashlib.sha256(f.read()).hexdigest(), hashlib.sha256(avant).hexdigest())
 
 
 if __name__ == "__main__":
