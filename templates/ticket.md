@@ -20,8 +20,10 @@ maj_le: AAAA-MM-JJ
 statut_depuis: AAAA-MM-JJ   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
+imputation: client          # client | esn ; esn seulement sur décision humaine VALIDÉ (R18) ; ignoré dans esn-interne (R19)
+imputation_decision:        # DEC-NNN obligatoire si imputation: esn (décision VALIDÉ de docs/decisions/)
 ---
-<!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
+<!-- modèle : templates/ticket.md v0.3 · responsable du modèle : A -->
 
 # T-NNN — <titre>
 
