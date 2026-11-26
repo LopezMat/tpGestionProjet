@@ -10,13 +10,13 @@ assigne: agent:testeur      # agent:<nom> | salarie:<prenom>
 competence_requise: tests-e2e (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 2             # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 0            # heures équivalent humain
-depend_de: [T-010, T-011, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022, T-023, T-024, T-025, T-026, T-027, T-028, T-041]   # ex. [T-001, T-002]
+depend_de: [T-010, T-011, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022, T-023, T-024, T-025, T-026, T-028, T-041]   # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-24
-maj_le: 2026-11-24
+maj_le: 2026-11-26
 statut_depuis: 2026-11-24   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
@@ -43,3 +43,4 @@ Second volet du ticket « Tests » : campagne complète sur le **SHA candidat** 
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-24 23:55 · agent:chef-de-projet · création · 0 h
+- 2026-11-26 22:05 · agent:chef-de-projet · SIMULATION · T-027 (F-06, ANNULE par DEC-020) retiré de depend_de ; aucun critère ne portait sur F-06 ; statut et estimation inchangés. Temps compté dans T-008 · 0 h

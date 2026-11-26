@@ -4,7 +4,7 @@ id: T-065
 titre: Dette de tests et de documentation de l'incrément (remarques T-010, T-011 et T-054)
 projet: reservation-coworking
 type: amelioration          # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: ANNULE              # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: basse             # critique | haute | normale | basse
 assigne: agent:dev-backend  # agent:<nom> | salarie:<prenom>
 competence_requise: backend-python (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -16,8 +16,8 @@ validation_humaine_requise: non   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-25
-maj_le: 2026-11-25
-statut_depuis: 2026-11-25   # date du dernier changement de statut
+maj_le: 2026-11-26
+statut_depuis: 2026-11-26   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
 ---
@@ -70,3 +70,4 @@ Priorité basse : **hors de l'incrément de la soutenance et après les Must**. 
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-25 23:50 · agent:chef-de-projet · création (triage des remarques 3 et 4 de T-010 et 7 et 8 de T-011) · 0 h
 - 2026-11-25 14:45 · agent:chef-de-projet · triage (S1-R5) : ajout des remarques 1 à 5 du relecteur-code sur T-054 et des remarques sans enjeu de sécurité de l'audit securite-2026-11-25-4 (message « réserver », `HEAD` en 404) ; 7 critères ajoutés ; estimation 1 → 2,5 h (remarque 1 : 0,4 h ; 2 et 3 : 0,4 h ; 4 et 5 : 0,2 h ; message : 0,2 h ; `HEAD` : 0,3 h) ; compétence `backend-python (confirme)` ; dépend aussi de T-054, T-062 et T-070 (mêmes fichiers) ; priorité `basse` maintenue. Temps compté dans T-008 · 0 h
+- 2026-11-26 22:00 · agent:chef-de-projet · SIMULATION · A_FAIRE → ANNULE par DEC-020 (révision du budget à 4 200 € HT, scénario B : dette de tests et de documentation sans effet pour le client ni sur la sécurité). Aucun ticket n'en dépend ; sa revue (0,5 h) retirée de T-066 et sa vérification (0,4 h) retirée de T-067. Conséquences connues, acceptées par DEC-020 : la borne fragile de `tests/test_health_delai.py`, les deux assertions toujours vraies, le message `date_hors_fenetre` (« réserver ») sur `GET /api/disponibilites` et `HEAD` en 404 restent en l'état ; à reprendre en maintenance par un nouveau ticket si un humain le décide. Temps compté dans T-008 · 0 h

@@ -46,3 +46,4 @@ Revue humaine (S3-R2, AF3) de [T-058](T-058-role-applicatif-non-superutilisateur
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-25 23:50 · agent:chef-de-projet · création · 0 h
+- 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h

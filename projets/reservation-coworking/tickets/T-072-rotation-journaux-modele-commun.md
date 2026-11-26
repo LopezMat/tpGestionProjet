@@ -48,3 +48,4 @@ Constat 15 (bas, A09 Journalisation ; A05) du rapport [securite-2026-11-25-4.md]
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-25 14:45 · agent:chef-de-projet · création (triage du constat 15, partie b, rapport securite-2026-11-25-4) · 0 h
+- 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h
