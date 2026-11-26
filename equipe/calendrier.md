@@ -1,7 +1,7 @@
 ---
 # Calendrier de l'équipe (lu par scripts/tableau.py, ne pas renommer les champs)
 responsable: B
-maj_le: 2026-11-23
+maj_le: 2026-11-26
 jours_feries: [2026-12-25, 2027-01-01]   # jours non ouvrés, en plus des samedis et dimanches
 evenements:
   - id: EV-001
@@ -12,7 +12,7 @@ evenements:
     motif: conges              # conges | maladie | formation | autre (absence) ; vide pour arrivee et depart
     capacite_pct: 0            # % de capacité restante sur la période (0 = indisponible)
     statut: prevu              # prevu | confirme | annule
-    decision:                  # DEC-NNN quand l'événement a été arbitré
+    decision: DEC-021          # DEC-NNN quand l'événement a été arbitré (SIMULATION, scénario 3)
   - id: EV-002
     type: absence
     qui: salarie:nadia
@@ -31,6 +31,15 @@ evenements:
     capacite_pct: 0
     statut: prevu
     decision:
+  - id: EV-004                 # SIMULATION (scénario 3, skill depart-membre, 2026-11-26)
+    type: depart
+    qui: salarie:hugo
+    debut: 2026-12-04          # date de départ (dernier jour travaillé)
+    fin: 2026-12-04
+    motif:
+    capacite_pct: 0
+    statut: prevu
+    decision: DEC-021
 ---
 
 # Calendrier de l'équipe
@@ -42,6 +51,7 @@ Source de la **capacité réelle** des salariés : un salarié a une capacité n
 | EV-001 | Léa | absence | 2026-11-26 | 2026-11-27 | congés | prévu |
 | EV-002 | Nadia | absence | 2026-12-03 | 2026-12-03 | formation (supervision) | prévu |
 | EV-003 | Karim | absence | 2026-12-21 | 2026-12-31 | congés | prévu |
+| EV-004 | Hugo | départ | 2026-12-04 | 2026-12-04 | — | prévu (**SIMULATION**, scénario 3) |
 
 ## Règles
 - **Le calendrier est mis à jour uniquement par les skills d'événements** (`absence`, `arrivee-membre`, `depart-membre`), exécutés par le coordinateur.
