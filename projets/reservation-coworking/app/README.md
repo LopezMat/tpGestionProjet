@@ -12,7 +12,7 @@ Référence : `../architecture.md` (v1.1). État après T-010 : socle seulement 
 | `reservation/bdd.py` | moteur de la sonde `SELECT 1` (`_moteur_sonde`) et moteur applicatif à pool (`moteur_applicatif`) |
 | `reservation/migrer.py`, `reservation/migrations/` | migrations Alembic (schéma, 3 salles) appliquées au démarrage, de façon tolérante (T-011) |
 | `reservation/demarrer.py` | point d'entrée de l'image : attend la base, migre, lance Uvicorn (1 worker) |
-| `reservation/static/` | front HTML/CSS/JS sans build |
+| `reservation/static/` | front HTML/CSS/JS sans build : `index.html` (disponibilités), `css/style.css`, `js/api.js` (appels), `js/creneaux.js` (fonctions pures), `js/disponibilites.js` (écran) |
 | `docs/openapi.json` | schéma OpenAPI versionné pour le `dev-frontend` |
 | `tests/` | tests pytest |
 | `env.example` | variables d'environnement, sans valeur |
@@ -29,6 +29,8 @@ python -m venv .venv
 pip install -r requirements-dev.txt
 python -m pytest
 ```
+
+Tests du front (T-055) : la logique pure de la page (`reservation/static/js/creneaux.js`, état « passé » avec heure simulée) se teste avec Node 20 ou plus, sans aucune dépendance npm ni changement de l'image : `node --no-warnings --test "tests/front/*.test.mjs"`. Le respect de la CSP par tous les fichiers de `reservation/static/` est contrôlé par pytest (`tests/test_front_statique.py`).
 
 Les tests qui exigent un vrai PostgreSQL sont ignorés tant que `TEST_DATABASE_URL` n'est pas renseignée :
 
