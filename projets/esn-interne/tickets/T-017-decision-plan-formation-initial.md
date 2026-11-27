@@ -4,7 +4,7 @@ id: T-017
 titre: Plan de formation initial — budget de fonctionnement, échéance et allocations (DEC-024)
 projet: esn-interne
 type: decision              # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: EN_COURS      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE       # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: agent:chef-de-projet   # agent:<nom> | salarie:<prenom>
 competence_requise: gestion-projet (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -19,7 +19,7 @@ cree_le: 2026-11-27
 maj_le: 2026-11-27
 statut_depuis: 2026-11-27   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le: 2026-11-27      # facultatif : date du passage TERMINE
 imputation: esn             # client | esn ; esn seulement sur décision humaine VALIDÉ (R18) ; dans esn-interne : toujours esn (R19)
 imputation_decision:        # DEC-NNN VALIDÉ de docs/decisions/, obligatoire si esn dans un projet client ; vide dans esn-interne
 ---
@@ -173,7 +173,7 @@ En cas de manque de capacité, on retire dans l'ordre inverse.
 
 ## Critères d'acceptation
 - [x] Un humain a tranché (option, formations retenues, `budget_eur`, `deadline`, allocations par salarié et par période, enveloppe de frais externes) ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-024-*.md` est créé et référencé dans `decision`.
-- [ ] Allocations de P1 appliquées dans equipe/ ; P2 suivie par T-016 et le jalon du 2026-12-21 (planning.md).*
+- [x] Allocations de P1 appliquées dans equipe/ ; P2 suivie par T-016 et le jalon du 2026-12-21 (planning.md).*
 - [x] Les tickets non retenus sont `ANNULE`, avec une ligne de journal qui cite DEC-024 (T-016).
 
 ## Revue
@@ -189,3 +189,4 @@ En cas de manque de capacité, on retire dans l'ordre inverse.
 - 2026-11-27 09:30 · Ethan · décision prise et tracée dans DEC-024 (option B, enveloppe de frais séparée), ticket débloqué pour application · 0,25 h
 - 2026-11-27 · agent:coordinateur · DEC-024 appliquée : `projet.md` (budget 4 360 €, deadline 2027-01-15, salariés affectés, en_cours) et allocations de P1 dans `equipe/membres/` (Claire 5 %, Karim 5 %, Léa 25 %, Nadia 10 % sur esn-interne) ; T-015 ANNULE par le chef-de-projet (T-016). Critères 1 et 3 cochés ; critère 2 incomplet tant que les allocations de P2 ne sont pas appliquées (2026-12-21) : reste EN_COURS (R13) · 0 h
 - 2026-11-27 09:45 · Ethan · critère 2 reformulé : P2 sortie du périmètre de T-017 (suivie par T-016 et le jalon du 21/12), pour ne pas bloquer T-002 (formation du 03/12) ; décision humaine · 0,1 h
+- 2026-11-27 · agent:coordinateur · critères vérifiés : DEC-024 VALIDÉ et référencé (1) ; allocations de P1 appliquées dans equipe/, P2 suivie par T-016 et le jalon « Bascule des allocations P1 → P2 » du 2026-12-21 de planning.md v1.0 (2) ; T-015 ANNULE avec journal citant DEC-024 (3). EN_COURS → TERMINE à la demande d'Ethan ; T-002, T-003, T-005, T-006, T-007, T-012, T-013 et T-014 deviennent prenables · 0 h

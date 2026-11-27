@@ -9,10 +9,10 @@
 | Indicateur | Valeur |
 |---|---|
 | Type · état | interne · en_cours |
-| Avancement (h estimées terminées / h estimées hors ANNULE) | 2,5 % (1,5 h / 59,5 h) |
-| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 57,0 h |
+| Avancement (h estimées terminées / h estimées hors ANNULE) | 3,3 % (2,0 h / 60,5 h) |
+| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 57,5 h |
 | Budget de fonctionnement consommé / prévu (projet interne, R19) | 60,00 € / 4 360,00 € (1,4 %) |
-| Coût projeté à terminaison (consommé + reste × taux) | 3 655,71 € |
+| Coût projeté à terminaison (consommé + reste × taux) | 3 663,21 € |
 | Fin projetée | 2027-01-26 |
 | Deadline | 2027-01-15 |
 | Écart avec la deadline | +7 j ouvrés |
@@ -31,14 +31,14 @@
 
 | Statut | Nombre |
 |---|---|
-| A_FAIRE | 14 |
-| EN_COURS | 2 |
+| A_FAIRE | 15 |
+| EN_COURS | 1 |
 | EN_REVUE | 0 |
 | BLOQUE | 0 |
 | ATTENTE_HUMAIN | 0 |
-| TERMINE | 1 |
+| TERMINE | 2 |
 | ANNULE | 1 |
-| **Total** | 18 |
+| **Total** | 19 |
 
 ## Tickets BLOQUE
 
@@ -58,12 +58,12 @@ Aucune décision attendue.
 | T-005 | Encadrement de Léa (T-004) — revues humaines et sécurité | salarie:karim | A_FAIRE | 2,0 h | 2026-11-27 → 2026-12-04 |
 | T-006 | Formation Léa — recette-fonctionnelle en binôme avec Claire | salarie:lea | A_FAIRE | 4,0 h | 2026-12-08 → 2026-12-10 |
 | T-007 | Encadrement de Léa (T-006) — recette fonctionnelle | salarie:claire | A_FAIRE | 1,0 h | 2026-11-27 → 2026-12-01 |
-| T-008 | Formation Karim — sauvegarde-restauration (restauration réelle en binôme avec Nadia) | salarie:karim | A_FAIRE | 5,0 h | 2027-01-06 → 2027-01-26 |
-| T-009 | Encadrement de Karim (T-008) — sauvegarde et restauration | salarie:nadia | A_FAIRE | 2,0 h | 2027-01-06 → 2027-01-11 |
-| T-010 | Formation Léa — docker (autoformation et binôme avec Nadia) | salarie:lea | A_FAIRE | 7,0 h | 2027-01-06 → 2027-01-12 |
+| T-008 | Formation Karim — sauvegarde-restauration (restauration réelle en binôme avec Nadia) | salarie:karim | A_FAIRE | 5,0 h | 2027-01-05 → 2027-01-26 |
+| T-009 | Encadrement de Karim (T-008) — sauvegarde et restauration | salarie:nadia | A_FAIRE | 2,0 h | 2027-01-05 → 2027-01-11 |
+| T-010 | Formation Léa — docker (autoformation et binôme avec Nadia) | salarie:lea | A_FAIRE | 7,0 h | 2027-01-05 → 2027-01-11 |
 | T-011 | Encadrement de Léa (T-010) — docker | salarie:nadia | A_FAIRE | 3,0 h | 2027-01-11 → 2027-01-18 |
-| T-012 | Formation Nadia — documentation (guide d'exploitation Docker et restauration) | salarie:nadia | A_FAIRE | 7,0 h | 2026-12-16 → 2027-01-06 |
-| T-013 | Formation Léa — relation-client en binôme avec Claire | salarie:lea | A_FAIRE | 3,0 h | 2027-01-12 → 2027-01-13 |
+| T-012 | Formation Nadia — documentation (guide d'exploitation Docker et restauration) | salarie:nadia | A_FAIRE | 7,0 h | 2026-12-16 → 2027-01-05 |
+| T-013 | Formation Léa — relation-client en binôme avec Claire | salarie:lea | A_FAIRE | 3,0 h | 2027-01-11 → 2027-01-13 |
 | T-014 | Encadrement de Léa (T-013) — relation client | salarie:claire | A_FAIRE | 1,0 h | 2026-12-01 → 2026-12-04 |
 
 ## Tickets formation ouverts
@@ -100,25 +100,26 @@ gantt
     section agent chef-de-projet
     T-001 Plan de formation initial de l'ESN :done, t001, 2026-11-27, 2026-11-28
     T-016 Pilotage du plan de formation de l'ESN :active, t016, 2026-11-27, 2026-11-28
-    T-017 Plan de formation initial — budget de fonctionnement, échéan :active, t017, 2026-11-27, 2026-11-28
+    T-017 Plan de formation initial — budget de fonctionnement, échéan :done, t017, 2026-11-27, 2026-11-28
     T-018 tableau.py ne suit pas les frais externes (devis, factures d :t018, 2026-11-27, 2026-11-28
+    T-019 tableau.py — allocations par période et absence pour formati :t019, 2026-11-27, 2026-11-28
     section salarie claire
     T-007 Encadrement de Léa (T-006) — recette fonctionnelle :t007, 2026-11-27, 2026-12-02
     T-014 Encadrement de Léa (T-013) — relation client :t014, 2026-12-01, 2026-12-05
     section salarie karim
     T-005 Encadrement de Léa (T-004) — revues humaines et sécurité :t005, 2026-11-27, 2026-12-05
-    T-008 Formation Karim — sauvegarde-restauration (restauration réel :t008, 2027-01-06, 2027-01-27
+    T-008 Formation Karim — sauvegarde-restauration (restauration réel :t008, 2027-01-05, 2027-01-27
     section salarie lea
     T-003 Formation Léa — securite-applicative (1/2) autoformation gui :t003, 2026-11-30, 2026-12-04
     T-004 Formation Léa — revue humaine et securite-applicative (2/2)  :t004, 2026-12-04, 2026-12-09
     T-006 Formation Léa — recette-fonctionnelle en binôme avec Claire :t006, 2026-12-08, 2026-12-11
-    T-010 Formation Léa — docker (autoformation et binôme avec Nadia) :t010, 2027-01-06, 2027-01-13
-    T-013 Formation Léa — relation-client en binôme avec Claire :t013, 2027-01-12, 2027-01-14
+    T-010 Formation Léa — docker (autoformation et binôme avec Nadia) :t010, 2027-01-05, 2027-01-12
+    T-013 Formation Léa — relation-client en binôme avec Claire :t013, 2027-01-11, 2027-01-14
     section salarie nadia
     T-002 Formation Nadia — supervision (journée du 2026-12-03, EV-002 :t002, 2026-11-27, 2026-12-17
-    T-009 Encadrement de Karim (T-008) — sauvegarde et restauration :t009, 2027-01-06, 2027-01-12
+    T-009 Encadrement de Karim (T-008) — sauvegarde et restauration :t009, 2027-01-05, 2027-01-12
     T-011 Encadrement de Léa (T-010) — docker :t011, 2027-01-11, 2027-01-19
-    T-012 Formation Nadia — documentation (guide d'exploitation Docker :t012, 2026-12-16, 2027-01-07
+    T-012 Formation Nadia — documentation (guide d'exploitation Docker :t012, 2026-12-16, 2027-01-06
     section Jalons
     Deadline :milestone, deadline, 2027-01-15, 0d
 ```

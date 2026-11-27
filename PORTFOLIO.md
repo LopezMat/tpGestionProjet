@@ -8,7 +8,7 @@
 
 | Projet | Client | Type | État | Avancement | Budget consommé / prévu | % | Fin projetée | Deadline | Écart (j ouvrés) | BLOQUE | ATTENTE_HUMAIN | Alertes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| [esn-interne](projets/esn-interne/TABLEAU.md) | ESN (projet interne) | interne | en_cours | 2,5 % | 60,00 € / 4 360,00 € | 1,4 % | 2027-01-26 | 2027-01-15 | +7 | 0 | 0 | 5 |
+| [esn-interne](projets/esn-interne/TABLEAU.md) | ESN (projet interne) | interne | en_cours | 3,3 % | 60,00 € / 4 360,00 € | 1,4 % | 2027-01-26 | 2027-01-15 | +7 | 0 | 0 | 5 |
 | [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 19,9 % | 1 371,29 € / 4 200,00 € | 32,6 % | 2026-12-16 | 2026-12-18 | -2 | 0 | 1 | 3 |
 
 ## Alertes
@@ -36,9 +36,9 @@ Part ESN des projets clients (`imputation: esn` sur décision validée, R18) et 
 
 | Projet | Nature | Consommé | Projeté à terminaison | Budget de fonctionnement | Décisions |
 |---|---|---|---|---|---|
-| [esn-interne](projets/esn-interne/TABLEAU.md) | projet interne (R19) | 60,00 € | 3 655,71 € | 4 360,00 € | — |
+| [esn-interne](projets/esn-interne/TABLEAU.md) | projet interne (R19) | 60,00 € | 3 663,21 € | 4 360,00 € | — |
 | [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | prise en charge sur projet client (R18) | 22,50 € | 1 652,50 € | — | DEC-020, DEC-021 |
-| **Total ESN** | — | 82,50 € | 5 308,21 € | — | — |
+| **Total ESN** | — | 82,50 € | 5 315,71 € | — | — |
 
 ## Plan de formation de l'ESN
 
@@ -51,8 +51,8 @@ Tickets `formation` ouverts des projets internes (S1-R6, S1-R13).
 | esn-interne | T-004 | Formation Léa — revue humaine et securite-applicative (2/2) revues en double avec Karim | salarie:lea | A_FAIRE | 4,0 h | 2026-12-08 |
 | esn-interne | T-006 | Formation Léa — recette-fonctionnelle en binôme avec Claire | salarie:lea | A_FAIRE | 4,0 h | 2026-12-10 |
 | esn-interne | T-008 | Formation Karim — sauvegarde-restauration (restauration réelle en binôme avec Nadia) | salarie:karim | A_FAIRE | 5,0 h | 2027-01-26 |
-| esn-interne | T-010 | Formation Léa — docker (autoformation et binôme avec Nadia) | salarie:lea | A_FAIRE | 7,0 h | 2027-01-12 |
-| esn-interne | T-012 | Formation Nadia — documentation (guide d'exploitation Docker et restauration) | salarie:nadia | A_FAIRE | 7,0 h | 2027-01-06 |
+| esn-interne | T-010 | Formation Léa — docker (autoformation et binôme avec Nadia) | salarie:lea | A_FAIRE | 7,0 h | 2027-01-11 |
+| esn-interne | T-012 | Formation Nadia — documentation (guide d'exploitation Docker et restauration) | salarie:nadia | A_FAIRE | 7,0 h | 2027-01-05 |
 | esn-interne | T-013 | Formation Léa — relation-client en binôme avec Claire | salarie:lea | A_FAIRE | 3,0 h | 2027-01-13 |
 
 ## Équipe : allocation et utilisation

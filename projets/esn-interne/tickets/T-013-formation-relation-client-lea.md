@@ -56,3 +56,4 @@ Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), reg
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 10:55 · agent:chef-de-projet · création (T-001, plan de formation initial ; registre R-07 ; DEC-009 E) ; en attente de DEC-024 (T-017) · 0 h
 - 2026-11-27 14:30 · agent:chef-de-projet · retenu par DEC-024 (option B, rang 7) ; TERMINE au plus tard le 2026-12-18 (sinon, ticket decision : report au prochain contrat ou ANNULE) (T-016) · 0 h
+- 2026-11-27 · agent:coordinateur · hypothèse confirmée par Ethan le 2026-11-27 : Claire est d'accord pour présenter Léa au client · 0 h

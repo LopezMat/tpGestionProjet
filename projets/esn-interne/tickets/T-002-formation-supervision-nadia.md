@@ -58,3 +58,4 @@ Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), reg
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 10:00 · agent:chef-de-projet · création (T-001, plan de formation initial ; registre R-09 ; EV-002) ; en attente de DEC-024 (T-017) · 0 h
 - 2026-11-27 14:30 · agent:chef-de-projet · retenu par DEC-024 (option B, rang 3) ; frais externes dans l'enveloppe séparée de 700 € HT (devis à obtenir avant le 2026-12-03, 0 € engagé) ; date réelle 2026-12-03 (debut_le, termine_le) (T-016) · 0 h
+- 2026-11-27 · agent:coordinateur · consigne d'Ethan : devis à obtenir par Nadia avant le 2026-12-03 et à reporter dans l'enveloppe de planning.md ; au-delà de 700 € HT, nouveau ticket `decision` avant toute commande. T-017 TERMINE : ticket prenable (à faire par un humain, R15) · 0 h
