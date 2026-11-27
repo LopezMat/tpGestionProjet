@@ -10,13 +10,13 @@ assigne: agent:deployeur    # agent:<nom> | salarie:<prenom>
 competence_requise: ci-cd (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 1.5           # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 0            # heures équivalent humain
-depend_de: [T-046, T-029]   # ex. [T-001, T-002]
+depend_de: [T-046, T-029, T-058]   # T-058 : DEC-013 point 4
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-24
-maj_le: 2026-11-24
+maj_le: 2026-11-27
 statut_depuis: 2026-11-24   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
@@ -43,3 +43,4 @@ Ticket « Déploiement » du `deployeur` (portes 4 à 8 de S3, R13) : `python sc
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-24 23:55 · agent:chef-de-projet · création · 0 h
+- 2026-11-27 10:56 · agent:chef-de-projet · application de DEC-013 (option A, point 4 et Impacts) : T-058 ajouté à `depend_de` ([T-046, T-029] → [T-046, T-029, T-058]) ; la mise en production se fait avec le rôle applicatif non superutilisateur et sans repli `:-absent` ; dépendance déjà implicite par T-046 → T-045 → T-044 → T-058, rendue explicite comme le demande DEC-013 ; aucun cycle (ascendants de T-058 : T-057, T-029, T-007) ; statut, assigné et estimation inchangés · 0 h (temps compté dans T-008)

@@ -8,15 +8,15 @@ statut: EN_COURS            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_H
 priorite: normale           # critique | haute | normale | basse
 assigne: agent:chef-de-projet   # agent:<nom> | salarie:<prenom>
 competence_requise: gestion-projet (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
-estimation_h: 13.25         # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 12.5         # heures équivalent humain
+estimation_h: 15.25         # heures équivalent humain, quel que soit l'assigné
+temps_passe_h: 14.25        # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-24
-maj_le: 2026-11-26
+maj_le: 2026-11-27
 statut_depuis: 2026-11-24   # date du dernier changement de statut
 debut_le: 2026-11-24        # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
@@ -28,13 +28,13 @@ termine_le:                 # facultatif : date du passage TERMINE
 ## Description
 Ticket de travail du `chef-de-projet` (règle 14) : le temps de pilotage du projet `reservation-coworking` y est compté, une ligne de journal par intervention.
 
-Estimation : planification initiale 4 h (découpage, estimation, affectation, planning, budget, tri de T-006), replanification après DEC-009 1 h (planning v0.2), suivi et tri des tickets S2/S3 jusqu'à la mise en production 3 h (dont la surveillance de la marge pour l'abandon des Should), retour d'expérience 1 h.
+Estimation : planification initiale 4 h (découpage, estimation, affectation, planning, budget, tri de T-006), replanification après DEC-009 1 h (planning v0.2), suivi et tri des tickets S2/S3 jusqu'à la mise en production 3 h (dont la surveillance de la marge pour l'abandon des Should), retour d'expérience 1 h. Après DEC-020 : 13,25 h. Après DEC-026 (question 2) : **15,25 h**, avec +2 h pour le suivi jusqu'au 2026-12-18 (triage des suites de l'audit avant GO et de la recette, passages `avancement` de la condition 1) et le retex du projet.
 
 ## Critères d'acceptation
 - [ ] `planning.md` produit et soumis à validation (T-007).
 - [ ] Chaque intervention du `chef-de-projet` a une ligne de journal et son temps.
 - [ ] `retex.md` complété en fin de projet, avec ses tickets `amelioration`, et les tickets `formation` dans `projets/esn-interne/` (S1-R6, DEC-023).
-- [ ] **Condition 1 de DEC-020 (SIMULATION)** : à chaque passage du skill `avancement`, le **coût client** est comparé à 4 200 € HT, et le calcul est noté au journal de ce ticket. Depuis DEC-023, c'est la ligne « Coût client projeté à terminaison » de `TABLEAU.md`, calculée par `tableau.py` à partir du champ `imputation` des tickets (R18), sans soustraction manuelle. Seul ajout manuel tant que T-043 n'est pas ré-estimé : l'audit avant le GO, environ 75 €. Dès que le consommé client atteint 90 % (3 780 €), ou dès qu'un dépassement de 4 200 € est prévisible, un ticket `decision` `ATTENTE_HUMAIN` est créé **avant** d'engager le travail concerné (options : avenant ou retrait de périmètre, discussion avec le client par Claire, AF1) ; aucun dépassement n'est absorbé d'office par l'ESN.
+- [ ] **Condition 1 de DEC-020 (SIMULATION)** : à chaque passage du skill `avancement`, le **coût client** est comparé à 4 200 € HT, et le calcul est noté au journal de ce ticket. Depuis DEC-023, c'est la ligne « Coût client projeté à terminaison » de `TABLEAU.md`, calculée par `tableau.py` à partir du champ `imputation` des tickets (R18), sans soustraction manuelle. Depuis DEC-026, il n'y a plus d'ajout manuel : l'audit avant GO est compté par son propre ticket (T-108, 5 h, au client). Dès que le consommé client atteint 90 % (3 780 €), ou dès qu'un dépassement de 4 200 € est prévisible, un ticket `decision` `ATTENTE_HUMAIN` est créé **avant** d'engager le travail concerné (options : avenant ou retrait de périmètre, discussion avec le client par Claire, AF1) ; aucun dépassement n'est absorbé d'office par l'ESN.
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
@@ -67,3 +67,31 @@ Estimation : planification initiale 4 h (découpage, estimation, affectation, pl
 
   **Alerte déclenchée** : ticket `decision` `ATTENTE_HUMAIN` à créer par le coordinateur **avant d'engager** le correctif. Le défaut est couvert par la garantie de livraison (CDC § 9) s'il est confirmé. Consommé client 1 371,29 € (32,6 %, cette intervention comprise ; seuil 3 780 €). `tableau.py` lancé · 0,5 h
 - 2026-11-26 · agent:coordinateur · migration DEC-023 (R18) : critère « Condition 1 » réécrit (le coût client se lit dans `TABLEAU.md`, plus de soustraction manuelle) ; 23 tickets portent désormais `imputation: esn` (DEC-020, DEC-021) ; T-104 reste au client (décision d'Ethan dans DEC-023). L'écart de 175 € avec la part ESN manuelle (1 782,50 €) vient de T-081 et T-083, clos TERMINE sans temps passé, et non d'une ré-estimation (DEC-023). Le temps de cette migration n'est pas compté au client · 0 h
+- 2026-11-27 · agent:chef-de-projet · alerte S1-R11 et condition 1 de DEC-020 : création du ticket `decision` [T-107](T-107-arbitrage-audit-securite-avant-go.md) (ATTENTE_HUMAIN, porteuse Claire), qui arbitre le dépassement de T-043 et le comptage de l'audit avant GO (options A à E chiffrées). La question 2 porte sur la ré-estimation de ce ticket : +2 h, 30 €, pour le retex et le suivi, car le reste est de 0 h après cette intervention. Ligne de renvoi dans T-043 ; aucun autre ticket modifié. Refus du hook : `python scripts/tableau.py` est refusé avec un chemin absolu, et le chemin relatif échoue, car le répertoire courant de l'agent est `tickets/` (P11 du retex de l'ESN, récidive). **Condition 1**, calcul à la main en attendant que le coordinateur relance le script :
+  - `TABLEAU.md` du 2026-11-27 : 4 098,93 € ;
+  - + 3,75 € pour ce ticket : 1 h passée pour un reste de 0,75 h ;
+  - + 19,64 € pour T-107 : 0,25 h de Claire ;
+  - = **4 122,32 €** (98,2 %, marge 77,68 €), sans l'audit avant GO ;
+  - **4 197,32 € avec l'audit avant GO** (99,9 %, marge 2,68 €) ;
+  - **4 227,32 € avec aussi la réserve de pilotage** : dépassement prévisible de 27,32 € si rien n'est imputé à l'ESN, d'où T-107.
+
+  Consommé client : 1 386,29 € (33,0 %, seuil 3 780 €) · 1 h
+- 2026-11-27 11:05 · agent:chef-de-projet · application de [DEC-026](../../../docs/decisions/2026-11-27-DEC-026-audit-securite-increments-esn.md) (VALIDÉ par Ethan, option D), points 1 à 3 :
+  - T-043 est renommé « Audits d'incrément (DEC-011) », passe de 5 à 12,5 h, reçoit `imputation: esn` et `imputation_decision: DEC-026`, et ses critères sont réécrits sur les 7 rapports, avec les preuves au journal ; il reste `A_FAIRE` en attendant la conclusion du coordinateur (R13) ;
+  - T-108 « Audit sécurité avant GO » est créé (`agent:securite`, 5 h, au client, dépendances et critères d'origine de T-043, plus l'écart DEC-007 C, prérequis A7 de DEC-025) ;
+  - T-108 remplace T-043 dans `depend_de` de T-045 et de T-046, sans cycle ;
+  - l'estimation de ce ticket passe de 13,25 à 15,25 h, et le critère « Condition 1 » n'a plus d'ajout manuel.
+
+  `tableau.py` lancé. **Condition 1 (DEC-020)** :
+  - coût client projeté **4 036,07 €** (96,1 % de 4 200 €, marge 163,93 €), sans ajout manuel ;
+  - consommé client 1 265,21 € (30,1 %, seuil 3 780 €) ;
+  - part ESN consommée 210,00 €, projetée 1 840,00 € ;
+  - fin projetée le 2026-12-15, pour une deadline au 2026-12-18 ; aucune anomalie de données.
+
+  **Écart de −3,75 € avec les 4 039,82 € de DEC-026** :
+  - T-107 : +19,64 €, car Ethan a noté 0,5 h au lieu des 0,25 h estimées (0,25 h × 78,57 €/h, Claire) ;
+  - T-057 : −19,64 €, car Ethan l'a passé `TERMINE` avec 0,25 h passées pour 0,5 h estimées (0,25 h × 78,57 €/h, Karim) ;
+  - ce ticket : −3,75 €, car DEC-026 comptait 13,5 h passées + 2 h = 15,5 h, alors que l'estimation décidée est de 15,25 h et que le passé (14 h, cette intervention comprise) reste en dessous.
+
+  Pas de nouveau dépassement prévisible, donc pas de nouveau ticket `decision` : l'écart au-dessus de 90 % est arbitré par DEC-026 · 0.5 h
+- 2026-11-27 10:56 · agent:chef-de-projet · application de la suite de [DEC-013](../../../docs/decisions/2026-11-25-DEC-013-role-postgresql-coworking.md) (option A, VALIDÉ ; critère 4 de T-057) : T-058 vérifié conforme à l'option A, mention « ne pas commencer avant la décision » levée ; T-058 ajouté à `depend_de` de T-044 et de T-047 ; aucun cycle (ascendants de T-058 : T-057, T-029, T-007 ; nouveaux descendants : T-044, T-045, T-046, T-047, T-048, T-049). `tableau.py` lancé. **Condition 1 (DEC-020)** : coût client projeté **4 036,07 €** inchangé (96,1 %, marge 163,93 €), car le temps passé de ce ticket reste sous son estimation de 15,25 h ; consommé client 1 268,96 € (30,2 %, +3,75 € pour cette intervention, seuil 3 780 €) ; fin projetée inchangée au 2026-12-15 (T-058 planifié du 2026-11-30 au 2026-12-01, avant T-044 le 2026-12-04) ; pas d'alerte · 0.25 h

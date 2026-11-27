@@ -10,13 +10,13 @@ assigne: salarie:claire     # agent:<nom> | salarie:<prenom>
 competence_requise: recette-fonctionnelle (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 4.75          # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 0            # heures équivalent humain
-depend_de: [T-009, T-010, T-011, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022, T-023, T-024, T-025, T-026, T-028, T-030, T-031, T-032, T-033, T-034, T-035, T-036, T-037, T-042, T-043, T-044]   # ex. [T-001, T-002]
+depend_de: [T-009, T-010, T-011, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022, T-023, T-024, T-025, T-026, T-028, T-030, T-031, T-032, T-033, T-034, T-035, T-036, T-037, T-042, T-108, T-044]   # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-24
-maj_le: 2026-11-26
+maj_le: 2026-11-27
 statut_depuis: 2026-11-24   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
@@ -33,7 +33,7 @@ Recette humaine (porte 3 bis de S3, S3-R9, CLAUDE.md R16) de la livraison unique
 **Ticket salarié (AF11, R15)** : à faire par un humain ; Claire passe elle-même ce ticket `TERMINE` si le verdict est `CONFORME` (R13). Estimation : 5 h pour une quarantaine de critères et les 13 parcours du CDC § 7 ; un re-test après correction est couvert par la marge de risque du planning.
 
 ## Critères d'acceptation
-- [ ] Le SHA candidat est le même dans les rapports de tests (T-042), de sécurité (T-043) et de recette, et dans la sonde de santé (T-044).
+- [ ] Le SHA candidat est le même dans les rapports de tests (T-042), de sécurité avant GO (T-108) et de recette, et dans la sonde de santé (T-044).
 - [ ] Chaque critère d'acceptation des exigences de la livraison a une ligne dans le rapport ; les critères des Must sont tous `OK` ou `KO`, jamais vides.
 - [ ] Chaque KO a sa note dans `support/entrant/` et son ticket `bug` lié.
 - [ ] `rapports/recette-AAAA-MM-JJ.md` est en `EN_REVUE`, avec un verdict `CONFORME` ou `NON CONFORME` conforme à S3-R9.
@@ -50,3 +50,4 @@ Recette humaine (porte 3 bis de S3, S3-R9, CLAUDE.md R16) de la livraison unique
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-24 23:55 · agent:chef-de-projet · création · 0 h
 - 2026-11-26 22:05 · agent:chef-de-projet · SIMULATION · T-027 (F-06, ANNULE par DEC-020) retiré de depend_de ; F-06 retiré du périmètre de la recette dans la Description (ses critères ne sont plus recettés) ; estimation 5 → 4,75 h (− 0,25 h de recette de F-06, chiffrée dans T-093 § 3.1 et comprise dans les 4 169,43 € de DEC-020) ; F-08 (T-028, T-037) reste recetté ; statut et assignée inchangés. Temps compté dans T-008 · 0 h
+- 2026-11-27 11:00 · agent:chef-de-projet · application de DEC-026 (VALIDÉ par Ethan, option D), point 2 : T-043 (devenu « Audits d'incrément (DEC-011) », pris en charge par l'ESN) est remplacé par [T-108](T-108-audit-securite-avant-go.md) (« Audit sécurité avant GO ») dans `depend_de` et dans le critère 1 (SHA commun). Absence de cycle vérifiée : T-108 ne dépend que de T-010 à T-028, et aucun d'eux ne remonte à T-045. Statut, assignée et estimation inchangés. Temps compté dans T-008 · 0 h
