@@ -9,7 +9,7 @@
 | Projet | Client | Type | État | Avancement | Budget consommé / prévu | % | Fin projetée | Deadline | Écart (j ouvrés) | BLOQUE | ATTENTE_HUMAIN | Alertes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | [esn-interne](projets/esn-interne/TABLEAU.md) | ESN (projet interne) | interne | en_cours | 8,2 % | 123,75 € / 4 360,00 € | 2,8 % | 2027-01-26 | 2027-01-15 | +7 | 0 | 0 | 5 |
-| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 25,7 % | 1 268,96 € / 4 200,00 € | 30,2 % | 2026-12-15 | 2026-12-18 | -3 | 0 | 0 | 2 |
+| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | en_cours | 25,7 % | 1 268,96 € / 4 200,00 € | 30,2 % | 2026-12-15 | 2026-12-18 | -3 | 0 | 0 | 2 |
 
 ## Alertes
 

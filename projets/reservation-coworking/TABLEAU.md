@@ -8,7 +8,7 @@
 
 | Indicateur | Valeur |
 |---|---|
-| Type · état | metier · cadrage |
+| Type · état | metier · en_cours |
 | Avancement (h estimées terminées / h estimées hors ANNULE) | 25,7 % (58,5 h / 227,3 h) |
 | Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 134,4 h |
 | Budget client consommé / prévu (imputation client, R18) | 1 268,96 € / 4 200,00 € (30,2 %) |
