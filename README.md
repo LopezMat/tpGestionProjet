@@ -34,6 +34,16 @@ Notre équipe joue une **ESN** dont les missions sont assurées par des agents I
 3. Le coordinateur crée l'espace `projets/<slug>/`, mobilise les agents utiles et **s'arrête à chaque validation humaine**.
 4. Les humains valident en modifiant eux-mêmes l'en-tête des documents (`statut: VALIDÉ`, `valide_par`, `decision`) et en traçant la décision dans `docs/decisions/`.
 
+## Projet interne de l'ESN
+
+[`projets/esn-interne/`](projets/esn-interne/projet.md) porte le travail de l'ESN qui n'a pas de livrable client : le plan de formation, les outils et règles communs, et les tickets `decision` des événements d'équipe. Il n'a ni CDC, ni architecture, ni recette, ni GO : le `chef-de-projet` y propose les tickets, et un humain les arbitre. Le texte des règles fait foi : R18 et R19 de [CLAUDE.md](CLAUDE.md), S1-R13 de [S1](docs/systemes/S1-gestion-projet.md).
+
+| Sujet | En bref | Références |
+|---|---|---|
+| Imputation `client` / `esn` | Un ticket est imputé au client par défaut. L'ESN ne prend un coût à sa charge que sur une décision humaine validée, citée dans le ticket. `tableau.py` sépare le coût client de la part ESN, et `PORTFOLIO.md` consolide les deux. | R18, [DEC-023](docs/decisions/2026-11-26-DEC-023-imputation-esn-plan-formation.md) |
+| Plan de formation | Les formations retenues, le budget de fonctionnement, l'échéance et les allocations à `esn-interne` sont décidés par un humain. Le registre des compétences à risque est tenu dans le [planning](projets/esn-interne/planning.md). | S1-R13, [DEC-024](docs/decisions/2026-11-27-DEC-024-plan-formation-initial.md) |
+| Rétrospective | Pas de cérémonie à date fixe : la rétrospective prend la forme d'un `retex.md` suivi de tickets `amelioration` et `formation`. Celle de la semaine projet (23 au 27/11) a produit le [retex de l'ESN](projets/esn-interne/retex.md), validé, et les actions retenues par DEC-025. | [DEC-022](docs/decisions/2026-11-26-DEC-022-methodologie-retenue.md), [DEC-025](docs/decisions/2026-11-27-DEC-025-actions-retrospective-semaine.md) |
+
 ## Installer son poste
 
 À faire une fois par membre de l'équipe, puis après chaque mise à jour de Python ou de Claude Code.
