@@ -2,15 +2,15 @@
 titre: Fiche projet — Coworking Les Arcades (Perpignan)
 statut: BROUILLON
 responsable: B
-version: 0.6
-maj_le: 2026-11-26
+version: 0.7
+maj_le: 2026-11-27
 valide_par:
 decision:
 # Champs propres au projet (lus par scripts/tableau.py, ne pas renommer)
 slug: reservation-coworking
 client: Coworking Les Arcades (Perpignan)
 type_projet: metier         # vitrine | ecommerce | api | metier | modernisation
-etat_projet: cadrage        # cadrage | en_cours | en_pause | livre | maintenance | clos
+etat_projet: en_cours       # cadrage | en_cours | en_pause | livre | maintenance | clos
 budget_eur: 4200           # SIMULATION, DEC-020 (6 000 € selon DEC-009) ; comparé au seul coût client, la part ESN est séparée par le tableau (R18, DEC-023)
 deadline: 2026-12-18
 hebergement: local          # production locale Docker (DEC-003) ; autre hébergeur = décision humaine
