@@ -2,8 +2,8 @@
 titre: Registre des décisions humaines
 statut: EN_REVUE          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
 responsable: B
-version: 0.16
-maj_le: 2026-11-26
+version: 0.17
+maj_le: 2026-11-27
 valide_par:
 decision:
 ---
@@ -55,3 +55,4 @@ Un document `VALIDÉ` est figé pour les agents (R6). Pour le faire évoluer, un
 | [DEC-021](2026-11-26-DEC-021-simulation-absence-lea-depart-hugo.md) | 2026-11-26 | SIMULATION — reservation-coworking : absence de Léa (26-27/11) et départ de Hugo (04/12) pris en compte sans réaffectation, besoins `documentation` et second relecteur sécurité renvoyés au plan de formation de l'ESN, analyses à la charge de l'ESN (T-102, T-103) | VALIDÉ |
 | [DEC-022](2026-11-26-DEC-022-methodologie-retenue.md) | 2026-11-26 | Méthodologie retenue : Kanban à portes de validation humaines, livraisons incrémentales (VISION § 3.5), Definition of Done et équivalents des rituels ; aucune règle modifiée | VALIDÉ |
 | [DEC-023](2026-11-26-DEC-023-imputation-esn-plan-formation.md) | 2026-11-26 | Coûts pris en charge par l'ESN (R18 : champ `imputation`, décision VALIDÉ obligatoire, coût client calculé par `tableau.py`) et projet interne `esn-interne` (R19, S1-R6, S1-R13 : plan de formation) ; migration de `reservation-coworking`, T-104 au client | VALIDÉ |
+| [DEC-024](2026-11-27-DEC-024-plan-formation-initial.md) | 2026-11-27 | esn-interne : plan de formation initial, option B (T-002 à T-014, juridique par conseil externe), budget de fonctionnement 4 360 €, échéance 2027-01-15, allocations P1/P2 de Claire, Karim, Léa et Nadia, enveloppe de frais externes de 700 € HT hors budget (T-017) | VALIDÉ |
