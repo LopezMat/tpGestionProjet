@@ -9,7 +9,7 @@ priorite: normale           # critique | haute | normale | basse
 assigne: agent:chef-de-projet   # agent:<nom> | salarie:<prenom>
 competence_requise: gestion-projet (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 15.25         # heures équivalent humain, quel que soit l'assigné
-temps_passe_h: 14           # heures équivalent humain
+temps_passe_h: 14.25        # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
@@ -94,3 +94,4 @@ Estimation : planification initiale 4 h (découpage, estimation, affectation, pl
   - ce ticket : −3,75 €, car DEC-026 comptait 13,5 h passées + 2 h = 15,5 h, alors que l'estimation décidée est de 15,25 h et que le passé (14 h, cette intervention comprise) reste en dessous.
 
   Pas de nouveau dépassement prévisible, donc pas de nouveau ticket `decision` : l'écart au-dessus de 90 % est arbitré par DEC-026 · 0.5 h
+- 2026-11-27 10:56 · agent:chef-de-projet · application de la suite de [DEC-013](../../../docs/decisions/2026-11-25-DEC-013-role-postgresql-coworking.md) (option A, VALIDÉ ; critère 4 de T-057) : T-058 vérifié conforme à l'option A, mention « ne pas commencer avant la décision » levée ; T-058 ajouté à `depend_de` de T-044 et de T-047 ; aucun cycle (ascendants de T-058 : T-057, T-029, T-007 ; nouveaux descendants : T-044, T-045, T-046, T-047, T-048, T-049). `tableau.py` lancé. **Condition 1 (DEC-020)** : coût client projeté **4 036,07 €** inchangé (96,1 %, marge 163,93 €), car le temps passé de ce ticket reste sous son estimation de 15,25 h ; consommé client 1 268,96 € (30,2 %, +3,75 € pour cette intervention, seuil 3 780 €) ; fin projetée inchangée au 2026-12-15 (T-058 planifié du 2026-11-30 au 2026-12-01, avant T-044 le 2026-12-04) ; pas d'alerte · 0.25 h

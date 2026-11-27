@@ -16,7 +16,7 @@ validation_humaine_requise: oui   # oui | non
 decision:      DEC-013             # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-25
-maj_le: 2026-11-25
+maj_le: 2026-11-27
 statut_depuis: 2026-11-27   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:       2026-11-27          # facultatif : date du passage TERMINE
@@ -60,8 +60,8 @@ Taux : agent 15 €/h ; Karim 78,57 €/h ; Nadia 64,29 €/h (ARCHITECTURE § 8
 ## Critères d'acceptation
 - [x] Un humain a choisi une option (A, B, C ou D), et C a donné son accord sur la modification du modèle commun (sauf option D).
 - [x] Un fichier `docs/decisions/AAAA-MM-JJ-DEC-NNN-*.md` est créé (skill `tracer-decision`) et référencé dans `decision`.
-- [x] Option B : `architecture.md` est repassée `EN_REVUE` par un humain avant le début de T-013.
-- [x] Le `chef-de-projet` a ajusté T-058 et les dépendances de T-044 et de T-047 selon l'option retenue, en citant le DEC.
+- [x] Option B : `architecture.md` est repassée `EN_REVUE` par un humain avant le début de T-013. (sans objet : option A retenue par DEC-013)
+- [x] Le `chef-de-projet` a ajusté T-058 et les dépendances de T-044 et de T-047 selon l'option retenue, en citant le DEC. Preuve (2026-11-27) : T-058 aligné sur l'option A, condition « ne pas commencer avant la décision » levée, journal citant DEC-013 ; `depend_de` de T-044 `[T-017, T-021]` → `[T-017, T-021, T-058]` et de T-047 `[T-046, T-029]` → `[T-046, T-029, T-058]`, chacun avec une ligne de journal citant DEC-013 ; aucun cycle (ascendants de T-058 : T-057, T-029, T-007).
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
@@ -74,3 +74,5 @@ Taux : agent 15 €/h ; Karim 78,57 €/h ; Nadia 64,29 €/h (ARCHITECTURE § 8
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-25 23:50 · agent:chef-de-projet · création, ATTENTE_HUMAIN (triage du constat 10 du rapport securite-2026-11-25-3) ; temps d'analyse compté dans T-008 · 0 h
 - 2026-11-27 · Ethan · 0,25 h · Tranché par DEC-013 (validée le 25/11), ticket débloqué.
+- 2026-11-27 · Ethan · Tranché par DEC-013 (validée le 25/11), ticket débloqué · 0,25 h
+- 2026-11-27 11:00 · agent:coordinateur · critère 4 coché après vérification : suite de DEC-013 appliquée par le `chef-de-projet` (T-058, T-044, T-047 ; temps compté dans T-008). Tous les critères sont désormais remplis pour le statut `TERMINE` posé par Ethan (R13) · 0 h

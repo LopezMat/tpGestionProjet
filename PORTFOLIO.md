@@ -9,7 +9,7 @@
 | Projet | Client | Type | État | Avancement | Budget consommé / prévu | % | Fin projetée | Deadline | Écart (j ouvrés) | BLOQUE | ATTENTE_HUMAIN | Alertes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | [esn-interne](projets/esn-interne/TABLEAU.md) | ESN (projet interne) | interne | en_cours | 8,2 % | 123,75 € / 4 360,00 € | 2,8 % | 2027-01-26 | 2027-01-15 | +7 | 0 | 0 | 5 |
-| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 24,3 % | 1 265,21 € / 4 200,00 € | 30,1 % | 2026-12-15 | 2026-12-18 | -3 | 0 | 1 | 3 |
+| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 25,7 % | 1 268,96 € / 4 200,00 € | 30,2 % | 2026-12-15 | 2026-12-18 | -3 | 0 | 0 | 2 |
 
 ## Alertes
 
@@ -21,14 +21,11 @@
 | esn-interne | Utilisation (info) | lea utilisé à 43,3 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
 | esn-interne | Surcharge | nadia : 19,0 h assignées pour 18,5 h de capacité allouée (102,8 %) |
 | reservation-coworking | Critique | T-029 « Sauvegarde quotidienne et limite d'âge de 30 jours (outillage) » est ouvert (A_FAIRE) |
-| reservation-coworking | Critique | T-080 « SIMULATION — Perte de la base de production (volume Docker supprimé) » est ouvert (EN_REVUE) |
 | reservation-coworking | Utilisation (info) | claire utilisé à 36,8 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
 
 ## Décisions humaines attendues
 
-| Priorité | Projet | Ticket | Titre | Question (bloque_par) |
-|---|---|---|---|---|
-| haute | reservation-coworking | T-107 | Arbitrage : dépassement de T-043 (audit sécurité) et comptage de l'audit avant GO | arbitrage humain sur le dépassement de T-043 et le comptage de l'audit avant GO, avant d'engager l'audit (condition 1 de DEC-020) |
+Aucune.
 
 ## Coûts pris en charge par l'ESN
 

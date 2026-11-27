@@ -4,7 +4,7 @@ id: T-080
 titre: SIMULATION — Perte de la base de production (volume Docker supprimé)
 projet: reservation-coworking
 type: incident              # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: EN_REVUE            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: critique          # critique | haute | normale | basse
 assigne: agent:gestionnaire-crise   # agent:<nom> | salarie:<prenom>
 competence_requise: gestion-de-crise (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -16,10 +16,10 @@ validation_humaine_requise: oui   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:coordinateur
 cree_le: 2026-11-26
-maj_le: 2026-11-26
-statut_depuis: 2026-11-26   # date du dernier changement de statut
+maj_le: 2026-11-27
+statut_depuis: 2026-11-27   # date du dernier changement de statut
 debut_le: 2026-11-26        # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le: 2026-11-27      # facultatif : date du passage TERMINE
 ---
 > **SIMULATION** — Exercice de crise (scénario 5, S2) demandé par l'humain le 2026-11-26. Aucun événement réel : aucune commande Docker ni restauration n'est exécutée, `deploiement/local/` n'est ni lu ni modifié.
 
@@ -118,7 +118,7 @@ Post-mortem complet : [post-mortem-2026-11-26-perte-donnees.md](../rapports/post
 - **Avis relecteur-code** : sans objet (incident)
 - **Commentaires** :
 - **Revue humaine requise** : oui (priorité critique)
-- **Revue humaine** : Ethan, 2026-11-27, conforme : sauvegarde mise en place, restauration testée, post-mortem validé (DEC-019).
+- Revue humaine : Ethan, 2026-11-27, conforme pour une crise simulée : post-mortem validé (DEC-019), suites T-081 et T-083 terminées. Réserve : la sauvegarde quotidienne n'existe pas encore (T-029 A_FAIRE, prérequis du GO) et aucune restauration réelle n'a été testée.
 
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
@@ -146,3 +146,4 @@ Post-mortem complet : [post-mortem-2026-11-26-perte-donnees.md](../rapports/post
 - 2026-11-26 11:45 · agent:gestionnaire-crise · SIMULATION · ticket EN_REVUE : service rétabli en simulation (preuve de la sonde simulée, non exécutée) et post-mortem rédigé ; passage TERMINE laissé au coordinateur (R13), critère « actions sensibles tranchées » non rempli tant que T-082 et T-084 sont ouverts · 0 h
 - 2026-11-26 19:30 · agent:coordinateur · SIMULATION · critère « actions correctives liées à un ticket » coché : P-7 et P-8 sans objet (DEC-009 point E), sur instruction d'Ethan. Critère « actions sensibles » mis à jour : T-082 annulé et T-084 terminé (DEC-019 v0.2), reste le déblocage de T-081 et T-083 par Ethan à la fin des scénarios. Ticket laissé `EN_REVUE` · 0 h
 - 2026-11-27 · agent:coordinateur · SIMULATION · critère « actions sensibles » coché : T-081 et T-083 `TERMINE` avec `decision: DEC-019`, T-082 `ANNULE`, T-084 `TERMINE` (relevé par le retex de l'ESN, esn-interne/T-020, P3). Tous les critères sont cochés, mais la ligne « Revue humaine » (requise, priorité critique) est vide : ticket laissé `EN_REVUE` jusqu'à ce qu'un humain la remplisse (R13) · 0 h
+- 2026-11-27 10:57 · agent:coordinateur · SIMULATION · EN_REVUE → TERMINE (R13) : 5 critères cochés ; revue humaine d'Ethan du 2026-11-27, conforme pour une crise simulée, avec la réserve tracée (sauvegarde quotidienne T-029 `A_FAIRE`, prérequis du GO ; aucune restauration réelle testée) : la réserve reste portée par T-029 et T-092, ouverts · 0 h

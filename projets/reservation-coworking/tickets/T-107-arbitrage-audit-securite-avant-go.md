@@ -4,7 +4,7 @@ id: T-107
 titre: "Arbitrage : dépassement de T-043 (audit sécurité) et comptage de l'audit avant GO"
 projet: reservation-coworking
 type: decision              # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: ATTENTE_HUMAIN      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: salarie:claire     # agent:<nom> | salarie:<prenom>
 competence_requise: gestion-projet (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -112,4 +112,4 @@ Rien n'est modifié avant la décision. Après la décision, le `chef-de-projet`
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 · agent:chef-de-projet · création (ATTENTE_HUMAIN), à la demande du coordinateur : condition 1 de DEC-020, alerte S1-R11 sur le coût client projeté. Porteur Claire (AF2 ; allocation de 20 % au projet, active, aucune absence au calendrier). Temps d'analyse compté dans T-008 · 0 h
 - 2026-11-27 · agent:coordinateur · base B0 de 4 122,32 € confirmée par `tableau.py` relancé depuis la racine. Décision d'Ethan reçue (question 1 : option D ; question 2 : oui), avec son « pourquoi », et tracée dans DEC-026 (`EN_REVUE`) ; ticket laissé `ATTENTE_HUMAIN` : le champ `decision` et le déblocage reviennent à l'humain (R7) ; `imputation: esn` de T-043 non écrit avant la validation de DEC-026 (R18) · 0 h
-- 2026-11-27 · Ethan · 0,5 h · Option D retenue, DEC-026 validée, ticket débloqué.
+- 2026-11-27 · Ethan · Option D retenue, DEC-026 validée, ticket débloqué · 0,5 h

@@ -2,7 +2,7 @@
 titre: Retour d'expérience — ESN (projet interne) — semaine projet du 23 au 27/11
 statut: VALIDÉ
 responsable: agent:chef-de-projet
-version: 0.1
+version: 1.0
 maj_le: 2026-11-27
 valide_par: Ethan
 decision: DEC-025

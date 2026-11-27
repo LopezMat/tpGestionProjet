@@ -9,9 +9,9 @@
 | Indicateur | Valeur |
 |---|---|
 | Type · état | metier · cadrage |
-| Avancement (h estimées terminées / h estimées hors ANNULE) | 24,3 % (55,2 h / 227,3 h) |
-| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 134,7 h |
-| Budget client consommé / prévu (imputation client, R18) | 1 265,21 € / 4 200,00 € (30,1 %) |
+| Avancement (h estimées terminées / h estimées hors ANNULE) | 25,7 % (58,5 h / 227,3 h) |
+| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 134,4 h |
+| Budget client consommé / prévu (imputation client, R18) | 1 268,96 € / 4 200,00 € (30,2 %) |
 | Coût client projeté à terminaison (consommé + reste × taux) | 4 036,07 € |
 | Pris en charge par l'ESN (imputation esn, DEC-020, DEC-021, DEC-026) : consommé · projeté | 210,00 € · 1 840,00 € |
 | Coût total projeté (client + ESN) | 5 876,07 € |
@@ -24,7 +24,6 @@
 | Type | Détail |
 |---|---|
 | Critique | T-029 « Sauvegarde quotidienne et limite d'âge de 30 jours (outillage) » est ouvert (A_FAIRE) |
-| Critique | T-080 « SIMULATION — Perte de la base de production (volume Docker supprimé) » est ouvert (EN_REVUE) |
 | Utilisation (info) | claire utilisé à 36,8 % de sa capacité allouée : ajuster l'allocation ? (AF9, indicateur) |
 
 ## Tickets par statut
@@ -33,10 +32,10 @@
 |---|---|
 | A_FAIRE | 61 |
 | EN_COURS | 6 |
-| EN_REVUE | 6 |
+| EN_REVUE | 5 |
 | BLOQUE | 0 |
-| ATTENTE_HUMAIN | 1 |
-| TERMINE | 24 |
+| ATTENTE_HUMAIN | 0 |
+| TERMINE | 26 |
 | ANNULE | 10 |
 | **Total** | 108 |
 
@@ -46,9 +45,7 @@ Aucun ticket bloqué.
 
 ## En attente d'une décision humaine (ATTENTE_HUMAIN)
 
-| Priorité | Ticket | Titre | Porteur | Question (bloque_par) | Ancienneté |
-|---|---|---|---|---|---|
-| haute | T-107 | Arbitrage : dépassement de T-043 (audit sécurité) et comptage de l'audit avant GO | salarie:claire | arbitrage humain sur le dépassement de T-043 et le comptage de l'audit avant GO, avant d'engager l'audit (condition 1 de DEC-020) | 0 j ouvré |
+Aucune décision attendue.
 
 ## Tickets salariés à faire par un humain (AF11)
 
@@ -89,7 +86,6 @@ Aucun ticket bloqué.
 | T-098 | SIMULATION — Revue humaine T-092 (vérification quotidienne des sauvegardes) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-07 → 2026-12-08 |
 | T-099 | SIMULATION — Revue humaine T-078 (image PostgreSQL 16.16) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-08 → 2026-12-08 |
 | T-100 | SIMULATION — Revue humaine T-079 (verrou des dépendances, image figée) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-09 → 2026-12-09 |
-| T-107 | Arbitrage : dépassement de T-043 (audit sécurité) et comptage de l'audit avant GO | salarie:claire | ATTENTE_HUMAIN | 0,0 h | 2026-11-30 → 2026-11-30 |
 
 ## Tickets formation ouverts
 
@@ -163,7 +159,7 @@ gantt
     T-075 Contrôle statique du front par analyse HTML (constat 20) :t075, 2026-12-01, 2026-12-02
     T-105 SIMULATION — Bug « Aucun créneau » sur la page de consultati :t105, 2026-12-01, 2026-12-02
     section agent gestionnaire-crise
-    T-080 SIMULATION — Perte de la base de production (volume Docker s :crit, active, t080, 2026-11-27, 2026-11-28
+    T-080 SIMULATION — Perte de la base de production (volume Docker s :done, t080, 2026-11-26, 2026-11-28
     section agent relecteur-code
     T-039 Revue de code (1/2) — socle, authentification, réservations :active, t039, 2026-11-27, 2026-11-28
     T-040 Revue de code (2/2) — front, bout en bout, Should, outillage :t040, 2026-11-27, 2026-11-28
@@ -189,7 +185,7 @@ gantt
     T-091 SIMULATION — Registre des demandes de suppression chez le cl :t091, 2026-12-14, 2026-12-16
     T-094 SIMULATION — Informer le client de la révision du budget :t094, 2026-11-30, 2026-12-01
     T-106 SIMULATION — Condition 1 de DEC-020 dépassement prévisible d :done, t106, 2026-11-26, 2026-11-27
-    T-107 Arbitrage dépassement de T-043 (audit sécurité) et comptage  :crit, t107, 2026-11-30, 2026-12-01
+    T-107 Arbitrage dépassement de T-043 (audit sécurité) et comptage  :done, t107, 2026-11-27, 2026-11-28
     section salarie karim
     T-030 Revue humaine T-013 (authentification, sessions, rôles) :t030, 2026-11-27, 2026-12-01
     T-031 Revue humaine T-014 (limitation des tentatives) :t031, 2026-11-30, 2026-12-01
