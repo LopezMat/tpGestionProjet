@@ -252,7 +252,7 @@ class TestPlan(unittest.TestCase):
         for pid in ("humain:ethan", "visiteur:prof"):                    # accueil, sans bureau
             self.assertEqual((poste[pid]["piece"], poste[pid]["y"], poste[pid]["bureau"]), ("couloir", 14, False))
         dans_s3 = [i for i in range(7) if poste["agent:s3-{}".format(i)]["piece"] == "s3"]
-        self.assertEqual(len(dans_s3), 6)
+        self.assertEqual(len(dans_s3), 4)                                # capacité de S3 : 4 bureaux (DEC-027)
         self.assertEqual(poste["agent:s3-6"]["piece"], "realisation")    # débordement
         self.assertEqual(poste["agent:maison"]["piece"], "realisation")  # hors catalogue : annexe
         self.assertEqual(poste["agent:chef"]["piece"], "s1")
@@ -264,6 +264,189 @@ class TestPlan(unittest.TestCase):
         specs += [("salarie:s{}".format(i), "salarie", "salarie") for i in range(15)]
         self.verifier(self.persos(specs))
 
+
+# ---------------------------------------------------------------------------- DEC-027 : S3, halos, info-bulle
+
+def rect_perso(x, y):
+    """Sprite 16 × 24 px d'un personnage à la tuile (x, y) : pieds au bas de la tuile (formule du ticket T-025)."""
+    return (x * 16, (y + 1) * 16 - 24, 16, 24)
+
+
+def rect_bureau(x, y):
+    return ((x - 0.5) * 16, (y - 1) * 16 + 3, 32, 12)
+
+
+def chevauche(a, b):
+    return a[0] < b[0] + b[2] and b[0] < a[0] + a[2] and a[1] < b[1] + b[3] and b[1] < a[1] + a[3]
+
+
+class VerifPlan:
+    """Contrôles de non-chevauchement communs au catalogue réel et aux plans synthétiques."""
+
+    def controler(self, plan, n_visiteurs=None):
+        postes = plan["postes"]
+        persos = [("poste " + p["id"], rect_perso(p["x"], p["y"])) for p in postes]
+        bureaux = [("bureau " + p["id"], rect_bureau(p["x"], p["y"]), p["id"]) for p in postes if p["bureau"]]
+        visiteurs = []
+        for p in postes:
+            for v in p.get("visites", []):
+                visiteurs.append(("visite {} ({},{})".format(p["id"], v["x"], v["y"]), rect_perso(v["x"], v["y"])))
+        for i, f in enumerate(plan["file"]):
+            visiteurs.append(("file {} ({},{})".format(i, f["x"], f["y"]), rect_perso(f["x"], f["y"])))
+        tous = persos + visiteurs
+        for i, (na, ra) in enumerate(tous):
+            for nb, rb in tous[i + 1:]:
+                self.assertFalse(chevauche(ra, rb), "{} chevauche {}".format(na, nb))
+        for nom, r in tous:
+            for nb, rb, proprio in bureaux:
+                if nom == "poste " + proprio:
+                    continue                    # on est assis à son propre bureau
+                self.assertFalse(chevauche(r, rb), "{} chevauche {}".format(nom, nb))
+            self.assertTrue(0 <= r[0] and r[0] + r[2] <= plan["largeur"] * 16 and 0 <= r[1] and
+                            r[1] + r[3] <= plan["hauteur"] * 16, nom)
+        positions = [(v[0], v[1]) for v in
+                     [(p["x"], p["y"], "poste") for p in postes] + [(q["x"], q["y"], "") for q in plan["file"]]
+                     + [(q["x"], q["y"], "") for p in postes for q in p.get("visites", [])]]
+        self.assertEqual(len(positions), len(set(positions)), "deux places identiques")
+        return visiteurs
+
+
+class TestPlanS3(unittest.TestCase, VerifPlan):
+
+    def persos(self, specs):
+        return [{"id": i, "nature": n, "systeme": s} for i, n, s in specs]
+
+    def specs_s3(self, n_s3=4):
+        noms = ["agent:relecteur-code", "agent:testeur", "agent:securite", "agent:deployeur", "agent:autre-s3"]
+        specs = [("coordinateur", "coordinateur", "coordinateur")]
+        specs += [("humain:" + h, "humain", "humain") for h in ("ethan", "johan", "stephane", "matthieu")]
+        specs += [(n, "agent", "S3") for n in noms[:n_s3]]
+        specs += [("agent:dev-backend", "agent", "realisation"), ("agent:dev-frontend", "agent", "realisation"),
+                  ("agent:veilleur", "agent", "S2"), ("agent:analyste-besoin", "agent", "S4"),
+                  ("salarie:lea", "salarie", "salarie"), ("visiteur:equipe", "visiteur", "visiteur")]
+        return specs
+
+    def test_grille_2x2_espacee(self):
+        persos = self.persos(self.specs_s3())
+        plan = bureau.construire_plan(persos)
+        postes = {p["id"]: p for p in plan["postes"]}
+        s3 = [postes[p["poste"]] for p in persos if p["id"].startswith("agent:") and postes[p["poste"]]["piece"] == "s3"]
+        self.assertEqual(len(s3), 4)
+        self.assertEqual(len({p["x"] for p in s3}), 2)
+        self.assertEqual(len({p["y"] for p in s3}), 2)
+        xs = sorted({p["x"] for p in s3})
+        self.assertGreaterEqual(xs[1] - xs[0], 5)             # bureaux de 2 tuiles : de la place entre les colonnes
+        self.verifier_aucun_doublon(s3)
+
+    def verifier_aucun_doublon(self, postes):
+        self.assertEqual(len({(p["x"], p["y"]) for p in postes}), len(postes))
+
+    def test_cinquieme_agent_s3_deborde(self):
+        persos = self.persos(self.specs_s3(5))
+        plan = bureau.construire_plan(persos)
+        postes = {p["id"]: p for p in plan["postes"]}
+        self.assertEqual(sum(postes[p["poste"]]["piece"] == "s3" for p in persos if p["systeme"] == "S3"), 4)
+        self.assertEqual(postes[persos[[p["id"] for p in persos].index("agent:autre-s3")]["poste"]]["piece"],
+                         "realisation")
+        self.controler(plan)
+
+    def test_places_de_visite(self):
+        persos = self.persos(self.specs_s3())
+        plan = bureau.construire_plan(persos)
+        postes = {p["id"]: p for p in plan["postes"]}
+        relecteur = postes["p-agent-relecteur-code"]
+        testeur = postes["p-agent-testeur"]
+        for poste in (relecteur, testeur):
+            self.assertGreaterEqual(len(poste["visites"]), 3)
+            self.assertLessEqual(len(poste["visites"]), bureau.VISITES_MAX)
+            for v in poste["visites"]:
+                self.assertEqual(v["y"] // 11, 0, "place de visite hors de S3")     # S3 : y de 0 à 10
+                self.assertTrue(36 <= v["x"] < 48)
+        lieux = [(v["x"], v["y"]) for p in (relecteur, testeur) for v in p["visites"]]
+        self.assertEqual(len(lieux), len(set(lieux)), "places de visite distinctes")
+        self.assertNotIn("visites", postes["p-agent-securite"])                       # seulement relecteur et testeur
+        self.assertNotIn("visites", postes["p-coordinateur"])
+        self.controler(plan)
+
+    def test_file_dans_le_couloir_devant_la_porte(self):
+        persos = self.persos(self.specs_s3())
+        plan = bureau.construire_plan(persos)
+        piece = {p["id"]: p for p in plan["pieces"]}
+        porte = piece["s3"]["porte"]["x"]
+        self.assertGreaterEqual(len(plan["file"]), 4)
+        for f in plan["file"]:
+            self.assertEqual(f["y"], plan["rang_couloir"])
+            self.assertNotIn(f["x"], (porte - 1, porte, porte + 1))                   # le passage reste libre
+            self.assertNotEqual((f["x"], f["y"]), (24, 14))                           # ni le coordinateur
+        self.assertLessEqual(abs(plan["file"][0]["x"] - porte), 3)                    # elle commence devant la porte
+
+    def test_sans_chevauchement_beaucoup_de_monde(self):
+        specs = self.specs_s3(5) + [("agent:x{}".format(i), "agent", "S2") for i in range(12)]
+        specs += [("salarie:s{}".format(i), "salarie", "salarie") for i in range(6)]
+        self.controler(bureau.construire_plan(self.persos(specs)))
+
+
+class TestPlanCatalogueReel(unittest.TestCase, VerifPlan):
+    """Le plan calculé sur le dépôt réel (agents, salariés et membres humains) en lecture seule."""
+
+    @classmethod
+    def setUpClass(cls):
+        racine = os.path.dirname(ICI)
+        site = console.Site(racine, console.tableau.en_date(DATE))
+        # lecture seule : mêmes lectures que Site.generer(), sans en appeler l'écriture
+        site.equipe, site.projets, site.anomalies = console.tableau.charger(site.racine, site.auj)
+        site.inventaire()
+        cls.donnees = bureau.Donnees(site).calculer()
+        cls.plan = cls.donnees["plan"]
+        cls.persos = {p["id"]: p for p in cls.donnees["personnages"]}
+        cls.postes = {p["id"]: p for p in cls.plan["postes"]}
+
+    def test_s3_du_catalogue(self):
+        s3 = [p for p in self.donnees["personnages"] if p["nature"] == "agent" and p["systeme"] == "S3"]
+        self.assertGreaterEqual(len(s3), 4)
+        self.assertEqual(sum(self.postes[p["poste"]]["piece"] == "s3" for p in s3), 4)
+
+    def test_quatre_visiteurs_sans_chevauchement(self):
+        relecteur = self.postes[self.persos["agent:relecteur-code"]["poste"]]
+        testeur = self.postes[self.persos["agent:testeur"]["poste"]]
+        self.assertEqual((relecteur["piece"], testeur["piece"]), ("s3", "s3"))
+        for poste in (relecteur, testeur):
+            self.assertGreaterEqual(len(poste["visites"]) + len(self.plan["file"]), 4)
+        # tous les visiteurs possibles à la fois (places de visite des deux postes, puis la file), pas seulement 4
+        self.controler(self.plan)
+        # 4 agents en revue chez le relecteur : ses places, puis la file
+        places = [(v["x"], v["y"]) for v in relecteur["visites"]] + [(f["x"], f["y"]) for f in self.plan["file"]]
+        rects = [rect_perso(x, y) for x, y in places[:4]]
+        autres = [rect_perso(p["x"], p["y"]) for p in self.plan["postes"]]
+        autres += [rect_bureau(p["x"], p["y"]) for p in self.plan["postes"] if p["bureau"]]
+        for i, r in enumerate(rects):
+            for o in autres:
+                self.assertFalse(chevauche(r, o), r)
+            for r2 in rects[i + 1:]:
+                self.assertFalse(chevauche(r, r2))
+
+
+class TestHalos(unittest.TestCase):
+
+    def test_statut_vers_etat_vers_halo(self):
+        attendus = {"EN_COURS": "travail", "BLOQUE": "bloque", "ATTENTE_HUMAIN": "attente", "EN_REVUE": None,
+                    "A_FAIRE": None, "TERMINE": None, "ANNULE": None}
+        self.assertEqual(set(attendus), set(console.tableau.STATUTS))
+        for statut, halo in attendus.items():
+            self.assertEqual(bureau.HALOS.get(bureau.etat_statut(statut)), halo, statut)
+
+    def test_table(self):
+        self.assertEqual(bureau.HALOS, {"tape": "travail", "bloque": "bloque", "attente": "attente",
+                                        "attend": "attente"})
+        self.assertNotIn("revue", bureau.HALOS)                    # EN_REVUE : pas de halo de travail
+        self.assertNotIn("cafe", bureau.HALOS)
+        self.assertEqual(len(set(bureau.HALOS.values())), 3)       # trois halos distincts
+
+    def test_etats_des_personnages_connus(self):
+        self.assertTrue(set(bureau.HALOS) <= set(bureau.LIBELLES_ETATS))
+
+
+# ---------------------------------------------------------------------------- JSON
 
 class TestJsonPourScript(unittest.TestCase):
 
@@ -427,6 +610,120 @@ class TestBureauGeneration(unittest.TestCase):
         for evenement in ("demande", "outil_debut", "outil_fin", "autorisation", "attente", "agent_debut",
                           "agent_fin", "fin_tour", "session_debut", "session_fin"):
             self.assertIn('case "{}"'.format(evenement), js)
+
+    # -- DEC-027 : info-bulle, halos, places de visite ------------------------------------------------
+    def js(self):
+        with open(bureau.SCRIPT_JS, encoding="utf-8") as f:
+            return f.read()
+
+    def test_infobulle_dans_le_cadre(self):
+        m = re.search(r'<div class="bureau-cadre" id="b-cadre">(.*?)</div><aside', self.page, re.S)
+        self.assertIsNotNone(m)
+        self.assertIn('<div id="b-infobulle" class="b-infobulle" hidden aria-hidden="true"></div>', m.group(1))
+        self.assertEqual(self.page.count('id="b-infobulle"'), 1)
+        css = bureau.CSS
+        self.assertRegex(css, r"\.b-infobulle\s*\{[^}]*position:\s*absolute")        # dans le cadre, visible en plein écran
+        self.assertRegex(css, r"\.b-infobulle\[hidden\]\s*\{\s*display:\s*none")
+        self.assertIn("pointer-events: none", css)
+
+    def test_infobulle_js_sans_html(self):
+        js = self.js()
+        corps = re.search(r"function remplirInfobulle\(id\) \{(.*?)\n  function masquerInfobulle", js, re.S).group(1)
+        self.assertIn("function ib(parent, tag, classe, texte)", js)
+        self.assertNotRegex(corps, r"innerHTML|outerHTML|innerText|insertAdjacent")
+        self.assertIn("mouseleave", js)
+        self.assertRegex(js, r"function masquerInfobulle\(\) \{\s*infoId = null;\s*if \(infobulle\) \{ infobulle\.hidden = true;")
+        self.assertRegex(js, r'(?s)"mousemove".*?if \(id\) \{ afficherInfobulle\(id, ev\); \} else \{ masquerInfobulle\(\); \}')
+        # Replay : « dernier événement », pas de statut affirmé
+        self.assertIn("Dernier événement du replay", corps)
+        self.assertNotRegex(corps.split('"replay"')[1].split("} else {")[0], r"\.statut|libelleEtat")
+
+    def test_infobulle_direct_ne_lit_que_la_liste_blanche(self):
+        """DEC-018 § 3 : le code de l'info-bulle en mode Direct ne lit que acteur, outil, categorie, detail, ts."""
+        js = self.js()
+        bloc = re.search(r"// <info-bulle-direct>.*?// </info-bulle-direct>", js, re.S)
+        self.assertIsNotNone(bloc)
+        champs = set(re.findall(r"\bev\.(\w+)", bloc.group(0)))
+        self.assertTrue(champs, "le bloc doit lire l'événement")
+        self.assertLessEqual(champs, {"acteur", "outil", "categorie", "detail", "ts"})
+        code = re.sub(r"//[^\n]*", "", bloc.group(0))
+        for interdit in ("message", "prompt", "texte", "chemin", "fichier", "commande", "sortie", "cwd", "input",
+                         "evenement", "session", "instance", "JSON", "m.data"):
+            self.assertNotIn(interdit, code, interdit)
+        # l'affichage ne relit que ce que le bloc a retenu
+        corps = re.search(r"function remplirInfobulle\(id\) \{(.*?)\n  function masquerInfobulle", js, re.S).group(1)
+        direct = corps.split('"direct"')[1].split("} else if")[0]
+        self.assertLessEqual(set(re.findall(r"\bdd\.(\w+)", direct)), {"categorie", "outil", "heure"})
+        self.assertNotIn("instantane", direct)
+        self.assertNotIn("tickets", direct)
+        # la fonction n'est appelée que sur un événement déjà validé par evValide
+        self.assertEqual(js.count("infobulleDirect(p, ev);"), 1)
+        self.assertLess(js.index("function evValide"), js.index("function infobulleDirect"))
+        self.assertRegex(js, r"if \(evValide\(ev\)\) \{ appliquerDirect\(ev, DR\.pret\); \}")
+
+    def test_halos_dans_les_donnees(self):
+        self.assertEqual(self.d["halos"], bureau.HALOS)
+        self.assertIn('"halos":', self.json_brut)
+        for h in ("travail", "bloque", "attente"):
+            self.assertIn('class="b-halo b-halo-{}"'.format(h), self.page)           # légende
+        css = bureau.CSS
+        for h in ("travail", "bloque", "attente"):
+            self.assertIn(".b-halo-" + h, css)
+        js = self.js()
+        self.assertIn("D.halos", js)                                  # la table vient de bureau.py
+        self.assertNotRegex(js, r"revue\s*:\s*\"(travail|bloque|attente)\"")
+        corps = re.search(r"function dessinerHalo\((.*?)\n  \}", js, re.S).group(0)
+        self.assertIn("PERIODE_HALO", corps)
+        self.assertRegex(corps, r"reduit \? 0\.95 :")                 # prefers-reduced-motion : fixe
+        self.assertGreaterEqual(int(re.search(r"var PERIODE_HALO = (\d+);", js).group(1)), 1500)
+        styles = re.search(r"var STYLES_HALO = \{(.*?)\n  \};", js, re.S).group(1)
+        formes = re.findall(r"tirets: (\[[^\]]*\])", styles)
+        self.assertEqual(len(set(formes)), 3)                         # trois formes distinctes (pas la couleur seule)
+        self.assertIn("var halo = haloDe(p);", js)
+        self.assertLess(js.index("dessinerHalo(sc,"), js.index("sc.drawImage(s, sx, sy)"))   # sous le sprite
+
+    def test_replay_et_halos_par_dernier_evenement(self):
+        js = self.js()
+        corps = re.search(r"function haloReplay\(ev\) \{(.*?)\n  \}", js, re.S).group(1)
+        self.assertIn('EN_COURS: "tape"', corps)
+        self.assertIn('BLOQUE: "bloque"', corps)
+        self.assertIn('ATTENTE_HUMAIN: "attend"', corps)
+        for statut in ("EN_REVUE", "TERMINE", "ANNULE", "A_FAIRE"):
+            self.assertNotIn(statut, corps)                           # aucun halo
+        self.assertIn("p.halo = haloReplay(ev);", js)
+
+    def test_places_de_visite_dans_le_js(self):
+        js = self.js()
+        self.assertNotIn("DECALAGES", js)
+        self.assertNotIn("function aCote", js)
+        self.assertIn("reserverPlace(id, i.cible)", js)                                       # instantané
+        self.assertIn('reserverPlace(ev.perso, "agent:relecteur-code")', js)                  # replay : place libre
+        self.assertIn("c.poste.visites", js)
+        self.assertIn("P.file", js)
+        self.assertEqual(js.count("libererPlace(ev.perso);"), 1)
+
+    def test_aucune_donnee_ajoutee(self):
+        """Hors table des halos et places du plan, les entrées de la page ont les mêmes clés qu'avant (DEC-027)."""
+        self.assertEqual(set(self.d), {"version", "date", "plan", "personnages", "projets", "evenements", "etats",
+                                       "halos", "anomalies"})
+        self.assertEqual(set(self.d["plan"]), {"largeur", "hauteur", "tuile", "rang_couloir", "pieces", "postes",
+                                               "file", "cafe", "reunion"})
+        for p in self.d["plan"]["postes"]:
+            self.assertLessEqual(set(p), {"id", "piece", "x", "y", "bureau", "visites"})
+        for pr in self.d["projets"]:
+            self.assertEqual(set(pr), {"slug", "libelle", "page", "instantane"})
+            for i in pr["instantane"]:
+                self.assertEqual(set(i), {"perso", "etat", "cible", "bulle", "tickets"})
+                for t in i["tickets"]:
+                    self.assertEqual(set(t), {"id", "titre", "statut", "projet", "page", "role"})
+        base = {"projet", "date", "heure", "estimee", "sans_heure", "perso", "note", "ticket", "type", "statut",
+                "texte", "temps", "page", "n", "quand", "jalon"}
+        for ev in self.d["evenements"]:
+            self.assertLessEqual(set(ev), base | {"dec", "valide", "valide_par"})
+            self.assertGreaterEqual(set(ev), base)
+        for p in self.d["personnages"]:
+            self.assertNotIn("halo", p)
+            self.assertNotIn("visites", p)
 
     @unittest.skipUnless(shutil.which("node"), "node absent : syntaxe JavaScript non vérifiée")
     def test_syntaxe_js(self):
