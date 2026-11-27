@@ -4,7 +4,7 @@ id: T-017
 titre: Plan de formation initial — budget de fonctionnement, échéance et allocations (DEC-024)
 projet: esn-interne
 type: decision              # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: ATTENTE_HUMAIN      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: EN_COURS      # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: agent:chef-de-projet   # agent:<nom> | salarie:<prenom>
 competence_requise: gestion-projet (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -13,7 +13,7 @@ temps_passe_h: 0            # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002]
 bloque_par: décision humaine sur le plan de formation initial de l'ESN (formations retenues, budget de fonctionnement, échéance, allocations à esn-interne), DEC-024   # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: oui   # oui | non
-decision:                   # DEC-NNN si le ticket porte une décision humaine
+decision:       DEC-024            # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-27
 maj_le: 2026-11-27
@@ -186,3 +186,4 @@ En cas de manque de capacité, on retire dans l'ordre inverse.
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 11:15 · agent:chef-de-projet · création en ATTENTE_HUMAIN (T-001) : options A, B (recommandée), C et D chiffrées ; ordre de priorité ; contrôle des allocations ≤ 100 % et de la capacité par période ; décision attendue DEC-024 · 0 h
+- 2026-11-27 09:30 · Ethan · décision prise et tracée dans DEC-024 (option B, enveloppe de frais séparée), ticket débloqué pour application · 0,25 h
