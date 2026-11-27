@@ -22,7 +22,7 @@
   try { D = JSON.parse(source.textContent); } catch (err) { return; }
 
   function $(id) { return document.getElementById(id); }
-  var cadre = $("b-cadre"), fiche = $("b-fiche"), annonce = $("b-annonce");
+  var cadre = $("b-cadre"), fiche = $("b-fiche"), annonce = $("b-annonce"), infobulle = $("b-infobulle"), infoId = null;
   var ctx = canvas.getContext("2d");
 
   // ------------------------------------------------------------------ utilitaires
@@ -145,10 +145,31 @@
     p.cafe = null;
     return { x: p.poste.x, y: p.poste.y, dir: p.poste.bureau ? "haut" : "bas" };
   }
-  var DECALAGES = [[1.15, 0], [-1.15, 0], [1.15, 0.9], [-1.15, 0.9], [0, 1.3], [0.6, 1.6]];
-  function aCote(cibleId, k) {
-    var c = persos[cibleId], o = DECALAGES[k % DECALAGES.length];
-    return { x: c.poste.x + o[0], y: c.poste.y + o[1], dir: o[0] > 0 ? "gauche" : (o[0] < 0 ? "droite" : "haut") };
+  // Places de visite (DEC-027) : calculées par bureau.py (champ « visites » du poste du relecteur ou du testeur,
+  // et « file » dans le couloir devant la porte de S3), sans chevauchement. PL garde qui occupe quelle place.
+  var PL = { visites: {}, file: [] };
+  function libererPlace(id) {
+    Object.keys(PL.visites).forEach(function (c) {
+      PL.visites[c].forEach(function (occ, i) { if (occ === id) { PL.visites[c][i] = null; } });
+    });
+    PL.file.forEach(function (occ, i) { if (occ === id) { PL.file[i] = null; } });
+  }
+  function libererToutesPlaces() { PL.visites = {}; PL.file = []; }
+  function reserverPlace(id, cibleId) {
+    var c = persos[cibleId], visites = (c.poste && c.poste.visites) || [], occ, i, q;
+    libererPlace(id);
+    occ = PL.visites[cibleId] || (PL.visites[cibleId] = []);
+    for (i = 0; i < visites.length; i++) {
+      if (!occ[i]) {
+        occ[i] = id; q = visites[i];
+        return { x: q.x, y: q.y, dir: q.x > c.poste.x ? "gauche" : (q.x < c.poste.x ? "droite" : "haut") };
+      }
+    }
+    var file = P.file || [];
+    for (i = 0; i < file.length; i++) {
+      if (!PL.file[i]) { PL.file[i] = id; return { x: file[i].x, y: file[i].y, dir: "haut" }; }
+    }
+    return auPoste(persos[id]);          // plus aucune place : le personnage reste à son poste
   }
 
   // ------------------------------------------------------------------ pixel art : personnages
@@ -466,6 +487,34 @@
     creation: ["#ecfeff", "#0e7490", "#164e63"], defaut: ["#ffffff", "#1f2430", "#1f2430"]
   };
 
+  // Halos (DEC-027) : forme et couleur, pour ne pas dépendre de la couleur seule. La correspondance état -> halo
+  // vient de bureau.py (D.halos) ; la forme et la couleur de chaque halo sont ici.
+  var STYLES_HALO = {
+    travail: { trait: "#2563eb", fond: "rgba(59,130,246,0.30)", tirets: [] },        // anneau continu bleu
+    bloque: { trait: "#dc2626", fond: "rgba(239,68,68,0.22)", tirets: [5, 3] },       // anneau crénelé rouge
+    attente: { trait: "#d97706", fond: "rgba(245,158,11,0.25)", tirets: [2, 3] }      // anneau pointillé ambre
+  };
+  var PERIODE_HALO = 2000;                // pulsation lente (cycle de 2 s) ; fixe avec prefers-reduced-motion
+  function haloDe(p) {
+    var H = D.halos || {}, cle = null;
+    if (etat.mode === "direct") {
+      if (p.marque) { cle = "attente"; }
+      else if (p.act || (p.d.nature === "agent" && DR.instances[p.d.id])) { cle = "tape"; }
+    } else if (etat.mode === "replay") { cle = p.halo; }
+    else { cle = p.etat; }
+    return (cle && H[cle]) || null;
+  }
+  function dessinerHalo(c, cx, cy, type, t) {
+    var s = STYLES_HALO[type];
+    if (!s) { return; }
+    c.save();
+    c.globalAlpha = reduit ? 0.95 : 0.65 + 0.3 * Math.sin(t * 2 * Math.PI / PERIODE_HALO);
+    c.fillStyle = s.fond; c.strokeStyle = s.trait; c.lineWidth = 2;
+    c.beginPath(); c.ellipse(cx, cy, 11, 5.5, 0, 0, 2 * Math.PI); c.fill();
+    c.setLineDash(s.tirets); c.stroke();
+    c.restore();
+  }
+
   function dessiner(t) {
     sc.drawImage(decor, 0, 0);
     animerDecor(sc, t);
@@ -482,6 +531,8 @@
         pix(sc, Math.round((p.poste.x - 0.5) * T) + 11, Math.round((p.poste.y - 1) * T + 3) - 5, 10, 6,
             Math.floor(t / 90) % 2 ? "#60a5fa" : "#3b82f6");
       }
+      var halo = haloDe(p);
+      if (halo) { dessinerHalo(sc, sx + 8, sy + 21, halo, t); }      // sous le sprite
       sc.drawImage(s, sx, sy);
     });
     ctx.imageSmoothingEnabled = false;
@@ -586,8 +637,9 @@
   }
 
   function appliquerInstantane(immediat) {
-    var pr = projetCourant(), parId = {}, aCoteDe = {};
+    var pr = projetCourant(), parId = {};
     (pr.instantane || []).forEach(function (i) { parId[i.perso] = i; });
+    libererToutesPlaces();
     ordre.forEach(function (id) { persos[id].cafe = null; });
     ordre.forEach(function (id) {
       var p = persos[id], i = parId[id];
@@ -596,7 +648,7 @@
       var dest;
       if (!i || i.etat === "cafe") { dest = domicile(p); }
       else if (i.etat === "revue" && i.cible && persos[i.cible]) {
-        aCoteDe[i.cible] = (aCoteDe[i.cible] || 0) + 1; p.cafe = null; dest = aCote(i.cible, aCoteDe[i.cible] - 1);
+        p.cafe = null; dest = reserverPlace(id, i.cible);
       } else { dest = auPoste(p); }
       aller(p, dest, immediat ? 0 : undefined);
     });
@@ -632,6 +684,13 @@
     if (typeof valeur === "string") { dd.textContent = valeur; } else { dd.appendChild(valeur); }
     dl.appendChild(dd);
   }
+  function natureTexte(d) {
+    var nature = { agent: "Agent IA", salarie: "Salarié", coordinateur: "Coordinateur",
+      humain: "Membre de l'équipe projet", visiteur: "Visiteur" }[d.nature] || d.nature;
+    return nature + (d.systeme && d.systeme !== "salarie" && d.systeme !== "visiteur" &&
+      d.systeme !== "humain" && d.systeme !== "coordinateur" ? " · " + (d.systeme === "realisation" ? "pôle réalisation" :
+      d.systeme === "autres" ? "hors catalogue" : d.systeme) : "");
+  }
   function afficherFiche(id) {
     var p = persos[id];
     if (!p || !fiche) { return; }
@@ -641,10 +700,7 @@
     pastille.style.background = d.couleur;
     h.appendChild(pastille); h.appendChild(document.createTextNode(d.nom));
     fiche.appendChild(h);
-    var nature = { agent: "Agent IA", salarie: "Salarié", coordinateur: "Coordinateur",
-      humain: "Membre de l'équipe projet", visiteur: "Visiteur" }[d.nature] || d.nature;
-    fiche.appendChild(el("p", "meta", nature + (d.systeme && d.systeme !== "salarie" && d.systeme !== "visiteur" &&
-      d.systeme !== "humain" && d.systeme !== "coordinateur" ? " · " + (d.systeme === "realisation" ? "pôle réalisation" : d.systeme === "autres" ? "hors catalogue" : d.systeme) : "")));
+    fiche.appendChild(el("p", "meta", natureTexte(d)));
     fiche.appendChild(el("p", null, d.role));
     var dl = el("dl");
     ligneFiche(dl, "Modèle", d.modele);
@@ -685,6 +741,63 @@
     }
   }
 
+  // ------------------------------------------------------------------ info-bulle (DEC-027)
+  // Au survol d'un personnage : uniquement des données déjà dans la page (D) ; tout passe par textContent ; elle est
+  // aria-hidden (la fiche aria-live porte déjà l'information). Replay : « dernier événement », jamais un statut
+  // (DEC-016 § 5). Direct : catégorie, nom d'outil et heure seulement (DEC-018 § 3).
+  function ib(parent, tag, classe, texte) { var n = el(tag, classe, texte); parent.appendChild(n); return n; }
+  function libelleProjet(slug) {
+    for (var i = 0; i < D.projets.length; i++) { if (D.projets[i].slug === slug) { return D.projets[i].libelle; } }
+    return slug;
+  }
+  function remplirInfobulle(id) {
+    var p = persos[id], d = p.d, i = null, tickets;
+    vider(infobulle);
+    ib(infobulle, "strong", null, d.nom);
+    ib(infobulle, "div", "b-ib-meta", natureTexte(d));
+    ib(infobulle, "div", null, tronquer(d.role, 110));
+    if (etat.mode === "direct") {
+      ib(infobulle, "div", "b-ib-etiquette", "En direct");
+      ib(infobulle, "div", null, texteActivite(p));
+      var dd = p.dernierDirect;
+      if (dd && (dd.categorie || dd.outil)) {
+        ib(infobulle, "div", "b-ib-meta", "Dernier outil : " + (LIB_CATEGORIE[dd.categorie] || "outil") +
+          (dd.outil ? " (" + dd.outil + ")" : "") + (dd.heure ? " à " + dd.heure : ""));
+      }
+    } else if (etat.mode === "replay") {
+      ib(infobulle, "div", "b-ib-etiquette", "Dernier événement du replay");
+      ib(infobulle, "div", null, p.dernier || "aucun événement pour ce personnage à ce stade");
+    } else {
+      (projetCourant().instantane || []).forEach(function (x) { if (x.perso === id) { i = x; } });
+      tickets = i ? i.tickets : [];
+      if (!tickets.length) {
+        ib(infobulle, "div", "b-ib-etiquette", "Ticket le plus urgent");
+        ib(infobulle, "div", null, "aucun (" + libelleEtat(aLAccueil(d) ? "accueil" : "cafe") + ")");
+      } else {
+        var urgent = tickets.filter(function (x) { return x.role === i.etat; })[0] || tickets[0];
+        ib(infobulle, "div", "b-ib-etiquette", "Ticket le plus urgent");
+        ib(infobulle, "div", null, urgent.id + " · " + urgent.statut + " · " + tronquer(urgent.titre, 60));
+        ib(infobulle, "div", "b-ib-meta", "Projet : " + libelleProjet(urgent.projet) +
+          (tickets.length > 1 ? " · +" + (tickets.length - 1) + (tickets.length > 2 ? " autres" : " autre") : ""));
+      }
+    }
+  }
+  function masquerInfobulle() {
+    infoId = null;
+    if (infobulle) { infobulle.hidden = true; vider(infobulle); }
+  }
+  function afficherInfobulle(id, ev) {
+    if (!infobulle || !persos[id]) { return; }
+    if (id !== infoId) { infoId = id; remplirInfobulle(id); }
+    infobulle.hidden = false;
+    var r = cadre.getBoundingClientRect(), w = infobulle.offsetWidth, h = infobulle.offsetHeight;
+    var x = ev.clientX - r.left + 14, y = ev.clientY - r.top + 14;
+    if (x + w > r.width - 4) { x = ev.clientX - r.left - w - 14; }       // bornée au cadre : à gauche, ou en haut du curseur
+    if (y + h > r.height - 4) { y = ev.clientY - r.top - h - 14; }
+    infobulle.style.left = Math.max(4, Math.min(r.width - w - 4, x)) + "px";
+    infobulle.style.top = Math.max(4, Math.min(r.height - h - 4, y)) + "px";
+  }
+
   // ------------------------------------------------------------------ replay
   var R = { liste: [], i: -1, lecture: false, vitesse: 1, prochain: 0, actif: {} };
   var liEvenements = {}, olEvenements = $("b-evenements"), courantLi = null;
@@ -720,16 +833,28 @@
     return base / R.vitesse;
   }
   function reinitialiserReplay() {
-    R.actif = {}; banniere = null;
-    ordre.forEach(function (id) { var p = persos[id]; p.cafe = null; p.bulle = null; p.marque = false; p.etat = "cafe"; });
+    R.actif = {}; banniere = null; libererToutesPlaces();
+    ordre.forEach(function (id) {
+      var p = persos[id]; p.cafe = null; p.bulle = null; p.marque = false; p.etat = "cafe"; p.halo = null; p.dernier = null;
+    });
     ordre.forEach(function (id) { var p = persos[id], d = domicile(p); p.x = d.x; p.y = d.y; p.dir = d.dir; p.chemin = []; });
   }
   function nomDe(id) { return persos[id] ? persos[id].d.nom : id; }
+  // Replay : l'état du halo suit le dernier événement de la personne (DEC-027). EN_COURS ou ligne de travail :
+  // « tape » ; BLOQUE : « bloque » ; ATTENTE_HUMAIN : « attend » ; création, TERMINE, EN_REVUE, décision : aucun.
+  // La table état -> halo est D.halos (bureau.py) ; ceci ne choisit que l'état.
+  function haloReplay(ev) {
+    if (ev.type === "travail") { return "tape"; }
+    if (ev.type !== "statut") { return null; }
+    return { EN_COURS: "tape", BLOQUE: "bloque", ATTENTE_HUMAIN: "attend" }[ev.statut] || null;
+  }
   function appliquerEvenement(ev, idx, anime) {
     var p = persos[ev.perso];
     if (!p) { return; }
     var duree = anime ? periode() * 0.7 : 0, dest;
     R.actif[ev.perso] = idx;
+    libererPlace(ev.perso);
+    p.halo = haloReplay(ev);
     if (ev.type === "decision") {
       var places = P.reunion || [], c = places.length ? places[idx % places.length] : p.poste;
       p.cafe = null; dest = { x: c.x, y: c.y, dir: "haut" };
@@ -739,7 +864,7 @@
                      fin: performance.now() + 2200 };
       }
     } else if (ev.statut === "EN_REVUE" && p.d.systeme === "realisation" && persos["agent:relecteur-code"]) {
-      p.cafe = null; dest = aCote("agent:relecteur-code", 0); p.etat = "revue";
+      p.cafe = null; dest = reserverPlace(ev.perso, "agent:relecteur-code"); p.etat = "revue";
     } else {
       dest = auPoste(p);
       p.etat = ev.statut === "BLOQUE" ? "bloque" : (ev.statut === "ATTENTE_HUMAIN" ? "attend" : "tape");
@@ -749,10 +874,12 @@
     if (ev.type === "decision") { texte = ev.texte; }
     var type = ev.type === "statut" ? (ev.statut === "BLOQUE" ? "bloque" : "statut") : ev.type;
     p.bulle = { texte: tronquer(texte, 40), long: texte, type: type === "travail" ? "defaut" : type, n: idx };
+    p.dernier = tronquer(texte, 110);            // info-bulle : « dernier événement du replay »
     // Les personnages inactifs depuis 8 événements retournent au café (ou à l'accueil).
     Object.keys(R.actif).forEach(function (id) {
       if (idx - R.actif[id] > 8) {
-        var q = persos[id]; q.bulle = null; q.etat = "cafe"; delete R.actif[id]; aller(q, domicile(q), duree);
+        var q = persos[id]; q.bulle = null; q.etat = "cafe"; q.halo = null; libererPlace(id);
+        delete R.actif[id]; aller(q, domicile(q), duree);
       } else if (persos[id].bulle && idx - persos[id].bulle.n > 3) { persos[id].bulle = null; }
     });
   }
@@ -829,6 +956,14 @@
     if (acteur === "coordinateur") { return "coordinateur"; }
     return persos["agent:" + acteur] ? "agent:" + acteur : null;
   }
+  // <info-bulle-direct> DEC-027 : de l'événement déjà validé par evValide, l'info-bulle ne retient que la catégorie,
+  // le nom d'outil et l'heure (champs de la liste blanche DEC-018 : acteur, outil, categorie, detail, ts). Un test
+  // vérifie que ce bloc ne lit aucun autre champ de l'événement.
+  function infobulleDirect(p, ev) {
+    var m = /T(\d{2}:\d{2}:\d{2})/.exec(ev.ts);
+    p.dernierDirect = { categorie: ev.categorie || "", outil: ev.outil || "", heure: m ? m[1] : "" };
+  }
+  // </info-bulle-direct>
   function bulleDirect(p, texte, type, ms, anime) {
     if (!anime) { return; }
     p.bulle = { texte: texte, type: type, expire: performance.now() + ms, long: texte };
@@ -904,6 +1039,7 @@
         if (p) {
           p.marque = false;
           if (p.d.nature === "agent" && !DR.instances[id]) { DR.instances[id] = {}; aller(p, auPoste(p), duree); }
+          infobulleDirect(p, ev);
           activite(p, ev.categorie, tsMs, anime || recent);
           if (ev.categorie === "delegue") { bulleDirect(p, "lance un agent", "creation", 3000, anime || recent); }
         }
@@ -1037,6 +1173,7 @@
   function changerMode(mode, immediat) {
     if (mode === "direct" && !DIRECT_DISPO) { mode = "instantane"; }
     var avant = etat.mode;
+    masquerInfobulle();
     etat.mode = mode;
     var bi = $("b-mode-instantane"), br = $("b-mode-replay"), bd = $("b-mode-direct"), zone = $("b-replay");
     if (bi) { bi.setAttribute("aria-pressed", String(mode === "instantane")); }
@@ -1129,8 +1266,11 @@
       survol = id; canvas.style.cursor = id ? "pointer" : "default"; redessiner = true;
       if (id) { afficherFiche(id); } else if (selection) { afficherFiche(selection); }
     }
+    if (id) { afficherInfobulle(id, ev); } else { masquerInfobulle(); }
   });
-  canvas.addEventListener("mouseleave", function () { survol = null; redessiner = true; if (selection) { afficherFiche(selection); } });
+  canvas.addEventListener("mouseleave", function () {
+    survol = null; redessiner = true; masquerInfobulle(); if (selection) { afficherFiche(selection); }
+  });
   canvas.addEventListener("click", function (ev) {
     var id = persoSous(ev);
     selection = id || null; redessiner = true;

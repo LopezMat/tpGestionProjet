@@ -266,6 +266,12 @@ LIBELLES_ETATS = {"tape": "au travail", "revue": "en revue", "attente": "décisi
                   "accueil": "à l'accueil"}
 
 
+# Halo sous un personnage, selon son état (DEC-027) : « travail » (anneau continu bleu), « bloque » (anneau
+# crénelé rouge), « attente » (anneau pointillé ambre). EN_REVUE (état « revue ») n'a pas de halo de travail.
+# Cette table est injectée dans la page (D.halos) ; le JS ne code aucune correspondance de son côté.
+HALOS = {"tape": "travail", "bloque": "bloque", "attente": "attente", "attend": "attente"}
+
+
 def etat_statut(statut):
     """État du personnage assigné, selon le statut du ticket ; tout autre statut : café."""
     return ETAT_PAR_STATUT.get(statut, "cafe")
@@ -313,12 +319,14 @@ def contributions(statut, assigne_id, approuve, bloque_par, persos, salaries):
 LARGEUR, HAUTEUR, TUILE = 48, 30, 16
 RANG_COULOIR = 12          # rangée de marche dans le couloir
 
-# id, type, titre, x, y, largeur, hauteur, système, rangées des personnages, colonnes de départ
+# id, type, titre, x, y, largeur, hauteur, système, rangées des personnages, colonnes imposées (None : une
+# colonne tous les 3 tuiles depuis x + 2). S3 : grille 2 × 2 espacée, capacité 4 (DEC-027) ; au-delà, l'agent
+# déborde vers l'open space.
 PIECES = [
     ("s4", "reunion", "S4 · Salle de réunion client", 0, 0, 12, 11, "S4", [7], None),
     ("s1", "chef", "S1 · Bureau du chef de projet", 12, 0, 12, 11, "S1", [4, 7], None),
     ("s2", "supervision", "S2 · Supervision", 24, 0, 12, 11, "S2", [4, 7], None),
-    ("s3", "serveur", "S3 · Salle serveur et déploiement", 36, 0, 12, 11, "S3", [4, 7], None),
+    ("s3", "serveur", "S3 · Salle serveur et déploiement", 36, 0, 12, 11, "S3", [4, 8], [38, 44]),
     ("couloir", "couloir", "Couloir · accueil", 0, 11, 48, 5, None, [], None),
     ("realisation", "openspace", "Open space · pôle réalisation", 0, 16, 14, 14, "realisation", [20, 23, 26], None),
     ("salaries", "salaries", "Bureaux des salariés", 14, 16, 14, 14, "salarie", [20, 23, 26], None),
@@ -330,9 +338,89 @@ POSTE_COORDINATEUR = (24, 14)
 
 def _places(piece):
     """Positions des personnages assis (tuile du personnage ; le bureau est dessiné au-dessus)."""
-    _, _, _, x, _, l, _, _, rangs, _ = piece
-    cols = [c for c in range(x + 2, x + l - 1, 3) if c + 1.5 <= x + l - 1]
+    _, _, _, x, _, l, _, _, rangs, colonnes = piece
+    cols = colonnes or [c for c in range(x + 2, x + l - 1, 3) if c + 1.5 <= x + l - 1]
     return [(c, r) for r in rangs for c in cols]
+
+
+# Postes que les agents en revue vont voir (même rôles que contributions()) : « places de visite » (DEC-027).
+POSTES_REVUE = ("agent:relecteur-code", "agent:testeur")
+VISITES_MAX = 4            # places de visite par poste ; au-delà, la file du couloir
+FILE_MAX = 8               # places de la file, dans le couloir devant la porte de S3
+HAUT_PERSO = 24            # sprite 16 × 24 px, pieds au bas de la tuile
+HAUT_ETIQUETTE = 9         # place laissée sous une place de visite pour le nom du personnage
+ACCUEIL = (21 * TUILE, 12 * TUILE + 4, 6 * TUILE, 3 * TUILE - 8)   # comptoir dessiné dans le couloir
+
+
+def rect_perso(x, y):
+    """Rectangle (x, y, l, h) en px d'un personnage placé à la tuile (x, y)."""
+    return (x * TUILE, (y + 1) * TUILE - HAUT_PERSO, TUILE, HAUT_PERSO)
+
+
+def rect_bureau(x, y):
+    """Rectangle en px du bureau du poste (x, y) : même calcul que bureau() dans bureau.js."""
+    return ((x - 0.5) * TUILE, (y - 1) * TUILE + 3, 2 * TUILE, 12)
+
+
+def se_chevauchent(a, b, marge=0):
+    return a[0] < b[0] + b[2] + marge and b[0] < a[0] + a[2] + marge and \
+        a[1] < b[1] + b[3] + marge and b[1] < a[1] + a[3] + marge
+
+
+def _places_visite(plan_pieces, par_id, postes):
+    """({id du poste visité : [(x, y)]}, [(x, y)] file du couloir). Pour chaque poste de POSTES_REVUE, jusqu'à
+    VISITES_MAX places dans sa pièce, au plus près, sans chevaucher ni personnage, ni bureau, ni une autre
+    place (marge de 2 px) ; le vestibule devant la porte reste libre. La file est une rangée du couloir devant
+    la porte de S3. Calcul générique : aucun nom d'agent hors POSTES_REVUE."""
+    occupe = [ACCUEIL]
+    for po in postes:
+        occupe.append(rect_perso(po["x"], po["y"]))
+        if po["bureau"]:
+            occupe.append(rect_bureau(po["x"], po["y"]))
+    candidats = {}
+    for pid in POSTES_REVUE:
+        po = par_id.get(pid)
+        if not po:
+            continue
+        piece = plan_pieces[po["piece"]]
+        px0, py0 = piece["x"] * TUILE, piece["y"] * TUILE
+        px1, py1 = px0 + piece["l"] * TUILE, py0 + piece["h"] * TUILE
+        porte = piece.get("porte")
+        vestibule = None
+        if porte and piece["y"] < RANG_COULOIR:
+            vestibule = (porte["x"] * TUILE - 2, py1 - 3 * TUILE, 2 * TUILE + 4, 3 * TUILE)
+        liste = []
+        for y in range(piece["y"], piece["y"] + piece["h"]):
+            for x in range(piece["x"], piece["x"] + piece["l"]):
+                r = rect_perso(x, y)
+                if r[0] < px0 + 4 or r[0] + r[2] > px1 - 4 or r[1] < py0 + 2 * TUILE or r[1] + r[3] > py1 - 6:
+                    continue                       # hors de la pièce, ou devant les racks / le tableau du haut
+                if vestibule and se_chevauchent(r, vestibule):
+                    continue
+                dx, dy = x - po["x"], y - po["y"]
+                cout = dx * dx + (1.4 * dy) ** 2 + (4 if porte and porte["x"] - 1 <= x <= porte["x"] + 1 else 0)
+                liste.append((cout, dy, -dx, x, y))
+        candidats[pid] = [(x, y) for _, _, _, x, y in sorted(liste)]
+    choisies = {pid: [] for pid in candidats}
+    pris = []
+    for _ in range(VISITES_MAX):               # un tour par poste : le relecteur et le testeur se partagent la pièce
+        for pid in candidats:
+            for x, y in candidats[pid]:
+                r = rect_perso(x, y)
+                etiquette = (r[0], r[1], r[2], r[3] + HAUT_ETIQUETTE)      # le nom est écrit sous le personnage
+                if not any(se_chevauchent(etiquette, o, 2) for o in occupe + pris):
+                    choisies[pid].append((x, y))
+                    pris.append(etiquette)
+                    break
+    porte_s3 = plan_pieces["s3"]["porte"]["x"]
+    xs = sorted((x for x in range(2, LARGEUR - 1, 2) if not porte_s3 - 1 <= x <= porte_s3 + 1),
+                key=lambda x: (abs(x - porte_s3 - 1), x))
+    file_ = []
+    for x in xs:
+        r = rect_perso(x, RANG_COULOIR)
+        if not any(se_chevauchent(r, o) for o in occupe + pris) and len(file_) < FILE_MAX:
+            file_.append((x, RANG_COULOIR))
+    return choisies, file_
 
 
 def construire_plan(personnages):
@@ -360,6 +448,7 @@ def construire_plan(personnages):
         n_couloir[0] += 1
         return "couloir", x, y
 
+    par_id = {}
     visiteurs_x = [28, 20, 31, 17, 34, 14, 37, 11, 40, 8, 43, 5]
     n_visiteurs = 0
     for p in personnages:
@@ -379,6 +468,7 @@ def construire_plan(personnages):
         poste = {"id": "p-" + re.sub(r"[^a-z0-9-]+", "-", p["id"]), "piece": pid, "x": x, "y": y,
                  "bureau": p["nature"] not in ("humain", "visiteur")}
         postes.append(poste)
+        par_id[p["id"]] = poste
         p["poste"] = poste["id"]
     # Coin café : 6 colonnes × 3 rangées, puis le couloir : au moins une place par personnage.
     cafe = [(x, y) for y in (20, 23, 26) for x in (30, 33, 36, 39, 42, 45)]
@@ -386,14 +476,19 @@ def construire_plan(personnages):
     while len(cafe) < len(personnages):
         cafe.append((45 - (i % 14) * 3, 28 if i < 6 else 12))
         i += 1
-    return {
-        "largeur": LARGEUR, "hauteur": HAUTEUR, "tuile": TUILE, "rang_couloir": RANG_COULOIR,
-        "pieces": [{"id": p[0], "type": p[1], "titre": p[2], "x": p[3], "y": p[4], "l": p[5], "h": p[6],
+    pieces_plan = [{"id": p[0], "type": p[1], "titre": p[2], "x": p[3], "y": p[4], "l": p[5], "h": p[6],
                     "couleur": COULEURS.get(p[7] or "", "#94a3b8"),
                     "porte": None if p[0] == "couloir" else {"x": p[3] + p[5] // 2,
                                                              "y": p[4] + p[6] - 1 if p[4] < 11 else p[4]}}
-                   for p in PIECES],
+                   for p in PIECES]
+    visites, file_ = _places_visite({p["id"]: p for p in pieces_plan}, par_id, postes)
+    for pid, lieux in visites.items():
+        par_id[pid]["visites"] = [{"x": x, "y": y} for x, y in lieux]
+    return {
+        "largeur": LARGEUR, "hauteur": HAUTEUR, "tuile": TUILE, "rang_couloir": RANG_COULOIR,
+        "pieces": pieces_plan,
         "postes": postes,
+        "file": [{"x": x, "y": y} for x, y in file_],
         "cafe": [{"x": x, "y": y} for x, y in cafe],
         "reunion": [{"x": x, "y": y} for x, y in REUNION],
     }
@@ -649,7 +744,7 @@ class Donnees:
         plan = construire_plan([self.persos[i] for i in self.ordre])
         return {"version": 1, "date": s.auj.isoformat(), "plan": plan,
                 "personnages": [self.persos[i] for i in self.ordre], "projets": self.projets,
-                "evenements": self.evenements, "etats": LIBELLES_ETATS,
+                "evenements": self.evenements, "etats": LIBELLES_ETATS, "halos": HALOS,
                 "anomalies": sorted(set(self.anomalies))}
 
     def _projet(self, slug, libelle, page, contrib):
@@ -693,6 +788,9 @@ def json_pour_script(donnees):
 LEGENDE = [("tape", "au travail (EN_COURS)"), ("revue", "en revue (EN_REVUE) : chez le relecteur ou le testeur"),
            ("attente", "« ! » décision humaine attendue (ATTENTE_HUMAIN)"), ("attend", "attend un humain"),
            ("bloque", "bulle rouge : bloqué (BLOQUE)"), ("cafe", "machine à café : rien en cours")]
+# Halos autour des personnages (DEC-027) : forme et couleur, pour ne pas dépendre de la couleur seule.
+LEGENDE_HALOS = [("travail", "halo bleu continu : au travail"), ("bloque", "halo rouge à tirets : bloqué"),
+                 ("attente", "halo ambre pointillé : décision humaine attendue ou attend un humain")]
 
 
 # Mode Direct (DEC-018) : optionnel, local au poste, disponible seulement quand la page est servie par
@@ -758,7 +856,7 @@ def page_html(site, donnees):
          '<span id="b-horloge" class="b-horloge"></span></div>',
          '<div class="bureau-scene"><div class="bureau-cadre" id="b-cadre">'
          '<canvas id="b-canvas" width="768" height="480" role="img" aria-label="Vue de dessus du bureau">'
-         '</canvas></div>'
+         '</canvas><div id="b-infobulle" class="b-infobulle" hidden aria-hidden="true"></div></div>'
          '<aside class="carte bureau-fiche" id="b-fiche" aria-live="polite"><p class="vide">Survolez ou cliquez '
          'un personnage, ou choisissez-le dans la liste ci-dessous.</p></aside></div>',
          DIRECT_LISTE,
@@ -766,7 +864,10 @@ def page_html(site, donnees):
          'événements) restent lisibles.</p></noscript>',
          '<p id="b-annonce" class="b-sr" aria-live="polite"></p>',
          '<ul class="legende-bureau" aria-label="Légende des états">{}</ul>'.format("".join(
-             '<li><span class="b-pastille b-{}"></span>{}</li>'.format(e(k), e(v)) for k, v in LEGENDE))]
+             '<li><span class="b-pastille b-{}"></span>{}</li>'.format(e(k), e(v)) for k, v in LEGENDE)),
+         '<ul class="legende-bureau" aria-label="Légende des halos">{}</ul>'.format("".join(
+             '<li><span class="b-halo b-halo-{}" aria-hidden="true"></span>{}</li>'.format(e(k), e(v))
+             for k, v in LEGENDE_HALOS))]
     # Personnages et état, par projet (alternative texte au dessin ; filtrée par le sélecteur).
     blocs = []
     for p in projets:
@@ -848,6 +949,19 @@ CSS = """
   vertical-align: -.1em; border: 1px solid rgba(0,0,0,.15); }
 .b-tape { background: #3b82f6; } .b-revue { background: #8b5cf6; } .b-attente { background: #f59e0b; }
 .b-attend { background: #fde68a; } .b-bloque { background: #ef4444; } .b-cafe { background: #a8a29e; }
+.b-halo { display: inline-block; width: 1.3rem; height: .6rem; border-radius: 50%; margin-right: .2rem;
+  vertical-align: -.05em; border-width: 2px; border-color: transparent; border-style: solid; }
+.b-halo-travail { border-color: #3b82f6; border-style: solid; background: rgba(59,130,246,.18); }
+.b-halo-bloque { border-color: #dc2626; border-style: dashed; background: rgba(220,38,38,.12); }
+.b-halo-attente { border-color: #d97706; border-style: dotted; background: rgba(245,158,11,.15); }
+.b-infobulle { position: absolute; z-index: 5; max-width: 270px; padding: .4rem .55rem; border-radius: 6px;
+  border: 1px solid #1f2430; background: #fffef8; color: #1f2430; box-shadow: 0 3px 10px rgba(0,0,0,.35);
+  font-size: .78rem; line-height: 1.35; text-align: left; pointer-events: none; overflow-wrap: anywhere; }
+.b-infobulle[hidden] { display: none; }
+.b-infobulle strong { display: block; font-size: .86rem; }
+.b-infobulle .b-ib-meta { color: #475569; }
+.b-infobulle .b-ib-etiquette { margin-top: .3rem; font-size: .68rem; text-transform: uppercase; letter-spacing: .04em;
+  color: #64748b; }
 .b-perso { font: inherit; font-weight: 600; color: var(--marque-2); background: none; border: 0; padding: 0;
   cursor: pointer; text-align: left; }
 .b-perso:hover, .b-perso:focus-visible { text-decoration: underline; }

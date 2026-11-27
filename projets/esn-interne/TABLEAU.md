@@ -9,10 +9,10 @@
 | Indicateur | Valeur |
 |---|---|
 | Type · état | interne · en_cours |
-| Avancement (h estimées terminées / h estimées hors ANNULE) | 8,2 % (5,5 h / 67,0 h) |
+| Avancement (h estimées terminées / h estimées hors ANNULE) | 17,7 % (13,2 h / 74,8 h) |
 | Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 60,2 h |
-| Budget de fonctionnement consommé / prévu (projet interne, R19) | 123,75 € / 4 360,00 € (2,8 %) |
-| Coût projeté à terminaison (consommé + reste × taux) | 3 768,21 € |
+| Budget de fonctionnement consommé / prévu (projet interne, R19) | 226,50 € / 4 360,00 € (5,2 %) |
+| Coût projeté à terminaison (consommé + reste × taux) | 3 870,96 € |
 | Fin projetée | 2027-01-26 |
 | Deadline | 2027-01-15 |
 | Écart avec la deadline | +7 j ouvrés |
@@ -31,14 +31,14 @@
 
 | Statut | Nombre |
 |---|---|
-| A_FAIRE | 18 |
+| A_FAIRE | 20 |
 | EN_COURS | 1 |
 | EN_REVUE | 0 |
 | BLOQUE | 0 |
 | ATTENTE_HUMAIN | 0 |
-| TERMINE | 4 |
+| TERMINE | 5 |
 | ANNULE | 1 |
-| **Total** | 24 |
+| **Total** | 27 |
 
 ## Tickets BLOQUE
 
@@ -108,6 +108,10 @@ gantt
     T-022 Cadrage « Audit avant GO outillé » (action A7, DEC-025) — pr :t022, 2026-11-27, 2026-11-28
     T-023 Préparation de la PR de règles A2-A3-A4 (DEC-025) — skill tr :t023, 2026-11-27, 2026-11-28
     T-024 Préparation de la PR de règles A6 (DEC-025) — règle 6 du che :t024, 2026-11-27, 2026-12-01
+    section agent dev-frontend
+    T-025 Améliorations de la page « Le bureau » — info-bulle au survo :done, t025, 2026-11-27, 2026-11-28
+    T-026 Page « Le bureau » — son court d'alerte BLOQUE / ATTENTE_HUM :t026, 2026-11-27, 2026-11-28
+    T-027 Page « Le bureau » — info-bulle non rafraîchie en Replay sou :t027, 2026-11-27, 2026-11-28
     section salarie claire
     T-007 Encadrement de Léa (T-006) — recette fonctionnelle :t007, 2026-11-27, 2026-12-02
     T-014 Encadrement de Léa (T-013) — relation client :t014, 2026-12-01, 2026-12-05

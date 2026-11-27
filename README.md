@@ -117,10 +117,17 @@ La page `console/bureau.html` ([DEC-016](docs/decisions/2026-11-26-DEC-016-page-
 - **Membres humains de l'équipe projet.** Ils sont toujours à l'accueil, même si aucun journal ne les cite. Un acteur de journal, un assigné ou un `decide_par` qui leur correspond est rattaché à leur personnage, sans doublon : la casse et les accents sont ignorés, et le préfixe `salarie:` est accepté (« Ethan », « salarie:ethan », « Stéphane », « stephane »). Les autres humains inconnus (« Le professeur », « Équipe ESN ») restent des visiteurs de l'accueil. Sans `equipe/humains.md`, la page se génère quand même ; une entrée mal formée ou en double est signalée dans « Anomalies de données ».
 - **Instantané** (projet choisi, ou « Toute l'ESN ») : l'état vient des tickets (R9).
   - `EN_COURS` : il tape à son bureau.
-  - `EN_REVUE` : il va chez le relecteur, ou chez le testeur si la revue est `APPROUVÉ`.
+  - `EN_REVUE` : il va sur une place de visite chez le relecteur, ou chez le testeur si la revue est `APPROUVÉ`.
   - `ATTENTE_HUMAIN` : « ! » au-dessus de l'humain attendu (le salarié ou le membre de l'équipe projet assigné).
   - `BLOQUE` : bulle rouge.
   - Sinon : coin café.
+- **Info-bulle au survol** ([DEC-027](docs/decisions/2026-11-27-DEC-027-ameliorations-bureau.md)). Elle s'ouvre près du curseur, reste dans le cadre (donc visible en plein écran) et disparaît quand la souris quitte le personnage ; la fiche latérale garde son comportement. Elle est `aria-hidden` : la fiche `aria-live` porte déjà l'information.
+  - **Instantané** : nom, nature et système, rôle, ticket le plus urgent (identifiant, statut, titre, projet) et « +N autres ».
+  - **Replay** : « dernier événement du replay », jamais un statut affirmé.
+  - **Direct** : catégorie, nom d'outil et heure, rien d'autre que les champs déjà journalisés (aucun texte de message, chemin, commande ni sortie d'outil, DEC-018 § 3).
+  - Aucune donnée nouvelle n'est injectée dans la page ; les textes ne passent que par `textContent`.
+- **Halos d'état.** Un anneau sous le personnage, dont la forme et la couleur diffèrent : **continu bleu** pour un personnage au travail (`EN_COURS`, ou actif en mode Direct) ; **à tirets rouge** pour `BLOQUE` ; **pointillé ambre** pour `ATTENTE_HUMAIN` (l'humain attendu et l'agent qui attend). `EN_REVUE` n'a pas de halo de travail. La correspondance état → halo est la constante `HALOS` de `scripts/bureau.py`, injectée dans la page. Le halo pulse lentement (cycle de 2 s), et reste fixe avec `prefers-reduced-motion`. En Replay, il suit le dernier événement du personnage (création, `TERMINE`, `EN_REVUE` et décision : aucun halo). La légende de la page le rappelle.
+- **Pièce S3.** Les quatre bureaux sont en grille 2 × 2 espacée (capacité 4 ; un 5ᵉ agent S3 déborde vers l'open space). `construire_plan` calcule des **places de visite** à côté du poste du relecteur de code et du testeur, sans chevaucher ni personnage ni bureau, puis une **file** dans le couloir devant la porte de S3 : quatre agents en revue ne s'empilent plus. Le Replay réserve la première place libre au lieu de toujours la première. Un test vérifie, sur le catalogue réel, qu'aucun rectangle de personnage (16 × 24 px) ne chevauche un autre personnage ni un bureau.
 - **Replay** : la chronologie des lignes « Journal » des tickets et des décisions DEC. Commandes : lecture, pause, pas à pas, vitesse, curseur.
   - Le filtre **« jalons seulement »** (création, changements de statut, décisions) est actif par défaut, pour un film d'environ 1 min 30 à ×1 ; décocher pour tout voir.
   - Une décision s'affiche par une bannière « ✔ DEC-NNN · décidé par … ».
