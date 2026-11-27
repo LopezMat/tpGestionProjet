@@ -28,7 +28,7 @@ imputation_decision:        # DEC-NNN VALIDÉ de docs/decisions/, obligatoire si
 # T-014 — Encadrement de Léa (T-013) — relation client
 
 ## Description
-Temps de formatrice du binôme interne de [T-013](T-013-formation-relation-client-lea.md) (plan de formation de l'ESN, S1-R13). Proposé par T-001, **soumis à l'arbitrage de [T-017](T-017-decision-plan-formation-initial.md) (DEC-024)**.
+Temps de formatrice du binôme interne de [T-013](T-013-formation-relation-client-lea.md) (plan de formation de l'ESN, S1-R13). Proposé par T-001, **retenu par [DEC-024](../../../docs/decisions/2026-11-27-DEC-024-plan-formation-initial.md) (option B), rang 7 de priorité**. Allocation de Claire à `esn-interne` : 5 % en P1, **0 % en P2** : ce ticket doit être `TERMINE` au plus tard le 2026-12-18, sinon il devient non planifiable après la bascule du 2026-12-21.
 
 Ce ticket ne compte que la préparation et le débriefing de chaque échange avec Léa, et l'attestation (1 h). Le temps de l'échange lui-même reste dans le ticket du client (`T-094`, `T-009`, `T-046`, `T-091`).
 
@@ -50,3 +50,4 @@ Ce ticket ne compte que la préparation et le débriefing de chaque échange ave
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 11:00 · agent:chef-de-projet · création (T-001, temps de formatrice de T-013) ; en attente de DEC-024 (T-017) · 0 h
+- 2026-11-27 14:30 · agent:chef-de-projet · retenu par DEC-024 (option B, rang 7) ; TERMINE au plus tard le 2026-12-18 (Claire à 0 % en P2) (T-016) · 0 h

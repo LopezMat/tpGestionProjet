@@ -28,7 +28,7 @@ imputation_decision:        # DEC-NNN VALIDÉ de docs/decisions/, obligatoire si
 # T-002 — Formation Nadia — supervision (journée du 2026-12-03, EV-002)
 
 ## Description
-Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), registre R-09). Proposé par T-001, **soumis à l'arbitrage de [T-017](T-017-decision-plan-formation-initial.md) (DEC-024)** : non prenable et non planifiable tant que l'allocation de Nadia à `esn-interne` est nulle.
+Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), registre R-09). Proposé par T-001, **retenu par [DEC-024](../../../docs/decisions/2026-11-27-DEC-024-plan-formation-initial.md) (option B), rang 3 de priorité**. Allocation de Nadia à `esn-interne` : 10 % en P1, appliquée le 2026-11-27. Prenable dès que T-017 est `TERMINE` (à conclure par le coordinateur **avant le 2026-12-03**).
 
 - **Compétence** : `supervision` ; **niveau actuel** : débutant ; **niveau visé** : confirmé (fiche de Nadia).
 - **Candidate** : Nadia.
@@ -37,8 +37,8 @@ Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), reg
 - **Modalité** : formation externe d'une journée, le **2026-12-03** (date fixe). Nadia travaille 7 h ce jeudi (temps partiel 4/5, pas de travail le mercredi).
 - **Coût** :
   - temps salarié : 7 h × 64,29 €/h = **450,00 €** (compté par `tableau.py`) ;
-  - frais externes : **inconnus**, provision de **700 € HT** à confirmer par devis (0 € si la session est déjà réglée ou gratuite). Ils ne sont pas comptés par `tableau.py` : enveloppe séparée de DEC-024.
-- **Note de calcul** : EV-002 met la capacité de Nadia à 0 le 2026-12-03 ; `tableau.py` place donc ce ticket sur d'autres jours. Le coût est juste ; la date réelle est le 2026-12-03.
+  - frais externes : **inconnus**, à confirmer par devis (0 € si la session est déjà réglée ou gratuite). Ils ne sont pas comptés par `tableau.py` : **enveloppe séparée de 700 € HT** (DEC-024 point 4), suivie dans la section « Enveloppe de frais externes » de [planning.md](../planning.md). Chaque mouvement (devis, engagement, facture) y est reporté avec une ligne de journal ici ; toute dépense au-delà de l'enveloppe passe par une nouvelle décision humaine.
+- **Note de calcul** : EV-002 met la capacité de Nadia à 0 le 2026-12-03 ; `tableau.py` place donc ce ticket sur d'autres jours (alerte « Absence » de `TABLEAU.md`, artefact analysé dans `planning.md`). Le coût est juste ; la date réelle est le 2026-12-03. **Pour que le tableau soit juste**, Nadia passe ce ticket `EN_COURS` puis `TERMINE` avec `debut_le` et `termine_le` au 2026-12-03 : le Gantt utilise alors ces dates et l'alerte disparaît.
 - **Si DEC-024 n'est pas prise avant le 2026-12-03**, ce ticket ne peut pas être pris (`depend_de: T-017`) : le coordinateur peut demander un arbitrage séparé et anticipé de ce seul point.
 
 ## Critères d'acceptation
@@ -57,3 +57,4 @@ Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), reg
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 10:00 · agent:chef-de-projet · création (T-001, plan de formation initial ; registre R-09 ; EV-002) ; en attente de DEC-024 (T-017) · 0 h
+- 2026-11-27 14:30 · agent:chef-de-projet · retenu par DEC-024 (option B, rang 3) ; frais externes dans l'enveloppe séparée de 700 € HT (devis à obtenir avant le 2026-12-03, 0 € engagé) ; date réelle 2026-12-03 (debut_le, termine_le) (T-016) · 0 h

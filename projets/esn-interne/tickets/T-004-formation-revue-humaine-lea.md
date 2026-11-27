@@ -28,7 +28,7 @@ imputation_decision:        # DEC-NNN VALIDÉ de docs/decisions/, obligatoire si
 # T-004 — Formation Léa — revue humaine et securite-applicative (2/2) revues en double avec Karim
 
 ## Description
-Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), registres R-02 et R-03). Proposé par T-001, **soumis à l'arbitrage de [T-017](T-017-decision-plan-formation-initial.md) (DEC-024)**. Suite de [T-003](T-003-formation-securite-autoformation-lea.md).
+Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), registres R-02 et R-03). Proposé par T-001, **retenu par [DEC-024](../../../docs/decisions/2026-11-27-DEC-024-plan-formation-initial.md) (option B), rang 1 de priorité**. Suite de [T-003](T-003-formation-securite-autoformation-lea.md).
 
 - **Compétences** : `revue-humaine` (méthode de S3-R2 : grille, indépendance, signature) et `securite-applicative` ; **niveau visé** : confirmé pour les deux, attesté par Karim, puis décidé par un humain.
 - **Candidate** : Léa. **Formateur** : Karim (temps compté dans [T-005](T-005-encadrement-revue-securite-karim.md)).
@@ -56,3 +56,4 @@ Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), reg
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 10:10 · agent:chef-de-projet · création (T-001, plan de formation initial ; registres R-02, R-03 ; DEC-021) ; en attente de DEC-024 (T-017) · 0 h
+- 2026-11-27 14:30 · agent:chef-de-projet · retenu par DEC-024 (option B, rang 1) ; fenêtre inchangée (2026-12-07 → 2026-12-11), attestation avant le 2026-12-18 (T-016) · 0 h

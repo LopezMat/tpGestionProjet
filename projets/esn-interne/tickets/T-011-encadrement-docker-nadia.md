@@ -28,10 +28,10 @@ imputation_decision:        # DEC-NNN VALIDÉ de docs/decisions/, obligatoire si
 # T-011 — Encadrement de Léa (T-010) — docker
 
 ## Description
-Temps de formatrice du binôme interne de [T-010](T-010-formation-docker-lea.md) (plan de formation de l'ESN, S1-R13). Proposé par T-001, **soumis à l'arbitrage de [T-017](T-017-decision-plan-formation-initial.md) (DEC-024)**.
+Temps de formatrice du binôme interne de [T-010](T-010-formation-docker-lea.md) (plan de formation de l'ESN, S1-R13). Proposé par T-001, **retenu par [DEC-024](../../../docs/decisions/2026-11-27-DEC-024-plan-formation-initial.md) (option B), rang 6 de priorité**. Allocation de Nadia à `esn-interne` : 20 % en P2.
 
 - **Formatrice** : Nadia. Séance en binôme (2,5 h, sur les 4 h de binôme de Léa ; Léa travaille seule le reste du temps), puis correction du guide de T-012 à partir des écarts relevés par Léa et attestation (0,5 h).
-- **Fenêtre** : du 2026-12-29 au 2027-01-12 (pas le mercredi).
+- **Fenêtre** : du 2026-12-30 au 2027-01-14 (pas le mercredi), en même temps que la partie binôme de T-010. Recalée le 2026-11-27 sur les allocations de P2 (T-016).
 - **Coût** : 3 h × 64,29 €/h = **192,86 €**.
 - Pas de `depend_de` vers T-010 (les deux se font ensemble, même principe qu'AF3) ; il dépend de T-012 (le guide).
 
@@ -50,3 +50,4 @@ Temps de formatrice du binôme interne de [T-010](T-010-formation-docker-lea.md)
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 10:45 · agent:chef-de-projet · création (T-001, temps de formatrice de T-010) ; en attente de DEC-024 (T-017) · 0 h
+- 2026-11-27 14:30 · agent:chef-de-projet · retenu par DEC-024 (option B, rang 6) ; fenêtre recalée sur P2 : 2026-12-30 → 2027-01-14, avec T-010 (T-016) · 0 h

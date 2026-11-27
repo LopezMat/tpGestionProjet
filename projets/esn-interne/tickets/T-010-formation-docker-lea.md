@@ -28,7 +28,7 @@ imputation_decision:        # DEC-NNN VALIDÉ de docs/decisions/, obligatoire si
 # T-010 — Formation Léa — docker (autoformation et binôme avec Nadia)
 
 ## Description
-Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), registre R-05). Proposé par T-001, **soumis à l'arbitrage de [T-017](T-017-decision-plan-formation-initial.md) (DEC-024)**.
+Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), registre R-05). Proposé par T-001, **retenu par [DEC-024](../../../docs/decisions/2026-11-27-DEC-024-plan-formation-initial.md) (option B), rang 6 de priorité**. Allocation de Léa à `esn-interne` : 10 % en P2 (0,7 h par jour ouvré), soit 10 jours ouvrés pour les 7 h : **c'est le ticket le plus tardif du plan** (fin projetée le 2027-01-14 pour une échéance au 2027-01-15, voir `planning.md`).
 
 - **Compétence** : `docker` ; **niveau actuel** : aucun ; **niveau visé à la fin de ce ticket** : débutant, c'est-à-dire autonome sur les procédures écrites (monter un environnement, lire des journaux, arrêter et relancer un service). Le niveau confirmé demandera un déploiement réel en binôme sur un prochain projet.
 - **Candidate** : Léa. Elle a la capacité, et un environnement de recette Docker (comme `reservation-coworking/T-044`) complète son rôle de recetteuse de secours (T-006).
@@ -37,7 +37,7 @@ Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), reg
 - **Modalité** :
   1. autoformation sur la documentation officielle de Docker et de Compose (images, conteneurs, volumes, réseaux, journaux) : 3 h ;
   2. binôme avec Nadia : 4 h. Léa monte **seule** un environnement de recette à partir du guide de [T-012](T-012-formation-documentation-nadia.md), puis Nadia la fait travailler sur les volumes, les journaux et l'arrêt propre. Jamais sur la production d'un client.
-- **Fenêtre** : du 2026-12-29 au 2027-01-12 (après T-012 ; Nadia libérée de `reservation-coworking` après le 2026-12-18).
+- **Fenêtre** : du 2026-12-30 au 2027-01-14 (après T-012, attendu le 2026-12-30 ; Nadia libérée de `reservation-coworking` après le 2026-12-18). Recalée le 2026-11-27 sur les allocations de P2 (T-016). Marge : 1 jour ouvré avant l'échéance ; si T-012 glisse, voir les leviers de `planning.md` (« Risques planning »).
 - **Coût** : 7 h × 64,29 €/h = **450,00 €** ; formatrice : voir T-011 (192,86 €) ; frais externes : 0 €.
 
 ## Critères d'acceptation
@@ -56,3 +56,4 @@ Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), reg
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 10:40 · agent:chef-de-projet · création (T-001, plan de formation initial ; registre R-05 ; DEC-019, DEC-021) ; en attente de DEC-024 (T-017) · 0 h
+- 2026-11-27 14:30 · agent:chef-de-projet · retenu par DEC-024 (option B, rang 6) ; fenêtre recalée sur P2 : 2026-12-30 → 2027-01-14 (Léa à 10 %, après T-012) (T-016) · 0 h

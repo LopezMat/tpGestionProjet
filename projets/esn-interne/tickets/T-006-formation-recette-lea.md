@@ -28,7 +28,7 @@ imputation_decision:        # DEC-NNN VALIDÉ de docs/decisions/, obligatoire si
 # T-006 — Formation Léa — recette-fonctionnelle en binôme avec Claire
 
 ## Description
-Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), registre R-06). Proposé par T-001, **soumis à l'arbitrage de [T-017](T-017-decision-plan-formation-initial.md) (DEC-024)**.
+Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), registre R-06). Proposé par T-001, **retenu par [DEC-024](../../../docs/decisions/2026-11-27-DEC-024-plan-formation-initial.md) (option B), rang 5 de priorité**. À terminer **au plus tard le 2026-12-18** : la formatrice (T-007) n'a plus d'allocation à `esn-interne` en P2.
 
 - **Compétence** : `recette-fonctionnelle` ; **niveau actuel** : aucun ; **niveau visé** : confirmé, attesté par Claire, puis décidé par un humain.
 - **Candidate** : Léa. Elle n'est l'auteure d'aucun ticket de `reservation-coworking`, condition d'un recetteur (règle 6 du `chef-de-projet`, S3-R1), et son expérience `accessibilite` et `html-css` la place du côté de l'utilisateur.
@@ -56,3 +56,4 @@ Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), reg
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 10:20 · agent:chef-de-projet · création (T-001, plan de formation initial ; registre R-06 ; DEC-009 E) ; en attente de DEC-024 (T-017) · 0 h
+- 2026-11-27 14:30 · agent:chef-de-projet · retenu par DEC-024 (option B, rang 5) ; fenêtre inchangée (pendant T-045, 2026-12-10 → 2026-12-15), au plus tard le 2026-12-18 (Claire à 0 % en P2) (T-016) · 0 h

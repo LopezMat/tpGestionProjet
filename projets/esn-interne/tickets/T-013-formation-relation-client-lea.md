@@ -28,7 +28,7 @@ imputation_decision:        # DEC-NNN VALIDÉ de docs/decisions/, obligatoire si
 # T-013 — Formation Léa — relation-client en binôme avec Claire
 
 ## Description
-Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), registre R-07). Proposé par T-001, **soumis à l'arbitrage de [T-017](T-017-decision-plan-formation-initial.md) (DEC-024)**.
+Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), registre R-07). Proposé par T-001, **retenu par [DEC-024](../../../docs/decisions/2026-11-27-DEC-024-plan-formation-initial.md) (option B), rang 7 de priorité** (premier retiré en cas de manque de capacité). **À terminer au plus tard le 2026-12-18** : la fenêtre se ferme avec `reservation-coworking`, et la formatrice (T-014) est à 0 % en P2. `tableau.py` le place après T-010 (en janvier), parce qu'il ordonne les tickets de Léa par priorité puis par id ; ce placement est un artefact, la date réelle est en P1.
 
 - **Compétence** : `relation-client` ; **niveau actuel** : aucun ; **niveau visé à la fin de ce ticket** : débutant. Le niveau confirmé, exigé par AF1, demandera un projet complet en binôme.
 - **Candidate** : Léa, pour en faire, avec T-006, une seconde personne capable de mener une recette avec le client (AF1 et règle 6 du `chef-de-projet`).
@@ -55,3 +55,4 @@ Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), reg
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 10:55 · agent:chef-de-projet · création (T-001, plan de formation initial ; registre R-07 ; DEC-009 E) ; en attente de DEC-024 (T-017) · 0 h
+- 2026-11-27 14:30 · agent:chef-de-projet · retenu par DEC-024 (option B, rang 7) ; TERMINE au plus tard le 2026-12-18 (sinon, ticket decision : report au prochain contrat ou ANNULE) (T-016) · 0 h

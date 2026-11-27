@@ -28,7 +28,7 @@ imputation_decision:        # DEC-NNN VALIDÉ de docs/decisions/, obligatoire si
 # T-007 — Encadrement de Léa (T-006) — recette fonctionnelle
 
 ## Description
-Temps de formatrice du binôme interne de [T-006](T-006-formation-recette-lea.md) (plan de formation de l'ESN, S1-R13). Proposé par T-001, **soumis à l'arbitrage de [T-017](T-017-decision-plan-formation-initial.md) (DEC-024)**.
+Temps de formatrice du binôme interne de [T-006](T-006-formation-recette-lea.md) (plan de formation de l'ESN, S1-R13). Proposé par T-001, **retenu par [DEC-024](../../../docs/decisions/2026-11-27-DEC-024-plan-formation-initial.md) (option B), rang 5 de priorité**. Allocation de Claire à `esn-interne` : 5 % en P1, **0 % en P2** : ce ticket doit être `TERMINE` au plus tard le 2026-12-18, sinon il devient non planifiable après la bascule du 2026-12-21.
 
 Ce ticket ne compte que le temps d'explication et l'attestation (1 h). Le temps de recette de Claire reste dans `reservation-coworking/T-045`, au budget du client ; le surplus dû à la formation ne doit pas y être reporté.
 
@@ -50,3 +50,4 @@ Ce ticket ne compte que le temps d'explication et l'attestation (1 h). Le temps 
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 10:25 · agent:chef-de-projet · création (T-001, temps de formatrice de T-006) ; en attente de DEC-024 (T-017) · 0 h
+- 2026-11-27 14:30 · agent:chef-de-projet · retenu par DEC-024 (option B, rang 5) ; TERMINE au plus tard le 2026-12-18 (Claire à 0 % en P2) (T-016) · 0 h

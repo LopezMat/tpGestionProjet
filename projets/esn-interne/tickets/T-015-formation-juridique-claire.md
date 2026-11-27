@@ -4,7 +4,7 @@ id: T-015
 titre: Formation Claire — juridique (RGPD du sous-traitant, contrats, violations)
 projet: esn-interne
 type: formation             # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: ANNULE              # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: basse             # critique | haute | normale | basse
 assigne: salarie:claire     # agent:<nom> | salarie:<prenom>
 competence_requise: juridique (debutant)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -28,7 +28,9 @@ imputation_decision:        # DEC-NNN VALIDÉ de docs/decisions/, obligatoire si
 # T-015 — Formation Claire — juridique (RGPD du sous-traitant, contrats, violations)
 
 ## Description
-Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), registre R-08). Proposé par T-001, **soumis à l'arbitrage de [T-017](T-017-decision-plan-formation-initial.md) (DEC-024)**. **Retenu seulement dans l'option A** ; l'option B, recommandée, le remplace par un recours à un conseil juridique externe au cas par cas.
+> **ANNULE le 2026-11-27 : non retenu par [DEC-024](../../../docs/decisions/2026-11-27-DEC-024-plan-formation-initial.md) (option B).** Un besoin juridique est traité par un conseil externe, saisi au cas par cas sur décision humaine (comme pour `reservation-coworking/T-084`). Le risque R-08 (`juridique` absente) est accepté par DEC-024 ; il reste suivi au registre de [planning.md](../planning.md). Le fichier est conservé pour la traçabilité (jamais supprimé).
+
+Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), registre R-08). Proposé par T-001, soumis à l'arbitrage de [T-017](T-017-decision-plan-formation-initial.md) (DEC-024). Retenu seulement dans l'option A ; l'option B, retenue, le remplace par un recours à un conseil juridique externe au cas par cas.
 
 - **Compétence** : `juridique` ; **niveau actuel** : aucun dans l'ESN ; **niveau visé** : débutant, c'est-à-dire savoir qualifier une question juridique et décider quand saisir un conseil. Le niveau confirmé n'est pas réaliste par la formation seule.
 - **Candidate** : Claire. Elle a déjà `rgpd` (confirmé), elle est l'interlocutrice des clients et elle porte les décisions (AF2).
@@ -53,3 +55,4 @@ Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), reg
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 11:05 · agent:chef-de-projet · création (T-001, plan de formation initial ; registre R-08 ; DEC-009 E) ; retenu seulement dans l'option A de T-017 ; en attente de DEC-024 · 0 h
+- 2026-11-27 14:00 · agent:chef-de-projet · A_FAIRE → ANNULE : non retenu par DEC-024 (option B) ; conseil juridique externe au cas par cas, sur décision humaine ; risque R-08 accepté (T-016) · 0 h

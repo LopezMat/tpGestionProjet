@@ -4,7 +4,7 @@ id: T-001
 titre: Plan de formation initial de l'ESN
 projet: esn-interne
 type: tache                 # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: EN_REVUE            # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: agent:chef-de-projet   # agent:<nom> | salarie:<prenom>
 competence_requise: gestion-projet (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
@@ -17,9 +17,9 @@ decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:coordinateur
 cree_le: 2026-11-26
 maj_le: 2026-11-27
-statut_depuis: 2026-11-27   # date du dernier changement de statut (EN_REVUE)
+statut_depuis: 2026-11-27   # date du dernier changement de statut (TERMINE)
 debut_le: 2026-11-27        # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+termine_le: 2026-11-27      # facultatif : date du passage TERMINE
 imputation: esn             # projet interne : toujours esn (R19)
 imputation_decision:        # vide dans esn-interne
 ---
@@ -67,3 +67,4 @@ Le temps de ce ticket est à la charge de l'ESN (R19), jamais du client.
 - 2026-11-27 09:00 · agent:chef-de-projet · A_FAIRE → EN_COURS (DEC-023 `VALIDÉ`, R4) ; lecture d'`equipe/` (fiches, calendrier, agents), de DEC-009 E, DEC-019, DEC-020, DEC-021, DEC-023, S1, `reservation-coworking` (projet.md, planning.md v1.1, TABLEAU.md du 2026-11-27, T-103) · 0 h
 - 2026-11-27 11:20 · agent:chef-de-projet · `planning.md` v0.1 (`EN_REVUE`) : registre de 17 compétences à risque (R-01 à R-17), plan proposé (option B), jalons, contrôle des allocations ≤ 100 % et de la capacité par période (P1 et P2) ; tickets `formation` T-002, T-003, T-004, T-006, T-008, T-010, T-012, T-013, T-015, tickets d'encadrement T-005, T-007, T-009, T-011, T-014, pilotage T-016 ; ticket `decision` T-017 en ATTENTE_HUMAIN (options A, B recommandée, C, D ; DEC-024 attendue) ; aucune écriture dans `equipe/` ni dans `projet.md` · 3 h
 - 2026-11-27 11:25 · agent:chef-de-projet · `python scripts/tableau.py` lancé pour contrôle ; EN_COURS → EN_REVUE (conclusion par le coordinateur, R13). Dépassement de l'estimation (3 h passées pour 1,5 h) : registre plus large que les 6 points demandés, 4 options chiffrées par période · 0 h
+- 2026-11-27 · agent:coordinateur · critères vérifiés (planning.md EN_REVUE, tickets formation T-002 à T-015 dans esn-interne, T-017 présenté en ATTENTE_HUMAIN et tranché par Ethan dans DEC-024 VALIDÉ, equipe/ intact avant la décision) ; EN_REVUE → TERMINE à la demande d'Ethan · 0 h

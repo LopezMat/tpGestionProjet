@@ -28,7 +28,7 @@ imputation_decision:        # DEC-NNN VALIDÉ de docs/decisions/, obligatoire si
 # T-009 — Encadrement de Karim (T-008) — sauvegarde et restauration
 
 ## Description
-Temps de formatrice du binôme interne de [T-008](T-008-formation-sauvegarde-restauration-karim.md) (plan de formation de l'ESN, S1-R13). Proposé par T-001, **soumis à l'arbitrage de [T-017](T-017-decision-plan-formation-initial.md) (DEC-024)**.
+Temps de formatrice du binôme interne de [T-008](T-008-formation-sauvegarde-restauration-karim.md) (plan de formation de l'ESN, S1-R13). Proposé par T-001, **retenu par [DEC-024](../../../docs/decisions/2026-11-27-DEC-024-plan-formation-initial.md) (option B), rang 2 de priorité**. Allocation de Nadia à `esn-interne` : 20 % en P2.
 
 - **Formatrice** : Nadia. Elle prépare la base jetable et la sauvegarde d'exercice (0,5 h), observe la restauration de Karim sans intervenir (1 h), puis corrige le guide de T-012 à partir des écarts relevés et atteste le niveau (0,5 h).
 - **Fenêtre** : du 2027-01-04 au 2027-01-13, en même temps que T-008 (pas le mercredi).
@@ -50,3 +50,4 @@ Temps de formatrice du binôme interne de [T-008](T-008-formation-sauvegarde-res
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 10:35 · agent:chef-de-projet · création (T-001, temps de formatrice de T-008) ; en attente de DEC-024 (T-017) · 0 h
+- 2026-11-27 14:30 · agent:chef-de-projet · retenu par DEC-024 (option B, rang 2) ; fenêtre inchangée (2027-01-04 → 2027-01-13, avec T-008) (T-016) · 0 h

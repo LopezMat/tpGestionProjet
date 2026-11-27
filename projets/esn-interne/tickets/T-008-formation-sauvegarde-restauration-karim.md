@@ -28,7 +28,7 @@ imputation_decision:        # DEC-NNN VALIDÉ de docs/decisions/, obligatoire si
 # T-008 — Formation Karim — sauvegarde-restauration (restauration réelle en binôme avec Nadia)
 
 ## Description
-Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), registre R-04). Proposé par T-001, **soumis à l'arbitrage de [T-017](T-017-decision-plan-formation-initial.md) (DEC-024)**.
+Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), registre R-04). Proposé par T-001, **retenu par [DEC-024](../../../docs/decisions/2026-11-27-DEC-024-plan-formation-initial.md) (option B), rang 2 de priorité**. Allocation de Karim à `esn-interne` : 10 % en P2 (0,7 h par jour ouvré), appliquée par le coordinateur le 2026-12-21. Avec cette allocation, les 5 h tiennent du 2027-01-04 au 2027-01-13, à condition que T-012 soit `TERMINE` au plus tard le 2026-12-31 (projection dans `planning.md`).
 
 - **Compétence** : `sauvegarde-restauration` (avec les commandes `docker` qu'elle demande : volumes, `compose exec`) ; **niveau actuel** : aucun ; **niveau visé** : confirmé, attesté par Nadia, puis décidé par un humain.
 - **Candidat** : Karim. Il est expert `base-de-donnees-sql` (PostgreSQL), ce qui raccourcit la formation, et il travaille le mercredi, jour où Nadia ne travaille pas.
@@ -59,3 +59,4 @@ Ticket du plan de formation de l'ESN (S1-R13, [planning.md](../planning.md), reg
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 10:30 · agent:chef-de-projet · création (T-001, plan de formation initial ; registre R-04 ; DEC-019, DEC-009 E) ; en attente de DEC-024 (T-017) · 0 h
+- 2026-11-27 14:30 · agent:chef-de-projet · retenu par DEC-024 (option B, rang 2) ; fenêtre inchangée (2027-01-04 → 2027-01-13). La date du 2027-01-26 affichée par TABLEAU.md vient de l'allocation de P1 (5 %) appliquée sur toute la durée : artefact jusqu'à la bascule P2 du 2026-12-21 (T-016) · 0 h
