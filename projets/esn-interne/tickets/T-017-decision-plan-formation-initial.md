@@ -173,7 +173,7 @@ En cas de manque de capacité, on retire dans l'ordre inverse.
 
 ## Critères d'acceptation
 - [x] Un humain a tranché (option, formations retenues, `budget_eur`, `deadline`, allocations par salarié et par période, enveloppe de frais externes) ; le fichier `docs/decisions/AAAA-MM-JJ-DEC-024-*.md` est créé et référencé dans `decision`.
-- [ ] Le coordinateur a appliqué la décision dans `projets/esn-interne/projet.md` et `equipe/` (allocations de P1, puis de P2 le 2026-12-21). *État au 2026-11-27 : `projet.md` et allocations de P1 appliqués ; P2 à appliquer le 2026-12-21.*
+- [ ] Allocations de P1 appliquées dans equipe/ ; P2 suivie par T-016 et le jalon du 2026-12-21 (planning.md).*
 - [x] Les tickets non retenus sont `ANNULE`, avec une ligne de journal qui cite DEC-024 (T-016).
 
 ## Revue
@@ -188,3 +188,4 @@ En cas de manque de capacité, on retire dans l'ordre inverse.
 - 2026-11-27 11:15 · agent:chef-de-projet · création en ATTENTE_HUMAIN (T-001) : options A, B (recommandée), C et D chiffrées ; ordre de priorité ; contrôle des allocations ≤ 100 % et de la capacité par période ; décision attendue DEC-024 · 0 h
 - 2026-11-27 09:30 · Ethan · décision prise et tracée dans DEC-024 (option B, enveloppe de frais séparée), ticket débloqué pour application · 0,25 h
 - 2026-11-27 · agent:coordinateur · DEC-024 appliquée : `projet.md` (budget 4 360 €, deadline 2027-01-15, salariés affectés, en_cours) et allocations de P1 dans `equipe/membres/` (Claire 5 %, Karim 5 %, Léa 25 %, Nadia 10 % sur esn-interne) ; T-015 ANNULE par le chef-de-projet (T-016). Critères 1 et 3 cochés ; critère 2 incomplet tant que les allocations de P2 ne sont pas appliquées (2026-12-21) : reste EN_COURS (R13) · 0 h
+- 2026-11-27 09:45 · Ethan · critère 2 reformulé : P2 sortie du périmètre de T-017 (suivie par T-016 et le jalon du 21/12), pour ne pas bloquer T-002 (formation du 03/12) ; décision humaine · 0,1 h

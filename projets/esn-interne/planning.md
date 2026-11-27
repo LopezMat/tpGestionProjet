@@ -1,11 +1,11 @@
 ---
 titre: Planning — ESN (projet interne) : plan de formation initial
-statut: EN_REVUE
+statut: VALIDÉ
 responsable: agent:chef-de-projet
-version: 0.2
+version: 1.0
 maj_le: 2026-11-27
-valide_par:
-decision:
+valide_par: Ethan
+decision: DEC-024
 ---
 <!-- modèle : templates/planning.md v0.1 · responsable du modèle : A -->
 
