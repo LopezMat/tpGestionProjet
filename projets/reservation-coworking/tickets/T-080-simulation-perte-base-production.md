@@ -118,7 +118,7 @@ Post-mortem complet : [post-mortem-2026-11-26-perte-donnees.md](../rapports/post
 - **Avis relecteur-code** : sans objet (incident)
 - **Commentaires** :
 - **Revue humaine requise** : oui (priorité critique)
-- Revue humaine : Ethan, 2026-11-27, conforme pour une crise simulée : post-mortem validé (DEC-019), suites T-081 et T-083 terminées. Réserve : la sauvegarde quotidienne n'existe pas encore (T-029 A_FAIRE, prérequis du GO) et aucune restauration réelle n'a été testée.
+- **Revue humaine** : Ethan, 2026-11-27, conforme pour une crise simulée : post-mortem validé (DEC-019), suites T-081 et T-083 terminées. Réserve : la sauvegarde quotidienne n'existe pas encore (T-029 A_FAIRE, prérequis du GO) et aucune restauration réelle n'a été testée.
 
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->

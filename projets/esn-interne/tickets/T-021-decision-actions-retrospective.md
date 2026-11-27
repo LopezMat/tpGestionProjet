@@ -105,5 +105,5 @@ Parmi les actions A1 à A10 proposées par le retex de la semaine, **lesquelles 
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-27 · agent:chef-de-projet · création en ATTENTE_HUMAIN (T-020) : actions A1 à A10 chiffrées, options 1 à 4, option 2 recommandée (112,50 €), projeté d'esn-interne à 88,0 %, sous le seuil de 3 924 €. Heure non indiquée : l'agent n'a pas accès à l'horloge · 0 h
 - 2026-11-27 · agent:coordinateur · décision d'Ethan reçue (option 2, avec son « pourquoi ») et tracée dans DEC-025 (`EN_REVUE`, skill `tracer-decision`) ; ticket laissé `ATTENTE_HUMAIN` : le champ `decision` et le déblocage reviennent à l'humain (R7) · 0 h
-- 2026-11-27 · Ethan · 0,5 h · Actions de la rétro choisies (option 2), DEC-025 validée, ticket débloqué.
+- 2026-11-27 · Ethan · Actions de la rétro choisies (option 2), DEC-025 validée, ticket débloqué · 0,5 h
 - 2026-11-27 10:58 · agent:chef-de-projet · application de DEC-025 : A1 ajoutée au périmètre de T-019 (priorité haute) ; tickets amelioration créés : T-022 (cadrage A7, haute, 1 h), T-023 (PR de règles A2-A3-A4, normale, 1,5 h), T-024 (PR de règles A6, normale, 0,5 h). A5 reporté au retex de reservation-coworking (ou plus tôt en cas de récidive) ; A8, A9 et A10 sans ticket (pratiques sans coût, plan de formation inchangé) · 0 h

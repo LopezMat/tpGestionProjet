@@ -73,6 +73,5 @@ Taux : agent 15 €/h ; Karim 78,57 €/h ; Nadia 64,29 €/h (ARCHITECTURE § 8
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-25 23:50 · agent:chef-de-projet · création, ATTENTE_HUMAIN (triage du constat 10 du rapport securite-2026-11-25-3) ; temps d'analyse compté dans T-008 · 0 h
-- 2026-11-27 · Ethan · 0,25 h · Tranché par DEC-013 (validée le 25/11), ticket débloqué.
 - 2026-11-27 · Ethan · Tranché par DEC-013 (validée le 25/11), ticket débloqué · 0,25 h
 - 2026-11-27 11:00 · agent:coordinateur · critère 4 coché après vérification : suite de DEC-013 appliquée par le `chef-de-projet` (T-058, T-044, T-047 ; temps compté dans T-008). Tous les critères sont désormais remplis pour le statut `TERMINE` posé par Ethan (R13) · 0 h
