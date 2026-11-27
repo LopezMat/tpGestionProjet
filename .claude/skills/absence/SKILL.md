@@ -18,8 +18,8 @@ Dès qu'une absence d'un salarié est connue, qu'elle soit prévue ou imprévue.
 1. **Collecter** le prénom, les dates et le type.
 2. **Coordinateur : ajouter l'événement** `absence` dans `equipe/calendrier.md` (id `EV-NNN` suivant, `capacite_pct: 0`, `statut: prevu`).
    - Si l'absence commence aujourd'hui : fiche en `statut: conges` ; sinon, la fiche reste `actif` (le calendrier fait foi pour la capacité).
-3. **Coordinateur : créer un ticket `decision`** « Absence de <prénom> du <début> au <fin> » dans chaque projet où il est alloué : `statut: A_FAIRE`, `assigne: agent:chef-de-projet`.
-4. **Lancer `chef-de-projet`, une fois par projet.** Il écrit dans la Description :
+3. **Coordinateur : créer un ticket `decision`** « Absence de <prénom> du <début> au <fin> » dans `projets/esn-interne/` (CLAUDE.md § 5, R19) : `statut: A_FAIRE`, `assigne: agent:chef-de-projet`. La Description liste les projets où le salarié est alloué.
+4. **Lancer `chef-de-projet`.** Il écrit dans la Description, pour chaque projet où le salarié est alloué :
    - les tickets du salarié dont la fenêtre prévue chevauche l'absence (S1-R9) ;
    - pour chacun, les options : réaffecter (agent ou salarié selon AF1 à AF10), décaler après le retour, binôme ;
    - la date de fin projetée recalculée et l'écart avec la deadline ;
@@ -36,10 +36,12 @@ Dès qu'une absence d'un salarié est connue, qu'elle soit prévue ou imprévue.
   *Pourquoi :* CLAUDE.md § 5 impose une décision pour tout événement d'équipe ; elle confirme aussi que l'absence est bien enregistrée.
 - **Le motif n'est enregistré que sous sa forme générique** (`conges`, `maladie`, `formation`, `autre`).
   *Pourquoi :* une donnée de santé ou personnelle n'a rien à faire dans un dépôt versionné.
+- **Le ticket `decision` est dans `esn-interne`**, jamais dans un projet client.
+  *Pourquoi :* un événement d'équipe relève de la vie interne de l'ESN ; son analyse n'a pas à peser sur un budget client (DEC-021, DEC-023).
 
 ## Produit
 - un événement `absence` dans le calendrier (et la fiche en `conges` si l'absence a commencé) ;
-- un ticket `decision` par projet avec l'analyse d'impact ;
+- un ticket `decision` dans `esn-interne` avec l'analyse d'impact, projet par projet ;
 - après la décision : réaffectations ou décalages, fichier DEC.
 
 ## Point d'arrêt humain

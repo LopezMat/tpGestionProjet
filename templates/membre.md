@@ -11,12 +11,12 @@ date_depart:                  # vide si aucun départ prévu
 competences:                  # niveau : debutant | confirme | expert
   - nom: <compétence>
     niveau: confirme
-allocation:                   # % de la capacité par projet ; total ≤ 100
+allocation:                   # % de la capacité par projet, esn-interne compris (formations, R19) ; total ≤ 100
   <slug-projet>: 100
 responsable: B
 maj_le: AAAA-MM-JJ
 ---
-<!-- modèle : templates/membre.md v0.1 · responsable du modèle : A -->
+<!-- modèle : templates/membre.md v0.2 · responsable du modèle : A -->
 
 # <Prénom> — <rôle>
 
@@ -24,4 +24,4 @@ maj_le: AAAA-MM-JJ
 <préférences, contraintes, historique d'intégration ou de passation>
 
 ## Formations suivies / prévues
-- T-… <formation>
+- esn-interne/T-… <formation> (plan de formation de l'ESN, S1-R13)

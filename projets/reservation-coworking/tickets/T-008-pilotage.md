@@ -33,8 +33,8 @@ Estimation : planification initiale 4 h (découpage, estimation, affectation, pl
 ## Critères d'acceptation
 - [ ] `planning.md` produit et soumis à validation (T-007).
 - [ ] Chaque intervention du `chef-de-projet` a une ligne de journal et son temps.
-- [ ] `retex.md` complété en fin de projet, avec ses tickets `amelioration` et `formation`.
-- [ ] **Condition 1 de DEC-020 (SIMULATION)** : à chaque passage du skill `avancement`, le **coût client** (coût projeté de `TABLEAU.md` moins la part imputée à l'ESN, recalculée sur les tickets qui portent la ligne « imputé à l'ESN (DEC-020) ») est comparé à 4 200 € HT, et le calcul est noté au journal de ce ticket. Dès que le consommé client atteint 90 % (3 780 €), ou dès qu'un dépassement de 4 200 € est prévisible, un ticket `decision` `ATTENTE_HUMAIN` est créé **avant** d'engager le travail concerné (options : avenant ou retrait de périmètre, discussion avec le client par Claire, AF1) ; aucun dépassement n'est absorbé d'office par l'ESN.
+- [ ] `retex.md` complété en fin de projet, avec ses tickets `amelioration`, et les tickets `formation` dans `projets/esn-interne/` (S1-R6, DEC-023).
+- [ ] **Condition 1 de DEC-020 (SIMULATION)** : à chaque passage du skill `avancement`, le **coût client** est comparé à 4 200 € HT, et le calcul est noté au journal de ce ticket. Depuis DEC-023, c'est la ligne « Coût client projeté à terminaison » de `TABLEAU.md`, calculée par `tableau.py` à partir du champ `imputation` des tickets (R18), sans soustraction manuelle. Seul ajout manuel tant que T-043 n'est pas ré-estimé : l'audit avant le GO, environ 75 €. Dès que le consommé client atteint 90 % (3 780 €), ou dès qu'un dépassement de 4 200 € est prévisible, un ticket `decision` `ATTENTE_HUMAIN` est créé **avant** d'engager le travail concerné (options : avenant ou retrait de périmètre, discussion avec le client par Claire, AF1) ; aucun dépassement n'est absorbé d'office par l'ESN.
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
@@ -66,3 +66,4 @@ Estimation : planification initiale 4 h (découpage, estimation, affectation, pl
   - avec T-105 (1,5 h, 22,50 €) et la revue et la vérification induites (1 h, 15,00 €, non comptées par le tableau) : **4 211,43 €, soit un dépassement prévisible de 11,43 €**.
 
   **Alerte déclenchée** : ticket `decision` `ATTENTE_HUMAIN` à créer par le coordinateur **avant d'engager** le correctif. Le défaut est couvert par la garantie de livraison (CDC § 9) s'il est confirmé. Consommé client 1 371,29 € (32,6 %, cette intervention comprise ; seuil 3 780 €). `tableau.py` lancé · 0,5 h
+- 2026-11-26 · agent:coordinateur · migration DEC-023 (R18) : critère « Condition 1 » réécrit (le coût client se lit dans `TABLEAU.md`, plus de soustraction manuelle) ; 23 tickets portent désormais `imputation: esn` (DEC-020, DEC-021) ; T-104 reste au client (décision d'Ethan dans DEC-023). L'écart de 175 € avec la part ESN manuelle (1 782,50 €) vient de T-081 et T-083, clos TERMINE sans temps passé, et non d'une ré-estimation (DEC-023). Le temps de cette migration n'est pas compté au client · 0 h

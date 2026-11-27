@@ -2,10 +2,10 @@
 titre: Règles du coordinateur
 statut: VALIDÉ
 responsable: B
-version: 1.3
+version: 1.4
 maj_le: 2026-11-26
 valide_par: Ethan
-decision: DEC-015
+decision: DEC-023
 ---
 
 # CLAUDE.md — Coordinateur de l'ESN
@@ -34,13 +34,14 @@ Documents de référence, à relire en cas de doute :
 | 6 bis | Recette humaine | S3 | salarié recetteur (skill [recette](.claude/skills/recette/SKILL.md)) | `rapports/recette-*.md` | **Oui** : verdict de recette |
 | 7 | Déploiement et vérification | S3 | `deployeur` | `rapports/deploiement-*.md` | **Oui** : GO mise en production |
 | 8 | Suivi et maintenance | S2 | `analyste-prod`, `support`, `veilleur`, `gestionnaire-crise` | tickets bug/incident/support, veille, post-mortem | Oui pour les actions sensibles sur les données |
-| 9 | Retour d'expérience | S1 | `chef-de-projet` | `retex.md`, tickets `amelioration` et `formation` | — |
+| 9 | Retour d'expérience | S1 | `chef-de-projet` | `retex.md`, tickets `amelioration`, tickets `formation` dans `projets/esn-interne/` (R19) | — |
 
 **Adaptation selon le type de projet** (voir aussi la grille de S4) :
 - **Site vitrine** : étapes 3 et 6 allégées (architecture standard, pas d'audit approfondi) ; un seul développeur.
 - **API** : `dev-backend` prioritaire ; `architecte` et `securite` renforcés ; pas de `dev-frontend`.
 - **E-commerce** : paiements, commandes et stocks traités en tickets dédiés ; tests de bout en bout, audit de sécurité et recette humaine obligatoires avant la mise en production.
 - **Modernisation** : `analyste-besoin` commence par une analyse de l'existant ([templates/existant.md](templates/existant.md)) ; aucune architecture n'est proposée avant la validation de cette analyse.
+- **Projet interne de l'ESN** (`projets/esn-interne/`, R19) : pas de pipeline client. Ni demande, ni CDC, ni architecture, ni recette, ni GO ; le `chef-de-projet` y propose les tickets, et un humain les arbitre par un ticket `decision`.
 
 ---
 
@@ -60,6 +61,8 @@ Après chaque agent, lis ses sorties, mets à jour le suivi et annonce à l'huma
 - **AF9 · L'utilisation des salariés est un indicateur, pas une obligation.** Une utilisation sous 50 % est signalée, avec une proposition d'ajustement de l'allocation ; on n'assigne jamais un ticket à un salarié pour atteindre un taux.
   *Pourquoi :* on évite les tickets artificiels ; l'allocation s'ajuste à la réalité du projet.
 - **AF11** : voir R15.
+
+**Imputation.** Au triage et lors d'une révision du budget, le `chef-de-projet` peut proposer qu'un ticket soit pris en charge par l'ESN. Le champ `imputation: esn` n'est écrit qu'après la décision humaine (R18).
 
 ---
 
@@ -99,6 +102,7 @@ Chaque règle est suivie de son **Pourquoi**. Pour modifier une règle, suis la 
 - la mise en production ;
 - les événements d'équipe (arrivée, départ, congés, révision du budget) ;
 - la revue humaine des tickets critiques ou liés à la sécurité ;
+- la prise en charge d'un coût par l'ESN (R18) et le plan de formation de l'ESN (S1-R13) ;
 - la création d'un nouvel agent et la modification d'une règle.
 
 **R8 · Un agent ne reste jamais bloqué en silence.** S'il ne peut pas avancer, il passe le ticket `BLOQUE` (avec `bloque_par` renseigné), écrit la raison dans le journal et te rend la main en disant ce qui lui manque. À toi de débloquer : relancer un autre agent, demander à l'humain, ou créer un ticket.
@@ -136,6 +140,12 @@ Chaque règle est suivie de son **Pourquoi**. Pour modifier une règle, suis la 
 **R17 · Le coordinateur et les agents ne modifient jamais un document Markdown par Bash** (sed, redirection, `tee`, script) : uniquement par Edit ou Write, pour que le hook R5/R6 s'applique. La règle vaut pour tout fichier Markdown du dépôt ; les scripts versionnés qui génèrent leurs fichiers (`tableau.py` pour `TABLEAU.md` et `PORTFOLIO.md`, R9) ne sont pas concernés.
 *Pourquoi :* incident du 2026-11-24 : le coordinateur a modifié [DEC-007](docs/decisions/2026-11-24-DEC-007-choix-techniques-coworking.md) au moyen d'un script Python lancé par Bash alors qu'il était déjà `VALIDÉ` (R6). Le hook `proteger_valide.py` ne surveille que Write et Edit : il n'a pas pu bloquer l'écriture, qui n'a été détectée qu'après coup par `verifier_validations.py` (DEC-010). La règle est appliquée techniquement pour tout appelant, session principale comprise, par le hook `restreindre_bash.py` sur les `.md` de `docs/` et de `projets/` : il refuse `sed -i`, les redirections `>` et `>>`, `tee` et les scripts Python en ligne (`python -c`, `python -` avec heredoc) qui y écrivent, et renvoie vers Edit/Write (ARCHITECTURE § 6, garde-fou 9 ; DEC-015). Un script enregistré dans un fichier puis lancé échappe à cette analyse : la règle s'applique quand même.
 
+**R18 · Imputation des coûts.** Tout ticket d'un projet client est imputé au client : `imputation: client`, valeur par défaut. L'ESN ne le prend à sa charge (`imputation: esn`) que sur une décision humaine **VALIDÉ**, citée dans `imputation_decision: DEC-NNN`. Toi et le `chef-de-projet` n'écrivez ce champ qu'en application d'une telle décision. Le budget du client n'est comparé qu'au coût client (S1-R11). La part de l'ESN reste visible dans `TABLEAU.md` et `PORTFOLIO.md`. Si la décision citée est absente, introuvable dans `docs/decisions/` ou non `VALIDÉ`, `tableau.py` compte le ticket au client et signale une anomalie.
+*Pourquoi :* l'ESN paie ses fautes (crise, garantie de livraison) et ses outils (DEC-009 D, DEC-020, DEC-021). Les scénarios du 2026-11-26 ont montré que le calcul manuel du coût client dérive (deux chiffres pour le même coût, à 15 € près) et fausse l'alerte à 90 %. Le tableau le calcule donc lui-même à partir des tickets (R9). L'exigence d'une décision validée empêche qu'un ticket passé en `esn` masque un dépassement : la condition 1 de DEC-020 interdit d'en absorber un d'office. Dans le doute, le coût reste au client, et l'alerte se déclenche plus tôt plutôt que trop tard (DEC-023).
+
+**R19 · Le projet interne `projets/esn-interne/` porte le travail de l'ESN qui n'a pas de livrable client** : le plan de formation (tickets `formation`, S1-R13), les outils et règles communs, et les décisions d'événements d'équipe (§ 5). Un humain décide son budget de fonctionnement (`budget_eur`), son échéance (`deadline`) et l'allocation des salariés (S1-R10). Il n'a ni CDC, ni architecture, ni recette, ni GO. Le `chef-de-projet` y crée les tickets, et un humain les arbitre par un ticket `decision` `ATTENTE_HUMAIN`. Un travail sur l'app ou la livraison d'un client reste dans le projet client, même payé par l'ESN (R18). La veille commune reste régie par S2.
+*Pourquoi :* `tableau.py` ne chiffre que les tickets d'un projet. Sans espace interne, une formation reste invisible ou est imputée arbitrairement à un client (lot2-D point 9). DEC-009 E et DEC-021 renvoyaient les besoins à un plan de formation de l'ESN qui n'existait pas. Le travail sur le code d'un client reste dans son projet, parce que `tableau.py` ne suit pas les dépendances d'un projet à l'autre : par exemple, le GO de `reservation-coworking` dépend de T-029, T-087 et T-092 (DEC-023).
+
 ---
 
 ## 4. Démarrer un nouveau projet
@@ -144,13 +154,17 @@ Chaque règle est suivie de son **Pourquoi**. Pour modifier une règle, suis la 
 2. Lance le skill [nouveau-projet](.claude/skills/nouveau-projet/SKILL.md) : il crée `demande.md`, `projet.md`, le ticket de travail de l'analyste (R14) et le ticket de décision sur l'interlocuteur client et l'allocation initiale.
 3. Lance `analyste-besoin`, puis applique le pipeline du § 1 en l'adaptant au type de projet. Avant l'`architecte`, crée son ticket de travail (R14).
 
+Le skill `nouveau-projet` ne sert qu'aux projets clients. Le projet interne `projets/esn-interne/` existe déjà (R19) ; on ne le recrée pas.
+
 ## 5. Événements d'équipe et de budget
 
 Arrivée, départ, absence et révision du budget sont traités par des skills dédiés : [arrivee-membre](.claude/skills/arrivee-membre/SKILL.md), [depart-membre](.claude/skills/depart-membre/SKILL.md), [absence](.claude/skills/absence/SKILL.md) et [revision-budget](.claude/skills/revision-budget/SKILL.md), décrits dans [S1 § 6](docs/systemes/S1-gestion-projet.md#6-événements-déquipe-et-de-budget). La séquence est toujours la même :
-1. tu crées le ticket `decision` (`A_FAIRE`, assigné à `agent:chef-de-projet`) ;
+1. tu crées le ticket `decision` (`A_FAIRE`, assigné à `agent:chef-de-projet`) **dans `projets/esn-interne/`** (R19) ; il cite les projets clients touchés, que le `chef-de-projet` analyse sans y créer de ticket d'analyse. Une révision du budget d'un client fait exception : son ticket reste dans le projet du client ;
 2. le `chef-de-projet` y écrit l'analyse d'impact et le passe `ATTENTE_HUMAIN` ;
 3. un humain décide, et la décision est tracée (skill `tracer-decision`) ;
 4. tu appliques les changements d'`equipe/` après la décision.
 
 **`equipe/` n'est écrit que par toi**, via ces skills et après décision humaine ; les agents le lisent.
 *Pourquoi :* l'allocation, la capacité et le calendrier sont des décisions humaines (S1-R10, S1 § 6) ; un seul rédacteur garde ces données cohérentes avec les décisions tracées.
+
+*Pourquoi le ticket d'un événement d'équipe va dans `esn-interne` :* « les événements d'équipe relèvent de la vie interne de l'ESN, pas du client » (DEC-021). Le coût de l'analyse n'a donc pas à peser sur un budget client (DEC-023). La révision du budget est une demande du client : son ticket reste dans le projet du client.

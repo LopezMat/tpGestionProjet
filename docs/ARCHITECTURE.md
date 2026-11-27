@@ -2,10 +2,10 @@
 titre: Architecture du système multi-agents
 statut: VALIDÉ
 responsable: B
-version: 1.6
+version: 1.7
 maj_le: 2026-11-26
 valide_par: Ethan
-decision: DEC-018
+decision: DEC-023
 ---
 
 # ARCHITECTURE — le « comment » de l'ESN virtuelle
@@ -100,6 +100,9 @@ Légende : `(A)`, `(B)`, `(C)` ou `(D)` désigne le responsable ; `[gén.]` sign
 │   ├── qui_fait_quoi.py  qui_fait_quoi_modele.html  test_qui_fait_quoi.py           (D) page
 │   │                                 « qui fait quoi », lecture seule, sortie hors Git (DEC-014)
 │   └── fixtures/                     (C) faux Docker et mini-app des tests
+├── projets/esn-interne/              projet interne de l'ESN (CLAUDE.md R19, DEC-023) : type_projet interne ;
+│                                     projet.md, planning.md (plan de formation, S1-R13), tickets/, TABLEAU.md [gén.] ;
+│                                     ni demande, ni CDC, ni architecture, ni app/
 └── projets/<slug>/
     ├── demande.md  projet.md  existant.md (modernisation)  cdc.md  architecture.md  planning.md  retex.md
     ├── tickets/T-NNN-<titre-court>.md
@@ -267,19 +270,22 @@ Format complet : [templates/ticket.md](../templates/ticket.md). Règles détaill
 - **Statuts** : `A_FAIRE`, `EN_COURS`, `EN_REVUE`, `BLOQUE`, `ATTENTE_HUMAIN`, `TERMINE`, `ANNULE`.
 - **Un ticket `decision` porte l'attente, le fichier de `docs/decisions/` porte la trace.** Ils sont liés par l'id (`decision: DEC-NNN` dans le ticket, `ticket: T-NNN` dans la décision).
 - **Champs ajoutés par DEC-002** : `competence_requise` (obligatoire, nom du référentiel d'`equipe/agents.md` et niveau) ; `statut_depuis`, `debut_le`, `termine_le` (facultatifs, tenus par celui qui change le statut). Quand ils manquent, `tableau.py` retombe sur les estimations décrites ci-dessous.
+- **Champs ajoutés par DEC-023** : `imputation` (`client` par défaut, ou `esn`) et `imputation_decision` (`DEC-NNN`, obligatoire si `esn`), voir CLAUDE.md R18. Pour un projet, `type_projet: interne` désigne le projet interne de l'ESN (R19).
 
 **Formules du tableau de bord** (`scripts/tableau.py`) :
 - Avancement = Σ estimation des tickets TERMINE ÷ Σ estimation des tickets hors ANNULE.
 - **Temps restant = Σ max(0, estimation_h − temps_passe_h)** sur les tickets qui ne sont ni TERMINE ni ANNULE.
 - Capacité d'un salarié sur une période = heures/semaine × allocation au projet (%) × jours disponibles (d'après `equipe/calendrier.md`).
-- Budget consommé = Σ temps_passe_h × taux horaire de l'assigné (§ 8).
+- Budget consommé = Σ temps_passe_h × taux horaire de l'assigné (§ 8), sur les tickets **imputés au budget du projet**. Pour un projet client, ce sont les tickets `imputation: client` : c'est le coût client. Pour un projet `interne`, ce sont tous les tickets (budget de fonctionnement).
+- **Part prise en charge par l'ESN** (projet client) = la même formule sur les tickets `imputation: esn`. Seuls comptent ceux dont `imputation_decision` cite une décision `VALIDÉ` de `docs/decisions/` ; les autres sont comptés au client et signalés en anomalie. **Coût total** = coût client + part ESN. `PORTFOLIO.md` consolide les parts ESN et les projets internes, et liste les tickets `formation` ouverts des projets internes (plan de formation, S1-R13).
 
 **Hypothèses de calcul** (appliquées par `tableau.py` et rappelées dans chaque `TABLEAU.md`) :
 - **Capacité d'un agent : 7 h équivalent humain par jour ouvré, un ticket à la fois** ; des agents différents travaillent en parallèle. Constante `CAPACITE_AGENT_H_JOUR`, révisable par décision.
 - **Capacité d'un salarié** : `capacite_h_semaine ÷ 5 × allocation au projet × capacite_pct` du calendrier. Elle est nulle avant l'arrivée, après le départ, et pour un salarié `parti`. Un temps partiel est moyenné sur 5 jours.
 - **Jours ouvrés** : hors samedis, dimanches et jours fériés d'`equipe/calendrier.md`.
 - **Ordonnancement** à partir de la date du jour : dépendances, puis priorité (critique → basse), puis id ; un ticket à la fois par assigné et par projet (l'allocation sépare les projets, S1-R10). Les tickets `BLOQUE` et `ATTENTE_HUMAIN` sont supposés débloqués le jour même, ce qui rend la date optimiste. Un ticket est **non planifiable** s'il est sans capacité, s'il ne peut pas finir avant le départ de son assigné ou s'il est pris dans un cycle ; il lève une alerte.
-- **Budget consommé** : compte aussi le temps des tickets `ANNULE`, puisqu'il a été dépensé. **Coût projeté à terminaison** = consommé + Σ reste × taux.
+- **Budget consommé** : compte aussi le temps des tickets `ANNULE`, puisqu'il a été dépensé. **Coût projeté à terminaison** = consommé + Σ reste × taux. Les deux se calculent séparément pour le coût client et pour la part ESN (R18).
+- **Sans ticket `imputation: esn` ni projet `interne`**, `TABLEAU.md` et `PORTFOLIO.md` sont identiques à ceux d'avant DEC-023 : les lignes et sections propres à l'ESN n'apparaissent que si elles ont un contenu.
 - **Utilisation (AF9)** : heures restantes assignées ÷ capacité allouée, d'aujourd'hui à la deadline (ou à la fin projetée si la deadline est passée). Signalée sous 50 % (information) et au-dessus de 100 % (surcharge).
 - **« Sans mise à jour »** : la date retenue est la plus récente entre `maj_le` et la dernière ligne du journal (ou `statut_depuis` s'il existe).
 - **Gantt des tickets terminés** : de `debut_le` à `termine_le`, à défaut de `cree_le` à `maj_le`.
@@ -287,7 +293,7 @@ Format complet : [templates/ticket.md](../templates/ticket.md). Règles détaill
 
 *Pourquoi :* un chiffre du tableau de bord doit pouvoir s'expliquer en soutenance ; une hypothèse écrite seulement dans le code n'est pas une règle de l'équipe.
 
-**Alertes** : deadline dépassée en projection ; budget consommé supérieur à 90 % ; ticket critique ouvert ; ticket EN_COURS sans mise à jour depuis plus de **2 jours ouvrés** ; préavis de départ inférieur à **5 jours ouvrés** ; affectation d'un salarié pendant une absence (S1-R9) ; ticket non planifiable ; surcharge d'un salarié ; allocation totale d'un salarié supérieure à 100 % (S1-R10).
+**Alertes** : deadline dépassée en projection ; budget consommé supérieur à 90 % (coût client pour un projet client, budget de fonctionnement pour un projet interne, S1-R11) ; ticket critique ouvert ; ticket EN_COURS sans mise à jour depuis plus de **2 jours ouvrés** ; préavis de départ inférieur à **5 jours ouvrés** ; affectation d'un salarié pendant une absence (S1-R9) ; ticket non planifiable ; surcharge d'un salarié ; allocation totale d'un salarié supérieure à 100 % (S1-R10).
 
 **Régénération** : `tableau.yml` commite TABLEAU/PORTFOLIO **seulement s'il y a des changements**, avec `[skip ci]` et un groupe `concurrency`. En cas de conflit, on régénère au lieu de résoudre à la main.
 
@@ -359,4 +365,4 @@ L'ordre des lots 2 à 6 est indicatif. L'état d'avancement des lots est suivi d
 | **C** | `testeur`, `securite`, `relecteur-code`, `deployeur`, `settings.json` et hooks, workflows, sauvegardes et rollback, S3 |
 | **D** | `veilleur`, `analyste-prod`, `support`, `gestionnaire-crise`, `runbooks/`, `scripts/tableau.py` et ses tests, S2 |
 
-**Interface entre responsables :** `tableau.py` (D) lit les formats de `templates/ticket.md` et `templates/membre.md` (A). Ces formats sont figés par DEC-001 ; toute modification passe par R11 et doit être signalée à D.
+**Interface entre responsables :** `tableau.py` (D) lit les formats de `templates/ticket.md`, `templates/projet.md` et `templates/membre.md` (A). Ces formats sont figés par DEC-001 ; toute modification passe par R11 et doit être signalée à D. Dernière modification : DEC-023 (`imputation`, `imputation_decision`, `type_projet: interne`).

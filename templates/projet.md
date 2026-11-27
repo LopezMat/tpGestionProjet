@@ -9,16 +9,16 @@ decision:
 # Champs propres au projet (lus par scripts/tableau.py, ne pas renommer)
 slug: <slug-client>
 client: <nom>
-type_projet: vitrine        # vitrine | ecommerce | api | metier | modernisation
+type_projet: vitrine        # vitrine | ecommerce | api | metier | modernisation | interne (projet interne de l'ESN, R19)
 etat_projet: cadrage        # cadrage | en_cours | en_pause | livre | maintenance | clos
-budget_eur: 0
-deadline: AAAA-MM-JJ
-hebergement: local          # production locale Docker (DEC-003) ; autre hébergeur = décision humaine
-url_prod: http://localhost:8080   # port fixe, propre à chaque projet
+budget_eur: 0               # budget du client (S1-R11) ; pour interne : budget de fonctionnement de l'ESN
+deadline: AAAA-MM-JJ        # pour interne : échéance du plan (S1-R13)
+hebergement: local          # production locale Docker (DEC-003) ; autre hébergeur = décision humaine ; interne : aucun
+url_prod: http://localhost:8080   # port fixe, propre à chaque projet ; interne : vide
 agents_mobilises: []        # ex. [analyste-besoin, architecte, dev-backend]
 salaries_affectes: []       # ex. [prenom1, prenom2]
 ---
-<!-- modèle : templates/projet.md v0.2 · responsable du modèle : A -->
+<!-- modèle : templates/projet.md v0.3 · responsable du modèle : A -->
 
 # Fiche projet — <client>
 

@@ -2,8 +2,14 @@
 """tableau.py : génère projets/<slug>/TABLEAU.md et PORTFOLIO.md à partir des tickets.
 
 Responsable : D · Lot 2 (D) · voir R9, R12, ARCHITECTURE § 7 (formules, alertes) et § 8 (taux),
-DEC-001 § 4 (temps restant), S1 (S1-R3, R8 à R12), critères AF9 et AF11 du chef-de-projet,
+DEC-001 § 4 (temps restant), S1 (S1-R3, R8 à R13), critères AF9 et AF11 du chef-de-projet,
 docs/a-integrer/lot2-B.md (point 6) et lot2-D.md.
+
+Imputation des coûts (R18, DEC-023) : un ticket d'un projet client est compté au client, sauf
+`imputation: esn` avec `imputation_decision: DEC-NNN` qui cite une décision VALIDÉ de docs/decisions/ ;
+il sort alors du coût client (comparé au budget, S1-R11) et entre dans la part de l'ESN. Projet interne
+(`type_projet: interne`, R19) : tous ses tickets sont à la charge de l'ESN, comparés à son budget de
+fonctionnement. Sans ticket `esn` ni projet interne, la sortie est identique à celle d'avant DEC-023.
 
 Les tickets sont la source de vérité (R9). Ce script est le SEUL à écrire TABLEAU.md et
 PORTFOLIO.md, et il n'écrit RIEN d'autre. Un fichier n'est réécrit que si son contenu change.
@@ -52,6 +58,9 @@ ENCADRE = ("> **Fichier généré** le {d} par `scripts/tableau.py` à partir de
 RE_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 RE_JOURNAL = re.compile(r"^\s*-\s*(\d{4}-\d{2}-\d{2})(?:\s+\d{1,2}:\d{2})?\s*·\s*(.*)$")
 RE_TICKET_ID = re.compile(r"^T-\d+$")
+RE_DEC_ID = re.compile(r"^DEC-\d{3}$")
+RE_FICHIER_DEC = re.compile(r"^\d{4}-\d{2}-\d{2}-(DEC-\d{3})-.*\.md$")
+TYPE_INTERNE = "interne"          # type_projet du projet interne de l'ESN (R19)
 
 
 # ============================================================================ utilitaires
@@ -169,6 +178,21 @@ def lister(dossier, suffixe=".md", prefixe=""):
         return []
     return sorted(n for n in noms if n.endswith(suffixe) and n.startswith(prefixe)
                   and os.path.isfile(os.path.join(dossier, n)))
+
+
+def decisions_connues(racine):
+    """{'DEC-NNN': True si VALIDÉ} pour les fichiers AAAA-MM-JJ-DEC-NNN-*.md de docs/decisions/ (R18).
+    Le statut est normalisé comme le hook (accents, casse) ; un frontmatter illisible vaut non validé."""
+    dossier = os.path.join(racine, "docs", "decisions")
+    connues = {}
+    for nom in lister(dossier):
+        m = RE_FICHIER_DEC.match(nom)
+        if not m:
+            continue
+        fm, _, err = lire_frontmatter(os.path.join(dossier, nom))
+        valide = not err and sans_accents(texte(fm.get("statut"))).upper() == "VALIDE"
+        connues[m.group(1)] = connues.get(m.group(1), False) or valide
+    return connues
 
 
 # ============================================================================ équipe
@@ -401,6 +425,10 @@ class Ticket:
         self.statut_depuis = en_date(fm.get("statut_depuis"))
         self.debut_le = en_date(fm.get("debut_le"))
         self.termine_le = en_date(fm.get("termine_le"))
+        # Imputation (R18, DEC-023) : valeur brute ; l'imputation effective est fixée par le projet.
+        self.imputation_brute = sans_accents(texte(fm.get("imputation"))).lower()
+        self.imputation_decision = texte(fm.get("imputation_decision")).upper()
+        self.imputation = "client"
         self.journal = []
         for ligne in corps.split("\n"):
             m = RE_JOURNAL.match(ligne)
@@ -449,11 +477,12 @@ class Ticket:
 
 
 class Projet:
-    def __init__(self, racine, dossier, equipe, aujourdhui):
+    def __init__(self, racine, dossier, equipe, aujourdhui, decisions=None):
         self.racine = racine
         self.dossier = dossier
         self.equipe = equipe
         self.aujourdhui = aujourdhui
+        self.decisions = decisions_connues(racine) if decisions is None else decisions
         self.anomalies = []
         self.tickets = []
         nom_dossier = os.path.basename(dossier)
@@ -470,6 +499,7 @@ class Projet:
         if self.client.startswith("<"):
             self.client = self.slug
         self.type_projet = texte(fm.get("type_projet")) or "—"
+        self.interne = self.type_projet.lower() == TYPE_INTERNE
         self.etat = texte(fm.get("etat_projet")) or "—"
         self.budget = en_nombre(fm.get("budget_eur"))
         if self.budget is not None and self.budget <= 0:
@@ -508,6 +538,7 @@ class Projet:
                 self.anomalies.append("{} : temps_passe_h absent ou invalide (0 retenu)".format(t.id))
             if t.statut in ("BLOQUE", "ATTENTE_HUMAIN") and not t.bloque_par:
                 self.anomalies.append("{} : {} sans bloque_par (S1-R3)".format(t.id, t.statut))
+            self._imputer(t)
             self.tickets.append(t)
         self.tickets.sort(key=lambda t: (int(t.id[2:]), t.id))
         self.par_id = {t.id: t for t in self.tickets}
@@ -515,6 +546,33 @@ class Projet:
             for dep in t.depend_de:
                 if dep not in self.par_id:
                     self.anomalies.append("{} : dépendance {} introuvable (ignorée)".format(t.id, dep))
+
+    def _imputer(self, t):
+        """Imputation effective du ticket (R18, R19) ; tout doute compte au client (ou à l'ESN en interne)."""
+        brute, dec = t.imputation_brute, t.imputation_decision
+        if self.interne:
+            t.imputation = "esn"
+            if brute == "client":
+                self.anomalies.append("{} : imputation client dans un projet interne (R19) ; esn retenu".format(t.id))
+            elif brute not in ("", "esn"):
+                self.anomalies.append("{} : imputation inconnue « {} » (esn retenu, R19)".format(t.id, brute))
+            return
+        t.imputation = "client"
+        if brute in ("", "client"):
+            return
+        if brute != "esn":
+            self.anomalies.append("{} : imputation inconnue « {} » (client retenu, R18)".format(t.id, brute))
+        elif not RE_DEC_ID.match(dec):
+            self.anomalies.append("{} : imputation esn sans imputation_decision valide (R18) ; "
+                                  "compté au client".format(t.id))
+        elif dec not in self.decisions:
+            self.anomalies.append("{} : imputation esn, {} introuvable dans docs/decisions/ (R18) ; "
+                                  "compté au client".format(t.id, dec))
+        elif not self.decisions[dec]:
+            self.anomalies.append("{} : imputation esn, {} : décision non validée (R18) ; "
+                                  "compté au client".format(t.id, dec))
+        else:
+            t.imputation = "esn"
 
     # -- calculs ---------------------------------------------------------------------
     def calculer(self):
@@ -525,14 +583,28 @@ class Projet:
         self.avancement = self.est_termine / self.est_total if self.est_total > 0 else None
         self.ouverts = [t for t in self.tickets if t.ouvert]
         self.temps_restant = sum(t.reste for t in self.ouverts)
+        # consomme / projete : coût imputé au budget du projet (client ; tout pour un projet interne).
+        # consomme_esn / projete_esn : part prise en charge par l'ESN sur un projet client (R18).
         self.consomme, self.projete = 0.0, 0.0
+        self.consomme_esn, self.projete_esn = 0.0, 0.0
+        esn = [t for t in self.tickets if t.imputation == "esn" and not self.interne]
+        self.a_part_esn = bool(esn)
+        self.decisions_esn = sorted({t.imputation_decision for t in esn})
         for t in self.tickets:
             taux, err = eq.taux(t.assigne)
             if err:
                 self.anomalies.append("{} : {} ; temps non chiffré".format(t.id, err))
                 continue
-            self.consomme += t.temps_passe * taux
-            self.projete += t.temps_passe * taux + (t.reste * taux if t.ouvert else 0.0)
+            consomme = t.temps_passe * taux
+            projete = t.temps_passe * taux + (t.reste * taux if t.ouvert else 0.0)
+            if t.imputation == "esn" and not self.interne:
+                self.consomme_esn += consomme
+                self.projete_esn += projete
+            else:
+                self.consomme += consomme
+                self.projete += projete
+        self.consomme_total = self.consomme + self.consomme_esn
+        self.projete_total = self.projete + self.projete_esn
         self.part_budget = self.consomme / self.budget if self.budget else None
         self._ordonnancer()
         self._utilisation()
@@ -643,8 +715,11 @@ class Projet:
         eq, auj = self.equipe, self.aujourdhui
         al = []
         if self.part_budget is not None and self.part_budget > SEUIL_BUDGET:
-            al.append(("Budget", "budget consommé {} sur {} ({}), au-delà de {} (S1-R11)".format(
-                fmt_eur(self.consomme), fmt_eur(self.budget), fmt_pct(self.part_budget), fmt_pct(SEUIL_BUDGET))))
+            quoi = "budget client consommé" if self.a_part_esn else (
+                "budget de fonctionnement consommé" if self.interne else "budget consommé")
+            al.append(("Budget", "{} {} sur {} ({}), au-delà de {} (S1-R11)".format(
+                quoi, fmt_eur(self.consomme), fmt_eur(self.budget), fmt_pct(self.part_budget),
+                fmt_pct(SEUIL_BUDGET))))
         if self.fin_projetee and self.deadline and self.fin_projetee > self.deadline:
             al.append(("Délais", "fin projetée le {} après la deadline du {} ({}) (S1-R11)".format(
                 self.fin_projetee.isoformat(), self.deadline.isoformat(), fmt_jo(self.ecart, signe=True))))
@@ -791,14 +866,27 @@ def rendre_tableau(p):
     ecart = "—" if p.ecart is None else fmt_jo(p.ecart, signe=bool(p.ecart))
     budget = "{} / {} ({})".format(fmt_eur(p.consomme), fmt_eur(p.budget), fmt_pct(p.part_budget)) \
         if p.budget else "{} / non renseigné".format(fmt_eur(p.consomme))
+    if p.a_part_esn:
+        couts = [
+            ["Budget client consommé / prévu (imputation client, R18)", budget],
+            ["Coût client projeté à terminaison (consommé + reste × taux)", fmt_eur(p.projete)],
+            ["Pris en charge par l'ESN (imputation esn, {}) : consommé · projeté".format(
+                ", ".join(p.decisions_esn)), "{} · {}".format(fmt_eur(p.consomme_esn), fmt_eur(p.projete_esn))],
+            ["Coût total projeté (client + ESN)", fmt_eur(p.projete_total)],
+        ]
+    else:
+        couts = [
+            ["Budget de fonctionnement consommé / prévu (projet interne, R19)" if p.interne
+             else "Budget consommé / prévu", budget],
+            ["Coût projeté à terminaison (consommé + reste × taux)", fmt_eur(p.projete)],
+        ]
     L += ["## Synthèse", ""]
     L += tableau_md(["Indicateur", "Valeur"], [
         ["Type · état", "{} · {}".format(p.type_projet, p.etat)],
         ["Avancement (h estimées terminées / h estimées hors ANNULE)",
          "{} ({} / {})".format(fmt_pct(p.avancement), fmt_h(p.est_termine), fmt_h(p.est_total))],
         ["Temps restant (Σ max(0, estimation − passé), DEC-001 § 4)", fmt_h(p.temps_restant)],
-        ["Budget consommé / prévu", budget],
-        ["Coût projeté à terminaison (consommé + reste × taux)", fmt_eur(p.projete)],
+    ] + couts + [
         ["Fin projetée", fin],
         ["Deadline", p.deadline.isoformat() if p.deadline else "non renseignée"],
         ["Écart avec la deadline", ecart],
@@ -900,6 +988,14 @@ def rendre_tableau(p):
           "- Les tickets BLOQUE et ATTENTE_HUMAIN sont supposés débloqués aujourd'hui ; leur date de fin est donc "
           "optimiste.",
           "- Tickets TERMINE dans le Gantt : de `cree_le` à `maj_le` (ou `debut_le` / `termine_le` s'ils existent)."]
+    if p.a_part_esn:
+        L.append("- Imputation (R18, DEC-023) : un ticket `imputation: esn` dont `imputation_decision` cite une "
+                 "décision VALIDÉ de `docs/decisions/` est pris en charge par l'ESN : il sort du coût client, seul "
+                 "comparé au budget (S1-R11), et reste compté dans la part ESN et le coût total. Sans décision "
+                 "validée, il est compté au client.")
+    if p.interne:
+        L.append("- Projet interne de l'ESN (R19, DEC-023) : tous les tickets sont à la charge de l'ESN et "
+                 "comparés au budget de fonctionnement (`budget_eur`).")
 
     L += ["", "## Anomalies de données", ""]
     an = sorted(set(p.anomalies))
@@ -924,6 +1020,43 @@ def alertes_equipe(equipe, auj):
             alertes.append(["(équipe)", "Allocation", "{} alloué(e) à {} au total, plus de 100 % (S1-R10)".format(
                 m["prenom"], fmt_nb(total, 0) + " %")])
     return alertes
+
+
+def sections_esn(projets):
+    """Sections de PORTFOLIO.md propres à l'ESN (R18, R19, S1-R13), présentes seulement si elles ont un
+    contenu : sans ticket `esn` ni projet interne, PORTFOLIO.md est inchangé."""
+    concernes = [p for p in projets if p.a_part_esn or p.interne]
+    if not concernes:
+        return []
+    L = ["", "## Coûts pris en charge par l'ESN", "",
+         "Part ESN des projets clients (`imputation: esn` sur décision validée, R18) et projets internes de "
+         "l'ESN (R19). Le coût client des projets clients n'en tient pas compte (S1-R11).", ""]
+    lignes, conso, proj = [], 0.0, 0.0
+    for p in concernes:
+        lien = Brut("[{}](projets/{}/TABLEAU.md)".format(p.slug, p.slug))
+        if p.interne:
+            lignes.append([lien, "projet interne (R19)", fmt_eur(p.consomme), fmt_eur(p.projete),
+                           fmt_eur(p.budget) if p.budget else "non renseigné", "—"])
+            conso, proj = conso + p.consomme, proj + p.projete
+        else:
+            lignes.append([lien, "prise en charge sur projet client (R18)", fmt_eur(p.consomme_esn),
+                           fmt_eur(p.projete_esn), "—", ", ".join(p.decisions_esn)])
+            conso, proj = conso + p.consomme_esn, proj + p.projete_esn
+    lignes.append(["**Total ESN**", "", fmt_eur(conso), fmt_eur(proj), "", ""])
+    L += tableau_md(["Projet", "Nature", "Consommé", "Projeté à terminaison", "Budget de fonctionnement",
+                     "Décisions"], lignes)
+    internes = [p for p in projets if p.interne]
+    if internes:
+        L += ["", "## Plan de formation de l'ESN", "",
+              "Tickets `formation` ouverts des projets internes (S1-R6, S1-R13).", ""]
+        form = [(p, t) for p in internes for t in p.ouverts if t.type == "formation"]
+        if form:
+            L += tableau_md(["Projet", "Ticket", "Titre", "Assigné", "Statut", "Estimation", "Fin prévue"], [
+                [p.slug, t.id, t.titre, t.assigne, t.statut, fmt_h(t.estimation),
+                 t.fin_prevue.isoformat() if t.fin_prevue else "non planifiable"] for p, t in form])
+        else:
+            L.append("Aucun ticket `formation` ouvert.")
+    return L
 
 
 def rendre_portfolio(projets, equipe, auj, anomalies_globales):
@@ -961,6 +1094,8 @@ def rendre_portfolio(projets, equipe, auj, anomalies_globales):
                         [[t.priorite, slug, t.id, t.titre, t.bloque_par] for _, slug, t in att])
     else:
         L.append("Aucune.")
+
+    L += sections_esn(projets)
 
     L += ["", "## Équipe : allocation et utilisation", ""]
     if equipe.membres:
@@ -1014,6 +1149,7 @@ def charger(racine, aujourdhui):
     Retourne (equipe, projets, anomalies globales) ; aussi utilisé par scripts/console.py. N'écrit rien."""
     equipe = Equipe(racine)
     anomalies = list(equipe.anomalies)
+    decisions = decisions_connues(racine)
     projets = []
     dossier_projets = os.path.join(racine, "projets")
     if os.path.isdir(dossier_projets):
@@ -1024,7 +1160,7 @@ def charger(racine, aujourdhui):
             if not os.path.isfile(os.path.join(dossier, "projet.md")):
                 anomalies.append("projets/{}/ : pas de projet.md, dossier ignoré".format(nom))
                 continue
-            p = Projet(racine, dossier, equipe, aujourdhui)
+            p = Projet(racine, dossier, equipe, aujourdhui, decisions)
             p.calculer()
             projets.append(p)
     return equipe, projets, anomalies

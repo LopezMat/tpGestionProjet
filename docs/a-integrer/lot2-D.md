@@ -171,7 +171,10 @@ Ces estimations sont fragiles : une simple correction de faute change `maj_le`. 
 
 ## 9. Tickets internes à l'ESN (B, décision)
 
-**Intégration** : reporté (décision humaine à prendre : budget et deadline d'un projet interne non décidés ; DEC-002 § 32).
+**Intégration** : intégré (DEC-023), après un report (DEC-002 § 32) :
+- projet interne `projets/esn-interne/` (CLAUDE.md R19), avec le plan de formation (S1-R13), les outils et règles communs et les décisions d'événements d'équipe ;
+- budget de fonctionnement, échéance et allocations décidés par DEC-024 ;
+- la veille commune reste régie par S2.
 
 **Quoi.** Certains travaux n'appartiennent à aucun projet client :
 - la veille commune (`veille/`) ;

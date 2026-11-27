@@ -20,6 +20,8 @@ maj_le: 2026-11-25
 statut_depuis: 2026-11-25   # date du dernier changement de statut
 debut_le:                   # facultatif : date du premier passage EN_COURS
 termine_le:                 # facultatif : date du passage TERMINE
+imputation: esn             # client | esn (R18, DEC-023)
+imputation_decision: DEC-020   # décision VALIDÉ qui met ce ticket à la charge de l'ESN
 ---
 <!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
 
@@ -55,3 +57,4 @@ Constat 10 du rapport [securite-2026-11-25-3.md](../rapports/securite-2026-11-25
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
 - 2026-11-25 23:50 · agent:chef-de-projet · création (triage du constat 10, rapport securite-2026-11-25-3) ; contenu rédigé pour l'option A de T-057, à ajuster après la décision · 0 h
 - 2026-11-26 22:10 · agent:chef-de-projet · SIMULATION · imputé à l'ESN (DEC-020) : coût hors budget client, ticket réalisé dans ce projet faute de projet interne · 0 h
+- 2026-11-26 · agent:coordinateur · migration DEC-023 : imputation reportée dans le frontmatter (`imputation: esn`, `imputation_decision: DEC-020`), d'après la ligne « imputé à l'ESN (DEC-020) » ; coût client et part ESN désormais calculés par `tableau.py` (R18) · 0 h
