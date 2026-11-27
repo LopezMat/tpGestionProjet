@@ -31,14 +31,14 @@
 
 | Statut | Nombre |
 |---|---|
-| A_FAIRE | 19 |
+| A_FAIRE | 20 |
 | EN_COURS | 1 |
 | EN_REVUE | 0 |
 | BLOQUE | 0 |
 | ATTENTE_HUMAIN | 0 |
 | TERMINE | 5 |
 | ANNULE | 1 |
-| **Total** | 26 |
+| **Total** | 27 |
 
 ## Tickets BLOQUE
 
@@ -111,6 +111,7 @@ gantt
     section agent dev-frontend
     T-025 Améliorations de la page « Le bureau » — info-bulle au survo :done, t025, 2026-11-27, 2026-11-28
     T-026 Page « Le bureau » — son court d'alerte BLOQUE / ATTENTE_HUM :t026, 2026-11-27, 2026-11-28
+    T-027 Page « Le bureau » — info-bulle non rafraîchie en Replay sou :t027, 2026-11-27, 2026-11-28
     section salarie claire
     T-007 Encadrement de Léa (T-006) — recette fonctionnelle :t007, 2026-11-27, 2026-12-02
     T-014 Encadrement de Léa (T-013) — relation client :t014, 2026-12-01, 2026-12-05
