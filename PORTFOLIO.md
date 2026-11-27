@@ -8,7 +8,7 @@
 
 | Projet | Client | Type | État | Avancement | Budget consommé / prévu | % | Fin projetée | Deadline | Écart (j ouvrés) | BLOQUE | ATTENTE_HUMAIN | Alertes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| [esn-interne](projets/esn-interne/TABLEAU.md) | ESN (projet interne) | interne | en_cours | 8,2 % | 123,75 € / 4 360,00 € | 2,8 % | 2027-01-26 | 2027-01-15 | +7 | 0 | 0 | 5 |
+| [esn-interne](projets/esn-interne/TABLEAU.md) | ESN (projet interne) | interne | en_cours | 17,7 % | 226,50 € / 4 360,00 € | 5,2 % | 2027-01-26 | 2027-01-15 | +7 | 0 | 0 | 5 |
 | [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | en_cours | 25,7 % | 1 268,96 € / 4 200,00 € | 30,2 % | 2026-12-15 | 2026-12-18 | -3 | 0 | 0 | 2 |
 
 ## Alertes
@@ -33,9 +33,9 @@ Part ESN des projets clients (`imputation: esn` sur décision validée, R18) et 
 
 | Projet | Nature | Consommé | Projeté à terminaison | Budget de fonctionnement | Décisions |
 |---|---|---|---|---|---|
-| [esn-interne](projets/esn-interne/TABLEAU.md) | projet interne (R19) | 123,75 € | 3 768,21 € | 4 360,00 € | — |
+| [esn-interne](projets/esn-interne/TABLEAU.md) | projet interne (R19) | 226,50 € | 3 870,96 € | 4 360,00 € | — |
 | [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | prise en charge sur projet client (R18) | 210,00 € | 1 840,00 € | — | DEC-020, DEC-021, DEC-026 |
-| **Total ESN** | — | 333,75 € | 5 608,21 € | — | — |
+| **Total ESN** | — | 436,50 € | 5 710,96 € | — | — |
 
 ## Plan de formation de l'ESN
 
