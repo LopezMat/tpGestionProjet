@@ -9,15 +9,15 @@
 | Indicateur | Valeur |
 |---|---|
 | Type · état | metier · cadrage |
-| Avancement (h estimées terminées / h estimées hors ANNULE) | 19,9 % (42,2 h / 212,6 h) |
-| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 129,7 h |
-| Budget client consommé / prévu (imputation client, R18) | 1 371,29 € / 4 200,00 € (32,6 %) |
-| Coût client projeté à terminaison (consommé + reste × taux) | 4 098,93 € |
-| Pris en charge par l'ESN (imputation esn, DEC-020, DEC-021) : consommé · projeté | 22,50 € · 1 652,50 € |
-| Coût total projeté (client + ESN) | 5 751,43 € |
-| Fin projetée | 2026-12-16 |
+| Avancement (h estimées terminées / h estimées hors ANNULE) | 24,3 % (55,2 h / 227,3 h) |
+| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 134,7 h |
+| Budget client consommé / prévu (imputation client, R18) | 1 265,21 € / 4 200,00 € (30,1 %) |
+| Coût client projeté à terminaison (consommé + reste × taux) | 4 036,07 € |
+| Pris en charge par l'ESN (imputation esn, DEC-020, DEC-021, DEC-026) : consommé · projeté | 210,00 € · 1 840,00 € |
+| Coût total projeté (client + ESN) | 5 876,07 € |
+| Fin projetée | 2026-12-15 |
 | Deadline | 2026-12-18 |
-| Écart avec la deadline | -2 j ouvrés |
+| Écart avec la deadline | -3 j ouvrés |
 
 ## Alertes
 
@@ -36,9 +36,9 @@
 | EN_REVUE | 6 |
 | BLOQUE | 0 |
 | ATTENTE_HUMAIN | 1 |
-| TERMINE | 22 |
+| TERMINE | 24 |
 | ANNULE | 10 |
-| **Total** | 106 |
+| **Total** | 108 |
 
 ## Tickets BLOQUE
 
@@ -48,7 +48,7 @@ Aucun ticket bloqué.
 
 | Priorité | Ticket | Titre | Porteur | Question (bloque_par) | Ancienneté |
 |---|---|---|---|---|---|
-| haute | T-057 | Rôle PostgreSQL de l'application (constat 10, moindre privilège) | salarie:karim | décision humaine sur le rôle PostgreSQL de l'application (constat 10 du rapport securite-2026-11-25-3), avec l'accord de C sur le modèle commun | 2 j ouvrés |
+| haute | T-107 | Arbitrage : dépassement de T-043 (audit sécurité) et comptage de l'audit avant GO | salarie:claire | arbitrage humain sur le dépassement de T-043 et le comptage de l'audit avant GO, avant d'engager l'audit (condition 1 de DEC-020) | 0 j ouvré |
 
 ## Tickets salariés à faire par un humain (AF11)
 
@@ -63,33 +63,33 @@ Aucun ticket bloqué.
 | T-034 | Revue humaine T-017 (compte accueil initial) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-02 → 2026-12-02 |
 | T-035 | Revue humaine T-019 (annulation et vue du jour) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-02 → 2026-12-02 |
 | T-036 | Revue humaine T-020 (matrice d'autorisation) | salarie:karim | A_FAIRE | 1,0 h | 2026-12-02 → 2026-12-03 |
-| T-037 | Revue humaine T-028 (purge à 12 mois) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-09 → 2026-12-10 |
+| T-037 | Revue humaine T-028 (purge à 12 mois) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-08 → 2026-12-09 |
 | T-038 | Revue humaine T-029 (sauvegarde et limite d'âge) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-03 → 2026-12-03 |
-| T-044 | Environnement de recette (app au SHA candidat, compte accueil de recette) | salarie:nadia | A_FAIRE | 1,0 h | 2026-12-07 → 2026-12-07 |
-| T-045 | Recette de la livraison | salarie:claire | A_FAIRE | 4,8 h | 2026-12-10 → 2026-12-15 |
-| T-046 | GO mise en production | salarie:claire | A_FAIRE | 0,5 h | 2026-12-15 → 2026-12-15 |
-| T-048 | Mise en service (compte accueil initial, tâche planifiée de sauvegarde) | salarie:nadia | A_FAIRE | 1,0 h | 2026-12-16 → 2026-12-16 |
-| T-049 | Fin de démonstration (suppression des données sur le poste) | salarie:nadia | A_FAIRE | 0,5 h | 2026-12-16 → 2026-12-16 |
-| T-057 | Rôle PostgreSQL de l'application (constat 10, moindre privilège) | salarie:karim | ATTENTE_HUMAIN | 0,5 h | 2026-12-04 → 2026-12-04 |
-| T-058 | Rôle PostgreSQL applicatif non superutilisateur (constat 10) | salarie:nadia | A_FAIRE | 2,0 h | 2026-12-04 → 2026-12-07 |
+| T-044 | Environnement de recette (app au SHA candidat, compte accueil de recette) | salarie:nadia | A_FAIRE | 1,0 h | 2026-12-04 → 2026-12-04 |
+| T-045 | Recette de la livraison | salarie:claire | A_FAIRE | 4,8 h | 2026-12-09 → 2026-12-14 |
+| T-046 | GO mise en production | salarie:claire | A_FAIRE | 0,5 h | 2026-12-14 → 2026-12-14 |
+| T-048 | Mise en service (compte accueil initial, tâche planifiée de sauvegarde) | salarie:nadia | A_FAIRE | 1,0 h | 2026-12-15 → 2026-12-15 |
+| T-049 | Fin de démonstration (suppression des données sur le poste) | salarie:nadia | A_FAIRE | 0,5 h | 2026-12-15 → 2026-12-15 |
+| T-058 | Rôle PostgreSQL applicatif non superutilisateur (constat 10) | salarie:nadia | A_FAIRE | 2,0 h | 2026-11-30 → 2026-12-01 |
 | T-059 | Revue humaine T-058 (rôle PostgreSQL applicatif) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-04 → 2026-12-04 |
-| T-064 | Revue humaine T-063 (en-têtes de sécurité et Host) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-04 → 2026-12-07 |
-| T-072 | Rotation des journaux dans le modèle compose commun (constat 15) | salarie:nadia | A_FAIRE | 0,5 h | 2026-12-11 → 2026-12-11 |
-| T-074 | Revue humaine T-073 (en-têtes sur la 500 interne) | salarie:karim | A_FAIRE | 0,2 h | 2026-12-07 → 2026-12-07 |
-| T-078 | Image PostgreSQL 16.16 ou plus (43 CVE corrigées, veille P-1) | salarie:nadia | A_FAIRE | 1,5 h | 2026-12-11 → 2026-12-14 |
-| T-085 | SIMULATION — Runbook perte-donnees, cas « volume supprimé » et « sauvegarde absente des traces » | salarie:nadia | A_FAIRE | 1,5 h | 2026-12-07 → 2026-12-07 |
-| T-086 | SIMULATION — Protéger le volume de base de production contre une suppression accidentelle | salarie:nadia | A_FAIRE | 2,0 h | 2026-12-07 → 2026-12-08 |
-| T-087 | SIMULATION — deployer_local.py et rollback_local.py refusent de recréer une base vide après un déploiement vérifié | salarie:nadia | A_FAIRE | 1,5 h | 2026-12-08 → 2026-12-09 |
-| T-089 | SIMULATION — Exercice de restauration réel, cas « volume supprimé », chronométré | salarie:nadia | A_FAIRE | 2,5 h | 2026-12-09 → 2026-12-10 |
-| T-091 | SIMULATION — Registre des demandes de suppression chez le client avant la mise en service | salarie:claire | A_FAIRE | 0,5 h | 2026-12-15 → 2026-12-16 |
-| T-092 | SIMULATION — Vérification quotidienne des sauvegardes (existence, restauration dans une base jetable, alerte) | salarie:nadia | A_FAIRE | 4,0 h | 2026-12-10 → 2026-12-11 |
+| T-064 | Revue humaine T-063 (en-têtes de sécurité et Host) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-04 → 2026-12-04 |
+| T-072 | Rotation des journaux dans le modèle compose commun (constat 15) | salarie:nadia | A_FAIRE | 0,5 h | 2026-12-10 → 2026-12-10 |
+| T-074 | Revue humaine T-073 (en-têtes sur la 500 interne) | salarie:karim | A_FAIRE | 0,2 h | 2026-12-04 → 2026-12-04 |
+| T-078 | Image PostgreSQL 16.16 ou plus (43 CVE corrigées, veille P-1) | salarie:nadia | A_FAIRE | 1,5 h | 2026-12-10 → 2026-12-11 |
+| T-085 | SIMULATION — Runbook perte-donnees, cas « volume supprimé » et « sauvegarde absente des traces » | salarie:nadia | A_FAIRE | 1,5 h | 2026-12-04 → 2026-12-04 |
+| T-086 | SIMULATION — Protéger le volume de base de production contre une suppression accidentelle | salarie:nadia | A_FAIRE | 2,0 h | 2026-12-04 → 2026-12-07 |
+| T-087 | SIMULATION — deployer_local.py et rollback_local.py refusent de recréer une base vide après un déploiement vérifié | salarie:nadia | A_FAIRE | 1,5 h | 2026-12-07 → 2026-12-08 |
+| T-089 | SIMULATION — Exercice de restauration réel, cas « volume supprimé », chronométré | salarie:nadia | A_FAIRE | 2,5 h | 2026-12-08 → 2026-12-09 |
+| T-091 | SIMULATION — Registre des demandes de suppression chez le client avant la mise en service | salarie:claire | A_FAIRE | 0,5 h | 2026-12-14 → 2026-12-15 |
+| T-092 | SIMULATION — Vérification quotidienne des sauvegardes (existence, restauration dans une base jetable, alerte) | salarie:nadia | A_FAIRE | 4,0 h | 2026-12-09 → 2026-12-10 |
 | T-094 | SIMULATION — Informer le client de la révision du budget | salarie:claire | A_FAIRE | 0,5 h | 2026-11-30 → 2026-11-30 |
-| T-095 | SIMULATION — Revue humaine T-085 (runbook « volume supprimé ») | salarie:karim | A_FAIRE | 0,5 h | 2026-12-07 → 2026-12-07 |
+| T-095 | SIMULATION — Revue humaine T-085 (runbook « volume supprimé ») | salarie:karim | A_FAIRE | 0,5 h | 2026-12-04 → 2026-12-07 |
 | T-096 | SIMULATION — Revue humaine T-086 (volume de production protégé) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-07 → 2026-12-07 |
-| T-097 | SIMULATION — Revue humaine T-087 (refus de recréer une base vide) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-08 → 2026-12-09 |
-| T-098 | SIMULATION — Revue humaine T-092 (vérification quotidienne des sauvegardes) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-09 → 2026-12-09 |
-| T-099 | SIMULATION — Revue humaine T-078 (image PostgreSQL 16.16) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-09 → 2026-12-09 |
-| T-100 | SIMULATION — Revue humaine T-079 (verrou des dépendances, image figée) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-10 → 2026-12-10 |
+| T-097 | SIMULATION — Revue humaine T-087 (refus de recréer une base vide) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-07 → 2026-12-07 |
+| T-098 | SIMULATION — Revue humaine T-092 (vérification quotidienne des sauvegardes) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-07 → 2026-12-08 |
+| T-099 | SIMULATION — Revue humaine T-078 (image PostgreSQL 16.16) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-08 → 2026-12-08 |
+| T-100 | SIMULATION — Revue humaine T-079 (verrou des dépendances, image figée) | salarie:karim | A_FAIRE | 0,5 h | 2026-12-09 → 2026-12-09 |
+| T-107 | Arbitrage : dépassement de T-043 (audit sécurité) et comptage de l'audit avant GO | salarie:claire | ATTENTE_HUMAIN | 0,0 h | 2026-11-30 → 2026-11-30 |
 
 ## Tickets formation ouverts
 
@@ -102,7 +102,7 @@ Période : du 2026-11-27 au 2026-12-18. Heures restantes assignées ÷ capacité
 | Salarié | Allocation | h restantes assignées | Capacité allouée | Utilisation | Observation |
 |---|---|---|---|---|---|
 | claire | 20 % | 8,2 h | 22,4 h | 36,8 % | sous 50,0 % : ajuster l'allocation ? |
-| karim | 20 % | 12,2 h | 22,4 h | 54,7 % | — |
+| karim | 20 % | 11,8 h | 22,4 h | 52,5 % | — |
 | nadia | 50 % | 22,5 h | 42,0 h | 53,6 % | — |
 
 ## Planning prévisionnel (Gantt)
@@ -127,7 +127,7 @@ gantt
     T-102 SIMULATION — Absence de Léa du 2026-11-26 au 2026-11-27 :done, t102, 2026-11-26, 2026-11-27
     T-103 SIMULATION — Départ de Hugo plan de passation :done, t103, 2026-11-26, 2026-11-27
     section agent deployeur
-    T-047 Déploiement en production locale :t047, 2026-12-15, 2026-12-17
+    T-047 Déploiement en production locale :t047, 2026-12-14, 2026-12-15
     section agent dev-backend
     T-010 Socle de l'application (/health, Dockerfile, démarrage) :done, t010, 2026-11-25, 2026-11-26
     T-011 Modèle de données et migrations :done, t011, 2026-11-25, 2026-11-26
@@ -169,7 +169,8 @@ gantt
     T-040 Revue de code (2/2) — front, bout en bout, Should, outillage :t040, 2026-11-27, 2026-11-28
     T-066 Revue de code (3/3) — correctifs de l'audit d'incrément :active, t066, 2026-11-27, 2026-12-01
     section agent securite
-    T-043 Audit sécurité :t043, 2026-12-07, 2026-12-08
+    T-043 Audits d'incrément (DEC-011) :done, t043, 2026-11-25, 2026-11-28
+    T-108 Audit sécurité avant GO :t108, 2026-12-07, 2026-12-09
     section agent support
     T-104 SIMULATION — Support utilisateurs :active, t104, 2026-11-27, 2026-11-28
     section agent testeur
@@ -181,13 +182,14 @@ gantt
     section salarie claire
     T-007 Validation du budget et des délais :done, t007, 2026-11-24, 2026-11-26
     T-009 Points client (mention de confidentialité, F-08, recette) :t009, 2026-11-27, 2026-12-01
-    T-045 Recette de la livraison :t045, 2026-12-10, 2026-12-16
-    T-046 GO mise en production :t046, 2026-12-15, 2026-12-16
+    T-045 Recette de la livraison :t045, 2026-12-09, 2026-12-15
+    T-046 GO mise en production :t046, 2026-12-14, 2026-12-15
     T-083 SIMULATION — Décision communication au client sur la perte d :done, t083, 2026-11-26, 2026-11-27
     T-084 SIMULATION — Décision notification CNIL de la violation de d :done, t084, 2026-11-26, 2026-11-27
-    T-091 SIMULATION — Registre des demandes de suppression chez le cl :t091, 2026-12-15, 2026-12-17
+    T-091 SIMULATION — Registre des demandes de suppression chez le cl :t091, 2026-12-14, 2026-12-16
     T-094 SIMULATION — Informer le client de la révision du budget :t094, 2026-11-30, 2026-12-01
     T-106 SIMULATION — Condition 1 de DEC-020 dépassement prévisible d :done, t106, 2026-11-26, 2026-11-27
+    T-107 Arbitrage dépassement de T-043 (audit sécurité) et comptage  :crit, t107, 2026-11-30, 2026-12-01
     section salarie karim
     T-030 Revue humaine T-013 (authentification, sessions, rôles) :t030, 2026-11-27, 2026-12-01
     T-031 Revue humaine T-014 (limitation des tentatives) :t031, 2026-11-30, 2026-12-01
@@ -196,33 +198,33 @@ gantt
     T-034 Revue humaine T-017 (compte accueil initial) :t034, 2026-12-02, 2026-12-03
     T-035 Revue humaine T-019 (annulation et vue du jour) :t035, 2026-12-02, 2026-12-03
     T-036 Revue humaine T-020 (matrice d'autorisation) :t036, 2026-12-02, 2026-12-04
-    T-037 Revue humaine T-028 (purge à 12 mois) :t037, 2026-12-09, 2026-12-11
+    T-037 Revue humaine T-028 (purge à 12 mois) :t037, 2026-12-08, 2026-12-10
     T-038 Revue humaine T-029 (sauvegarde et limite d'âge) :t038, 2026-12-03, 2026-12-04
-    T-057 Rôle PostgreSQL de l'application (constat 10, moindre privil :crit, t057, 2026-12-04, 2026-12-05
+    T-057 Rôle PostgreSQL de l'application (constat 10, moindre privil :done, t057, 2026-11-25, 2026-11-28
     T-059 Revue humaine T-058 (rôle PostgreSQL applicatif) :t059, 2026-12-04, 2026-12-05
-    T-064 Revue humaine T-063 (en-têtes de sécurité et Host) :t064, 2026-12-04, 2026-12-08
+    T-064 Revue humaine T-063 (en-têtes de sécurité et Host) :t064, 2026-12-04, 2026-12-05
     T-068 Revue humaine T-054 (API de consultation sans connexion) :done, t068, 2026-11-26, 2026-11-27
-    T-074 Revue humaine T-073 (en-têtes sur la 500 interne) :t074, 2026-12-07, 2026-12-08
-    T-095 SIMULATION — Revue humaine T-085 (runbook « volume supprimé  :t095, 2026-12-07, 2026-12-08
+    T-074 Revue humaine T-073 (en-têtes sur la 500 interne) :t074, 2026-12-04, 2026-12-05
+    T-095 SIMULATION — Revue humaine T-085 (runbook « volume supprimé  :t095, 2026-12-04, 2026-12-08
     T-096 SIMULATION — Revue humaine T-086 (volume de production proté :t096, 2026-12-07, 2026-12-08
-    T-097 SIMULATION — Revue humaine T-087 (refus de recréer une base  :t097, 2026-12-08, 2026-12-10
-    T-098 SIMULATION — Revue humaine T-092 (vérification quotidienne d :t098, 2026-12-09, 2026-12-10
-    T-099 SIMULATION — Revue humaine T-078 (image PostgreSQL 16.16) :t099, 2026-12-09, 2026-12-10
-    T-100 SIMULATION — Revue humaine T-079 (verrou des dépendances, im :t100, 2026-12-10, 2026-12-11
+    T-097 SIMULATION — Revue humaine T-087 (refus de recréer une base  :t097, 2026-12-07, 2026-12-08
+    T-098 SIMULATION — Revue humaine T-092 (vérification quotidienne d :t098, 2026-12-07, 2026-12-09
+    T-099 SIMULATION — Revue humaine T-078 (image PostgreSQL 16.16) :t099, 2026-12-08, 2026-12-09
+    T-100 SIMULATION — Revue humaine T-079 (verrou des dépendances, im :t100, 2026-12-09, 2026-12-10
     section salarie nadia
     T-029 Sauvegarde quotidienne et limite d'âge de 30 jours (outillag :crit, t029, 2026-11-27, 2026-12-01
-    T-044 Environnement de recette (app au SHA candidat, compte accuei :t044, 2026-12-07, 2026-12-08
-    T-048 Mise en service (compte accueil initial, tâche planifiée de  :t048, 2026-12-16, 2026-12-17
-    T-049 Fin de démonstration (suppression des données sur le poste) :t049, 2026-12-16, 2026-12-17
-    T-058 Rôle PostgreSQL applicatif non superutilisateur (constat 10) :t058, 2026-12-04, 2026-12-08
-    T-072 Rotation des journaux dans le modèle compose commun (constat :t072, 2026-12-11, 2026-12-12
-    T-078 Image PostgreSQL 16.16 ou plus (43 CVE corrigées, veille P-1 :t078, 2026-12-11, 2026-12-15
+    T-044 Environnement de recette (app au SHA candidat, compte accuei :t044, 2026-12-04, 2026-12-05
+    T-048 Mise en service (compte accueil initial, tâche planifiée de  :t048, 2026-12-15, 2026-12-16
+    T-049 Fin de démonstration (suppression des données sur le poste) :t049, 2026-12-15, 2026-12-16
+    T-058 Rôle PostgreSQL applicatif non superutilisateur (constat 10) :t058, 2026-11-30, 2026-12-02
+    T-072 Rotation des journaux dans le modèle compose commun (constat :t072, 2026-12-10, 2026-12-11
+    T-078 Image PostgreSQL 16.16 ou plus (43 CVE corrigées, veille P-1 :t078, 2026-12-10, 2026-12-12
     T-081 SIMULATION — Décision restauration de la base de production  :done, t081, 2026-11-26, 2026-11-27
-    T-085 SIMULATION — Runbook perte-donnees, cas « volume supprimé »  :t085, 2026-12-07, 2026-12-08
-    T-086 SIMULATION — Protéger le volume de base de production contre :t086, 2026-12-07, 2026-12-09
-    T-087 SIMULATION — deployer_local.py et rollback_local.py refusent :t087, 2026-12-08, 2026-12-10
-    T-089 SIMULATION — Exercice de restauration réel, cas « volume sup :t089, 2026-12-09, 2026-12-11
-    T-092 SIMULATION — Vérification quotidienne des sauvegardes (exist :t092, 2026-12-10, 2026-12-12
+    T-085 SIMULATION — Runbook perte-donnees, cas « volume supprimé »  :t085, 2026-12-04, 2026-12-05
+    T-086 SIMULATION — Protéger le volume de base de production contre :t086, 2026-12-04, 2026-12-08
+    T-087 SIMULATION — deployer_local.py et rollback_local.py refusent :t087, 2026-12-07, 2026-12-09
+    T-089 SIMULATION — Exercice de restauration réel, cas « volume sup :t089, 2026-12-08, 2026-12-10
+    T-092 SIMULATION — Vérification quotidienne des sauvegardes (exist :t092, 2026-12-09, 2026-12-11
     section Jalons
     Deadline :milestone, deadline, 2026-12-18, 0d
 ```

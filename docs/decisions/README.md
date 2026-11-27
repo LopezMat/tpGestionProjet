@@ -2,7 +2,7 @@
 titre: Registre des décisions humaines
 statut: EN_REVUE          # journal, jamais VALIDÉ (évolue uniquement par PR, exclu de R6)
 responsable: B
-version: 0.17
+version: 0.19
 maj_le: 2026-11-27
 valide_par:
 decision:
@@ -56,3 +56,5 @@ Un document `VALIDÉ` est figé pour les agents (R6). Pour le faire évoluer, un
 | [DEC-022](2026-11-26-DEC-022-methodologie-retenue.md) | 2026-11-26 | Méthodologie retenue : Kanban à portes de validation humaines, livraisons incrémentales (VISION § 3.5), Definition of Done et équivalents des rituels ; aucune règle modifiée | VALIDÉ |
 | [DEC-023](2026-11-26-DEC-023-imputation-esn-plan-formation.md) | 2026-11-26 | Coûts pris en charge par l'ESN (R18 : champ `imputation`, décision VALIDÉ obligatoire, coût client calculé par `tableau.py`) et projet interne `esn-interne` (R19, S1-R6, S1-R13 : plan de formation) ; migration de `reservation-coworking`, T-104 au client | VALIDÉ |
 | [DEC-024](2026-11-27-DEC-024-plan-formation-initial.md) | 2026-11-27 | esn-interne : plan de formation initial, option B (T-002 à T-014, juridique par conseil externe), budget de fonctionnement 4 360 €, échéance 2027-01-15, allocations P1/P2 de Claire, Karim, Léa et Nadia, enveloppe de frais externes de 700 € HT hors budget (T-017) | VALIDÉ |
+| [DEC-025](2026-11-27-DEC-025-actions-retrospective-semaine.md) | 2026-11-27 | esn-interne : actions retenues de la rétrospective de la semaine projet, option 2 (A1 à T-019, PR `tracer-decision` A2-A3-A4, A6, A7 cadrage ; A5 reporté ; 112,50 €, 88,0 % du budget de fonctionnement) ; aucune règle modifiée par cette décision (T-021) | VALIDÉ |
+| [DEC-026](2026-11-27-DEC-026-audit-securite-increments-esn.md) | 2026-11-27 | reservation-coworking : dépassement de l'audit de sécurité (T-043), option D : audits d'incrément (12,5 h, 187,50 €) pris en charge par l'ESN, audit avant GO de 5 h au client, pilotage T-008 +2 h ; coût client projeté 4 039,82 € (96,2 %), sans avenant ; budget d'esn-interne non touché (88,0 %) (T-107) | VALIDÉ |

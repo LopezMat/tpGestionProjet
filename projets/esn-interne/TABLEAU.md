@@ -9,10 +9,10 @@
 | Indicateur | Valeur |
 |---|---|
 | Type · état | interne · en_cours |
-| Avancement (h estimées terminées / h estimées hors ANNULE) | 3,3 % (2,0 h / 60,5 h) |
-| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 57,5 h |
-| Budget de fonctionnement consommé / prévu (projet interne, R19) | 60,00 € / 4 360,00 € (1,4 %) |
-| Coût projeté à terminaison (consommé + reste × taux) | 3 663,21 € |
+| Avancement (h estimées terminées / h estimées hors ANNULE) | 8,2 % (5,5 h / 67,0 h) |
+| Temps restant (Σ max(0, estimation − passé), DEC-001 § 4) | 60,2 h |
+| Budget de fonctionnement consommé / prévu (projet interne, R19) | 123,75 € / 4 360,00 € (2,8 %) |
+| Coût projeté à terminaison (consommé + reste × taux) | 3 768,21 € |
 | Fin projetée | 2027-01-26 |
 | Deadline | 2027-01-15 |
 | Écart avec la deadline | +7 j ouvrés |
@@ -31,14 +31,14 @@
 
 | Statut | Nombre |
 |---|---|
-| A_FAIRE | 15 |
+| A_FAIRE | 18 |
 | EN_COURS | 1 |
 | EN_REVUE | 0 |
 | BLOQUE | 0 |
 | ATTENTE_HUMAIN | 0 |
-| TERMINE | 2 |
+| TERMINE | 4 |
 | ANNULE | 1 |
-| **Total** | 19 |
+| **Total** | 24 |
 
 ## Tickets BLOQUE
 
@@ -102,7 +102,12 @@ gantt
     T-016 Pilotage du plan de formation de l'ESN :active, t016, 2026-11-27, 2026-11-28
     T-017 Plan de formation initial — budget de fonctionnement, échéan :done, t017, 2026-11-27, 2026-11-28
     T-018 tableau.py ne suit pas les frais externes (devis, factures d :t018, 2026-11-27, 2026-11-28
-    T-019 tableau.py — allocations par période et absence pour formati :t019, 2026-11-27, 2026-11-28
+    T-019 tableau.py — allocations par période, absence pour formation :t019, 2026-11-27, 2026-11-28
+    T-020 Rétrospective de la semaine projet (23 au 27/11) au niveau d :done, t020, 2026-11-27, 2026-11-28
+    T-021 Actions retenues de la rétrospective de la semaine projet (2 :done, t021, 2026-11-27, 2026-11-28
+    T-022 Cadrage « Audit avant GO outillé » (action A7, DEC-025) — pr :t022, 2026-11-27, 2026-11-28
+    T-023 Préparation de la PR de règles A2-A3-A4 (DEC-025) — skill tr :t023, 2026-11-27, 2026-11-28
+    T-024 Préparation de la PR de règles A6 (DEC-025) — règle 6 du che :t024, 2026-11-27, 2026-12-01
     section salarie claire
     T-007 Encadrement de Léa (T-006) — recette fonctionnelle :t007, 2026-11-27, 2026-12-02
     T-014 Encadrement de Léa (T-013) — relation client :t014, 2026-12-01, 2026-12-05

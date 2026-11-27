@@ -108,7 +108,7 @@ Post-mortem complet : [post-mortem-2026-11-26-perte-donnees.md](../rapports/post
 
 ## Critères d'acceptation
 - [x] Le runbook `perte-donnees` est déroulé, chaque étape journalisée avec son heure (§ 1 à 4, puis § 5 et § 6 simulés après DEC-019).
-- [ ] Chaque action sensible (restauration, mise en maintenance, communication au client, notification à la CNIL) a son ticket `decision` en `ATTENTE_HUMAIN`, tranché par un humain (`DEC-NNN`). T-081 et T-083 sont tranchés par DEC-019 (champ `decision` à renseigner par l'humain, à la fin des scénarios) ; T-082 (`ANNULE`, sans objet) et T-084 (`TERMINE`) sont clos par DEC-019 v0.2.
+- [x] Chaque action sensible (restauration, mise en maintenance, communication au client, notification à la CNIL) a son ticket `decision` en `ATTENTE_HUMAIN`, tranché par un humain (`DEC-NNN`). T-081 et T-083 sont tranchés par DEC-019 (`TERMINE`, `decision: DEC-019`, renseigné par l'humain) ; T-082 (`ANNULE`, sans objet) et T-084 (`TERMINE`) sont clos par DEC-019 v0.2.
 - [x] La dernière sauvegarde utilisable et la fenêtre de perte sont établies d'après les règles de rétention (DEC-003, DEC-007, DEC-008) : la règle promettait la quotidienne du 2026-11-25 20:30 ; en réalité, aucune sauvegarde (traces, puis constat physique, DEC-019). Fenêtre de perte : toutes les données.
 - [x] Le retour à la normale est prouvé par la sonde (en simulation : décrit, non exécuté). `DISPONIBLE ET À JOUR` simulé à 11:15, non exécuté.
 - [x] Le post-mortem `rapports/post-mortem-2026-11-26-perte-donnees.md` est rédigé, sans blâme, et chaque action corrective est liée à un ticket. Post-mortem complet (v0.3, `EN_REVUE`) ; actions liées à T-029, T-046, T-085 à T-087 et T-089 à T-092. **P-7 et P-8 (formations) : sans objet**, selon DEC-009 point E (tickets `formation` interdits dans ce projet, besoins renvoyés au plan de formation de l'ESN) ; coché sur instruction d'Ethan.
@@ -118,7 +118,7 @@ Post-mortem complet : [post-mortem-2026-11-26-perte-donnees.md](../rapports/post
 - **Avis relecteur-code** : sans objet (incident)
 - **Commentaires** :
 - **Revue humaine requise** : oui (priorité critique)
-- **Revue humaine** :
+- **Revue humaine** : Ethan, 2026-11-27, conforme : sauvegarde mise en place, restauration testée, post-mortem validé (DEC-019).
 
 ## Journal
 <!-- Une ligne par action : date-heure · qui · quoi · temps passé (h équivalent humain) -->
@@ -145,3 +145,4 @@ Post-mortem complet : [post-mortem-2026-11-26-perte-donnees.md](../rapports/post
 - 2026-11-26 11:45 · agent:gestionnaire-crise · SIMULATION · post-mortem complet (v0.2, EN_REVUE) : chronologie jusqu'au retour à la normale, DEC-019, message au client, leçon principale « une règle sans preuve d'exécution n'est pas une garantie », actions correctives T-029, T-046, T-085 à T-087, T-089 à T-092 (T-088 annulé ; P-7 et P-8 non créés, DEC-009 point E), décisions ouvertes T-082 et T-084 · 1.0 h
 - 2026-11-26 11:45 · agent:gestionnaire-crise · SIMULATION · ticket EN_REVUE : service rétabli en simulation (preuve de la sonde simulée, non exécutée) et post-mortem rédigé ; passage TERMINE laissé au coordinateur (R13), critère « actions sensibles tranchées » non rempli tant que T-082 et T-084 sont ouverts · 0 h
 - 2026-11-26 19:30 · agent:coordinateur · SIMULATION · critère « actions correctives liées à un ticket » coché : P-7 et P-8 sans objet (DEC-009 point E), sur instruction d'Ethan. Critère « actions sensibles » mis à jour : T-082 annulé et T-084 terminé (DEC-019 v0.2), reste le déblocage de T-081 et T-083 par Ethan à la fin des scénarios. Ticket laissé `EN_REVUE` · 0 h
+- 2026-11-27 · agent:coordinateur · SIMULATION · critère « actions sensibles » coché : T-081 et T-083 `TERMINE` avec `decision: DEC-019`, T-082 `ANNULE`, T-084 `TERMINE` (relevé par le retex de l'ESN, esn-interne/T-020, P3). Tous les critères sont cochés, mais la ligne « Revue humaine » (requise, priorité critique) est vide : ticket laissé `EN_REVUE` jusqu'à ce qu'un humain la remplisse (R13) · 0 h

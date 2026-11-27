@@ -9,7 +9,7 @@ priorite: normale           # critique | haute | normale | basse
 assigne: agent:chef-de-projet   # agent:<nom> | salarie:<prenom>
 competence_requise: suivi-budget (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
 estimation_h: 3             # heures équivalent humain, quel que soit l'assigné ; ré-estimé après DEC-024 (option B), voir Description
-temps_passe_h: 1            # heures équivalent humain
+temps_passe_h: 1.25         # heures équivalent humain
 depend_de: []               # ex. [T-001, T-002] ; T-017 retiré le 2026-11-27 (DEC-024 VALIDÉ), voir Journal
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
 validation_humaine_requise: non   # oui | non
@@ -64,3 +64,4 @@ Un dépassement (ticket `decision` d'alerte S1-R11, mise à jour du registre) se
 - 2026-11-27 14:00 · agent:chef-de-projet · T-015 → ANNULE (DEC-024, option B : conseil juridique externe au cas par cas) ; estimation maintenue à 3 h (détail en Description) · 0,1 h
 - 2026-11-27 14:50 · agent:chef-de-projet · planning.md v0.2 (option B retenue, options A, C et D écartées, enveloppe de frais externes, analyse des 4 alertes de TABLEAU.md et projection P1/P2) ; tickets T-002 à T-014 marqués « retenus par DEC-024 » avec leur rang, fenêtres de T-010 à T-012 recalées sur P2 ; contrôle par tableau.py · 0,9 h
 - 2026-11-27 · agent:coordinateur · **hypothèses confirmées par Ethan le 2026-11-27** (simulation), à reporter dans planning.md à sa prochaine révision (v1.0 VALIDÉ, figé par R6) : aucun congé de fin d'année prévu pour Claire, Léa et Nadia (la projection P2 au 2027-01-14 tient) ; Claire est d'accord pour présenter Léa au client (T-013). Consigne d'Ethan sur l'enveloppe : devis de T-002 à obtenir par Nadia avant le 2026-12-03 ; au-delà de 700 € HT, nouveau ticket `decision` avant toute commande. T-017 TERMINE ; ticket `amelioration` T-019 créé (allocations par période et absence pour formation dans tableau.py, PR de règles R11) · 0 h
+- 2026-11-27 11:00 · agent:chef-de-projet · application de DEC-025 (rétrospective, option 2) : T-019 enrichi d'A1 (priorité haute), création de T-022 (A7), T-023 (A2-A3-A4) et T-024 (A6), ligne de journal sur T-021 ; contrôle du projeté par tableau.py · 0,25 h

@@ -1,14 +1,14 @@
 ---
 # Frontmatter propre aux tickets (lu par scripts/tableau.py, ne pas renommer les champs)
 id: T-043
-titre: Audit sécurité
+titre: "Audits d'incrément (DEC-011)"
 projet: reservation-coworking
 type: tache                 # fonctionnalite | tache | bug | incident | support | decision | formation | amelioration
-statut: A_FAIRE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
+statut: TERMINE             # A_FAIRE | EN_COURS | EN_REVUE | BLOQUE | ATTENTE_HUMAIN | TERMINE | ANNULE
 priorite: haute             # critique | haute | normale | basse
 assigne: agent:securite     # agent:<nom> | salarie:<prenom>
 competence_requise: securite-applicative (confirme)   # nom du référentiel d'equipe/agents.md ; niveau : debutant | confirme | expert
-estimation_h: 5             # heures équivalent humain, quel que soit l'assigné
+estimation_h: 12.5          # heures équivalent humain, quel que soit l'assigné
 temps_passe_h: 12.5        # heures équivalent humain
 depend_de: [T-010, T-011, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022, T-023, T-024, T-025, T-026, T-028]   # ex. [T-001, T-002]
 bloque_par:                 # obligatoire si BLOQUE ou ATTENTE_HUMAIN
@@ -16,22 +16,32 @@ validation_humaine_requise: non   # oui | non
 decision:                   # DEC-NNN si le ticket porte une décision humaine
 cree_par: agent:chef-de-projet
 cree_le: 2026-11-24
-maj_le: 2026-11-26
-statut_depuis: 2026-11-24   # date du dernier changement de statut
-debut_le:                   # facultatif : date du premier passage EN_COURS
-termine_le:                 # facultatif : date du passage TERMINE
+maj_le: 2026-11-27
+statut_depuis: 2026-11-27   # date du dernier changement de statut
+debut_le: 2026-11-25        # facultatif : date du premier passage EN_COURS (premier audit d'incrément, voir Journal)
+termine_le: 2026-11-27      # facultatif : date du passage TERMINE
+imputation: esn             # client | esn ; esn seulement sur décision humaine VALIDÉ (R18) ; dans esn-interne : toujours esn (R19)
+imputation_decision: DEC-026   # DEC-NNN VALIDÉ de docs/decisions/, obligatoire si esn dans un projet client ; vide dans esn-interne
 ---
-<!-- modèle : templates/ticket.md v0.2 · responsable du modèle : A -->
+<!-- modèle : templates/ticket.md v0.3 · responsable du modèle : A -->
 
-# T-043 — Audit sécurité
+# T-043 — Audits d'incrément (DEC-011)
 
 ## Description
-Ticket « Audit sécurité » de l'agent `securite` (porte 3 de S3) : audit du code et des dépendances sur le SHA candidat, au niveau fixé par le CDC § 8 (OWASP Top 10, contrôle d'accès, authentification, RGPD ; pas de test d'intrusion externe), avec `pip-audit`, `bandit` et `gitleaks` (`securite.yml`). L'audit **confirme ou ajuste les seuils G** provisoires de DEC-007 (mot de passe, tentatives, alerte, sessions), en cohérence avec les revues de Karim (T-030 à T-032), et examine l'écart de forme « clé de signature des sessions » (DEC-007, C ; architecture R-06). Le coordinateur conclut (R13).
+Ticket de travail de l'agent `securite` qui porte les **audits d'incrément** faits à la suite de [DEC-011](../../../docs/decisions/2026-11-25-DEC-011-increment-consultation-coworking.md) : chaque ticket de l'incrément de soutenance passait par `securite`. Il y en a eu 7, journalisés ci-dessous, pour 12,5 h.
+
+Depuis [DEC-026](../../../docs/decisions/2026-11-27-DEC-026-audit-securite-increments-esn.md) (option D, VALIDÉ par Ethan le 2026-11-27) :
+- ce ticket est ré-estimé à 12,5 h (= temps passé), renommé et **pris en charge par l'ESN** (`imputation: esn`, R18), pour 12,5 h × 15 € = 187,50 €. Ces audits viennent d'un choix interne de l'ESN (DEC-011) et de l'absence de ré-estimation (constat P6 du retex de l'ESN) ;
+- l'**audit avant GO** (porte 3 de S3, sur le SHA candidat), qui était l'objet d'origine de ce ticket, est porté par [T-108](T-108-audit-securite-avant-go.md), au client, avec les critères d'origine. T-108 remplace ce ticket dans `depend_de` de la recette T-045 et du GO T-046.
+
+Les verdicts d'incrément ne valent pas porte 3 : chaque rapport le dit. Le coordinateur conclut ce ticket (R13).
 
 ## Critères d'acceptation
-- [ ] `rapports/securite-AAAA-MM-JJ.md` existe, en `EN_REVUE`, sur le même SHA que le rapport de tests, avec un verdict `NON BLOQUANT` ou `BLOQUANT`.
-- [ ] Chaque seuil G est déclaré confirmé ou à ajuster, avec la justification.
-- [ ] Toute vulnérabilité critique ou haute a son ticket `bug` ou `incident`.
+- [x] Les 7 rapports d'incrément existent et sont en `EN_REVUE` : [securite-2026-11-25](../rapports/securite-2026-11-25.md), [-2](../rapports/securite-2026-11-25-2.md), [-3](../rapports/securite-2026-11-25-3.md), [-4](../rapports/securite-2026-11-25-4.md), [-5](../rapports/securite-2026-11-25-5.md), [-6](../rapports/securite-2026-11-25-6.md) et [securite-2026-11-26](../rapports/securite-2026-11-26.md).
+- [x] Chacun porte un verdict `NON BLOQUANT` pour son périmètre d'incrément, avec l'état de code audité (commit, ou base `6c53d31` et empreintes pour les deux premiers).
+- [x] Aucun constat critique ou haut n'est resté sans ticket : aucun des 7 rapports ne relève de constat critique ou haut.
+- [x] Le temps des 7 audits est journalisé ci-dessous et égal à `temps_passe_h` (1,5 + 1,5 + 2 + 2 + 1,5 + 2,5 + 1,5 = 12,5 h).
+- [x] L'audit avant GO sur le SHA candidat est porté par un ticket distinct ([T-108](T-108-audit-securite-avant-go.md)), qui remplace ce ticket dans `depend_de` de T-045 et de T-046.
 
 ## Revue
 <!-- Remplie par relecteur-code pour les tickets de réalisation -->
@@ -52,3 +62,6 @@ Ticket « Audit sécurité » de l'agent `securite` (porte 3 de S3) : audit du c
 - 2026-11-25 16:15 · agent:securite · audit d'incrément de T-060 (`14398c1`), T-071 (`9114f9e`) et T-073 (`748c75e`, ajouté en cours d'audit par le coordinateur) : verdict NON BLOQUANT, 0 critique, 0 haute ; constats 13, 15a et 16 fermés (16 à l'exception acceptée des 400 d'Uvicorn) ; nouveaux constats bas 17 (formateur d'accès), 18 (URL de test dans la trace pytest) et 19 (variables `PG*` et contrôle d'hôte) ; aucun ticket `bug` ; rapport [securite-2026-11-25-6.md](../rapports/securite-2026-11-25-6.md). Outils absents : `pip-audit`, `safety`, `bandit`, `semgrep`, `gitleaks`, `trivy`, `pytest`. Vérifications sur des instances jetables construites depuis `git archive` (conteneurs, réseau, volume et images supprimés ; `apercu-*`, `t067c6b*` et `crazy_einstein` non touchés). Statut laissé `A_FAIRE`, comme aux audits précédents · 2.5 h
 - 2026-11-26 09:45 · agent:securite · audit d'incrément de T-055 (commit `dc53a1d0b74be03bc4a65f2b6cead51649e227cd`, page de consultation, DEC-011) : verdict NON BLOQUANT, 0 critique, 0 haute ; XSS côté client, conformité à la CSP de l'architecture § 6, messages d'erreur sans détail ni écho, absence de donnée de membre vérifiés sans constat (code relu ; Chrome headless sur une instance jetable avec des noms de salle hostiles et un membre leurre : texte rendu tel quel, 0 élément créé, 0 violation de CSP, leurre absent du DOM et du journal) ; nouveau constat 20 (bas : `test_front_statique.py` plus faible que le test supprimé sur les attributs sans espace devant, `<svg/onload=…>`, `id="a"onclick=…`, et sur la cible des `<script src>`, bloqués par la CSP servie) ; consultation sans connexion signalée comme écart provisoire DEC-011 ; aucun ticket `bug` ; rapport [securite-2026-11-26.md](../rapports/securite-2026-11-26.md). Outils absents : `pip-audit`, `safety`, `bandit`, `semgrep`, `gitleaks`, `trivy` ; `test_front_statique.py` non rejoué (`sqlalchemy` absent du poste). Instance jetable `audit7-*` supprimée (conteneurs, volume, réseau, image) ; `premierclic-db-1` et `esn-rc-*` non touchés. Statut laissé `A_FAIRE`, comme aux audits précédents · 1.5 h
 - 2026-11-26 22:05 · agent:chef-de-projet · SIMULATION · T-027 (F-06, ANNULE par DEC-020) retiré de depend_de ; aucun critère ne portait sur F-06 ; statut et estimation inchangés (le découpage proposé le 2026-11-25 reste à arbitrer). Temps compté dans T-008 · 0 h
+- 2026-11-27 · agent:chef-de-projet · ticket `decision` [T-107](T-107-arbitrage-audit-securite-avant-go.md) créé (ATTENTE_HUMAIN, porteuse Claire) pour arbitrer le dépassement (12,5 h passées pour 5 h estimées) et le comptage de l'audit avant GO (environ 5 h, 75 €), selon la condition 1 de DEC-020. La proposition du 2026-11-25 14:45 y est reprise (options A et B) et complétée par les options C, D et E. T-045 dépend aussi de ce ticket, en plus de T-046. Statut, estimation et dépendances inchangés jusqu'à la décision ; aucun audit avant GO engagé. Temps compté dans T-008 · 0 h
+- 2026-11-27 10:55 · agent:chef-de-projet · application de [DEC-026](../../../docs/decisions/2026-11-27-DEC-026-audit-securite-increments-esn.md) (VALIDÉ par Ethan, option D), point 1 : titre « Audit sécurité » → « Audits d'incrément (DEC-011) » ; estimation 5 → 12,5 h (= temps passé) ; frontmatter passé au template v0.3 avec `imputation: esn` et `imputation_decision: DEC-026` (R18 ; 187,50 € pris en charge par l'ESN) ; Description et critères réécrits sur les 7 rapports existants. Les critères d'origine (audit avant GO) sont repris dans le nouveau ticket [T-108](T-108-audit-securite-avant-go.md). **Preuves des critères cochés**, relevées dans les rapports : en-tête `statut: EN_REVUE` (ligne 3) dans les 7 ; section « Verdict » `NON BLOQUANT` dans les 7 (-1 l. 106, base `6c53d31` ; -2 l. 111, base `6c53d31` ; -3 l. 127, `2852fe7` ; -4 l. 128, `4674c76` ; -5 l. 158, `b8b0004` et `16282cc` ; -6 l. 153, `14398c1`, `9114f9e` et `748c75e` ; 2026-11-26 l. 111, `dc53a1d`) ; phrase « Aucun constat critique ou haut : aucun ticket `bug` créé » dans les 7 (-1 l. 54, -2 l. 59, -3 l. 62, -4 l. 55, -5 l. 53, -6 l. 50, 2026-11-26 l. 45) ; temps des 7 lignes `agent:securite` de ce journal = 12,5 h. Statut (`A_FAIRE`) et `depend_de` inchangés : c'est le coordinateur qui conclut (R13). Temps compté dans T-008 · 0 h
+- 2026-11-27 10:53 · agent:coordinateur · A_FAIRE → TERMINE (R13, ticket de travail d'un agent S3, conclu par le coordinateur) : 5 critères vérifiés de façon indépendante (verdict `NON BLOQUANT` relu dans les 7 rapports, aucun constat critique ou haut ouvert, 12,5 h = somme du journal, T-108 en place dans `depend_de` de T-045 et T-046) ; imputation ESN sous DEC-026 `VALIDÉ`. Les heures des lignes 10:55 et 10:58 du `chef-de-projet` sont des estimations (agent sans horloge, retex P8) · 0 h

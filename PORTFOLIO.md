@@ -8,8 +8,8 @@
 
 | Projet | Client | Type | État | Avancement | Budget consommé / prévu | % | Fin projetée | Deadline | Écart (j ouvrés) | BLOQUE | ATTENTE_HUMAIN | Alertes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| [esn-interne](projets/esn-interne/TABLEAU.md) | ESN (projet interne) | interne | en_cours | 3,3 % | 60,00 € / 4 360,00 € | 1,4 % | 2027-01-26 | 2027-01-15 | +7 | 0 | 0 | 5 |
-| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 19,9 % | 1 371,29 € / 4 200,00 € | 32,6 % | 2026-12-16 | 2026-12-18 | -2 | 0 | 1 | 3 |
+| [esn-interne](projets/esn-interne/TABLEAU.md) | ESN (projet interne) | interne | en_cours | 8,2 % | 123,75 € / 4 360,00 € | 2,8 % | 2027-01-26 | 2027-01-15 | +7 | 0 | 0 | 5 |
+| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | Coworking Les Arcades (Perpignan) | metier | cadrage | 24,3 % | 1 265,21 € / 4 200,00 € | 30,1 % | 2026-12-15 | 2026-12-18 | -3 | 0 | 1 | 3 |
 
 ## Alertes
 
@@ -28,7 +28,7 @@
 
 | Priorité | Projet | Ticket | Titre | Question (bloque_par) |
 |---|---|---|---|---|
-| haute | reservation-coworking | T-057 | Rôle PostgreSQL de l'application (constat 10, moindre privilège) | décision humaine sur le rôle PostgreSQL de l'application (constat 10 du rapport securite-2026-11-25-3), avec l'accord de C sur le modèle commun |
+| haute | reservation-coworking | T-107 | Arbitrage : dépassement de T-043 (audit sécurité) et comptage de l'audit avant GO | arbitrage humain sur le dépassement de T-043 et le comptage de l'audit avant GO, avant d'engager l'audit (condition 1 de DEC-020) |
 
 ## Coûts pris en charge par l'ESN
 
@@ -36,9 +36,9 @@ Part ESN des projets clients (`imputation: esn` sur décision validée, R18) et 
 
 | Projet | Nature | Consommé | Projeté à terminaison | Budget de fonctionnement | Décisions |
 |---|---|---|---|---|---|
-| [esn-interne](projets/esn-interne/TABLEAU.md) | projet interne (R19) | 60,00 € | 3 663,21 € | 4 360,00 € | — |
-| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | prise en charge sur projet client (R18) | 22,50 € | 1 652,50 € | — | DEC-020, DEC-021 |
-| **Total ESN** | — | 82,50 € | 5 315,71 € | — | — |
+| [esn-interne](projets/esn-interne/TABLEAU.md) | projet interne (R19) | 123,75 € | 3 768,21 € | 4 360,00 € | — |
+| [reservation-coworking](projets/reservation-coworking/TABLEAU.md) | prise en charge sur projet client (R18) | 210,00 € | 1 840,00 € | — | DEC-020, DEC-021, DEC-026 |
+| **Total ESN** | — | 333,75 € | 5 608,21 € | — | — |
 
 ## Plan de formation de l'ESN
 
@@ -61,7 +61,7 @@ Tickets `formation` ouverts des projets internes (S1-R6, S1-R13).
 |---|---|---|---|---|---|
 | claire | actif | expert | 25 % | esn-interne 5 %, reservation-coworking 20 % | esn-interne 16,8 %, reservation-coworking 36,8 % |
 | hugo | depart_prevu | debutant | 0 % | aucune | — |
-| karim | actif | expert | 25 % | esn-interne 5 %, reservation-coworking 20 % | esn-interne 76,9 %, reservation-coworking 54,7 % |
+| karim | actif | expert | 25 % | esn-interne 5 %, reservation-coworking 20 % | esn-interne 76,9 %, reservation-coworking 52,5 % |
 | lea | conges | confirme | 25 % | esn-interne 25 % | esn-interne 43,3 % |
 | nadia | actif | confirme | 60 % | esn-interne 10 %, reservation-coworking 50 % | esn-interne 102,8 %, reservation-coworking 53,6 % |
 
